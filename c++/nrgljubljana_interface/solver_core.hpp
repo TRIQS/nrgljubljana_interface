@@ -1,22 +1,22 @@
 /*******************************************************************************
  *
- * app4triqs: A TRIQS based impurity solver
+ * nrgljubljana_interface: A TRIQS based impurity solver
  *
  * Copyright (c) 2019 The Simons foundation
  *   authors: Nils Wentzell
  *
- * app4triqs is free software: you can redistribute it and/or modify it under the
+ * nrgljubljana_interface is free software: you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
  *
- * app4triqs is distributed in the hope that it will be useful, but WITHOUT ANY
+ * nrgljubljana_interface is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  *
  * You should have received a copy of the GNU General Public License along with
- * app4triqs. If not, see <http://www.gnu.org/licenses/>.
+ * nrgljubljana_interface. If not, see <http://www.gnu.org/licenses/>.
  *
  ******************************************************************************/
 #pragma once
@@ -24,7 +24,7 @@
 #include "./params.hpp"
 #include "./types.hpp"
 
-namespace app4triqs {
+namespace nrgljubljana_interface {
 
   /// The Solver class
   class solver_core : public container_set {
@@ -42,9 +42,9 @@ namespace app4triqs {
 
     public:
     /**
-     * Construct a APP4TRIQS solver
+     * Construct a NRGLJUBLJANA_INTERFACE solver
      *
-     * @param construct_parameters Set of parameters specific to the APP4TRIQS solver
+     * @param construct_parameters Set of parameters specific to the NRGLJUBLJANA_INTERFACE solver
      */
     CPP2PY_ARG_AS_DICT
     solver_core(constr_params_t const &constr_params_);
@@ -57,9 +57,9 @@ namespace app4triqs {
     solver_core &operator=(solver_core &&p) = default;
 
     /**
-     * Solve method that performs APP4TRIQS calculation
+     * Solve method that performs NRGLJUBLJANA_INTERFACE calculation
      *
-     * @param solve_params_t Set of parameters specific to the APP4TRIQS run
+     * @param solve_params_t Set of parameters specific to the NRGLJUBLJANA_INTERFACE run
      */
     CPP2PY_ARG_AS_DICT
     void solve(solve_params_t const &solve_params);
@@ -79,14 +79,14 @@ namespace app4triqs {
       post_process({constr_params, last_solve_params.value()});
     }
 
-    static std::string hdf5_scheme() { return "APP4TRIQS_SolverCore"; }
+    static std::string hdf5_scheme() { return "NRGLJUBLJANA_INTERFACE_SolverCore"; }
 
     // Function that writes a solver object to hdf5 file
     friend void h5_write(triqs::h5::group h5group, std::string subgroup_name, solver_core const &s) {
       auto grp = h5group.create_group(subgroup_name);
       h5_write_attribute(grp, "TRIQS_HDF5_data_scheme", solver_core::hdf5_scheme());
       h5_write_attribute(grp, "TRIQS_GIT_HASH", std::string(AS_STRING(TRIQS_GIT_HASH)));
-      h5_write_attribute(grp, "APP4TRIQS_GIT_HASH", std::string(AS_STRING(APP4TRIQS_GIT_HASH)));
+      h5_write_attribute(grp, "NRGLJUBLJANA_INTERFACE_GIT_HASH", std::string(AS_STRING(NRGLJUBLJANA_INTERFACE_GIT_HASH)));
       h5_write(grp, "", s.result_set());
       h5_write(grp, "constr_params", s.constr_params);
       h5_write(grp, "last_solve_params", s.last_solve_params);
@@ -105,4 +105,4 @@ namespace app4triqs {
       return s;
     }
   };
-} // namespace app4triqs
+} // namespace nrgljubljana_interface

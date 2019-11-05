@@ -1,33 +1,33 @@
 /*******************************************************************************
  *
- * app4triqs: A TRIQS based impurity solver
+ * nrgljubljana_interface: A TRIQS based impurity solver
  *
  * Copyright (c) 2019 The Simons foundation
  *   authors: Nils Wentzell
  *
- * app4triqs is free software: you can redistribute it and/or modify it under the
+ * nrgljubljana_interface is free software: you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
  *
- * app4triqs is distributed in the hope that it will be useful, but WITHOUT ANY
+ * nrgljubljana_interface is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  *
  * You should have received a copy of the GNU General Public License along with
- * app4triqs. If not, see <http://www.gnu.org/licenses/>.
+ * nrgljubljana_interface. If not, see <http://www.gnu.org/licenses/>.
  *
  ******************************************************************************/
-#include <app4triqs/solver_core.hpp>
+#include <nrgljubljana_interface/solver_core.hpp>
 
 #include <triqs/gfs.hpp>
 #include <triqs/h5.hpp>
 #include <triqs/test_tools/gfs.hpp>
 
-using namespace app4triqs;
+using namespace nrgljubljana_interface;
 
-TEST(app4triqs, HubbardAtom) { // NOLINT
+TEST(nrgljubljana_interface, HubbardAtom) { // NOLINT
 
   // System Parameters
   double U  = 1.0;

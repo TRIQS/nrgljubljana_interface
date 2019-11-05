@@ -32,10 +32,10 @@ C++ reference manual
 Python reference manual
 -----------------------
 
-.. automodule:: app4triqs 
+.. automodule:: nrgljubljana_interface 
    :members:
 
-.. autoclass:: app4triqs.app4triqs_module.Toto
+.. autoclass:: nrgljubljana_interface.nrgljubljana_interface_module.Toto
    :members:
 
-.. autofunction:: app4triqs.app4triqs_module.chain
+.. autofunction:: nrgljubljana_interface.nrgljubljana_interface_module.chain

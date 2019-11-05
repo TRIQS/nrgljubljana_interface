@@ -1,15 +1,15 @@
 # Generated automatically using the command :
-# c++2py ../../c++/app4triqs/solver_core.hpp -p --members_read_only -N app4triqs -a app4triqs -m solver_core -o solver_core --moduledoc="The app4triqs solve_core module" -C pytriqs --cxxflags="-std=c++17" --target_file_only
+# c++2py ../../c++/nrgljubljana_interface/solver_core.hpp -p --members_read_only -N nrgljubljana_interface -a nrgljubljana_interface -m solver_core -o solver_core --moduledoc="The nrgljubljana_interface solve_core module" -C pytriqs --cxxflags="-std=c++17" --target_file_only
 from cpp2py.wrap_generator import *
 
 # The module
-module = module_(full_name = "solver_core", doc = r"The app4triqs solve_core module", app_name = "app4triqs")
+module = module_(full_name = "solver_core", doc = r"The nrgljubljana_interface solve_core module", app_name = "nrgljubljana_interface")
 
 # Imports
 module.add_imports(*['pytriqs.gf', 'pytriqs.operators'])
 
 # Add here all includes
-module.add_include("app4triqs/solver_core.hpp")
+module.add_include("nrgljubljana_interface/solver_core.hpp")
 
 # Add here anything to add in the C++ code at the start, e.g. namespace using
 module.add_preamble("""
@@ -23,35 +23,35 @@ module.add_preamble("""
 #include <triqs/cpp2py_converters/real_or_complex.hpp>
 #include <triqs/cpp2py_converters/h5.hpp>
 
-using namespace app4triqs;
+using namespace nrgljubljana_interface;
 """)
 
 
 # The class solver_core
 c = class_(
         py_type = "SolverCore",  # name of the python class
-        c_type = "app4triqs::solver_core",   # name of the C++ class
+        c_type = "nrgljubljana_interface::solver_core",   # name of the C++ class
         doc = r"""The Solver class""",   # doc of the C++ class
         hdf5 = True,
 )
 
 c.add_member(c_name = "G_tau",
-             c_type = "app4triqs::g_tau_t",
+             c_type = "nrgljubljana_interface::g_tau_t",
              read_only= True,
              doc = r"""Greens function in imaginary time""")
 
 c.add_member(c_name = "G_iw",
-             c_type = "app4triqs::g_iw_t",
+             c_type = "nrgljubljana_interface::g_iw_t",
              read_only= True,
              doc = r"""Greens function in Matsubara frequencies""")
 
 c.add_member(c_name = "Sigma_iw",
-             c_type = "app4triqs::g_iw_t",
+             c_type = "nrgljubljana_interface::g_iw_t",
              read_only= True,
              doc = r"""Self-energy in Matsubara frequencies""")
 
 c.add_member(c_name = "constr_params",
-             c_type = "app4triqs::constr_params_t",
+             c_type = "nrgljubljana_interface::constr_params_t",
              read_only= True,
              doc = r"""""")
 
@@ -61,11 +61,11 @@ c.add_member(c_name = "last_solve_params",
              doc = r"""""")
 
 c.add_member(c_name = "G0_iw",
-             c_type = "app4triqs::g_iw_t",
+             c_type = "nrgljubljana_interface::g_iw_t",
              read_only= True,
              doc = r"""Noninteracting Green Function in Matsubara frequencies""")
 
-c.add_constructor("""(**app4triqs::constr_params_t)""", doc = r"""Construct a APP4TRIQS solver
+c.add_constructor("""(**nrgljubljana_interface::constr_params_t)""", doc = r"""Construct a NRGLJUBLJANA_INTERFACE solver
 
 
 
@@ -82,8 +82,8 @@ c.add_constructor("""(**app4triqs::constr_params_t)""", doc = r"""Construct a AP
 +----------------+-----------------------------------+---------+----------------------------------+
 """)
 
-c.add_method("""void solve (**app4triqs::solve_params_t)""",
-             doc = r"""Solve method that performs APP4TRIQS calculation
+c.add_method("""void solve (**nrgljubljana_interface::solve_params_t)""",
+             doc = r"""Solve method that performs NRGLJUBLJANA_INTERFACE calculation
 
 
 
@@ -113,7 +113,7 @@ module.add_class(c)
 
 # Converter for solve_params_t
 c = converter_(
-        c_type = "app4triqs::solve_params_t",
+        c_type = "nrgljubljana_interface::solve_params_t",
         doc = r"""The parameters for the solve function""",
 )
 c.add_member(c_name = "h_int",
@@ -140,7 +140,7 @@ module.add_converter(c)
 
 # Converter for constr_params_t
 c = converter_(
-        c_type = "app4triqs::constr_params_t",
+        c_type = "nrgljubljana_interface::constr_params_t",
         doc = r"""The parameters for the solver construction""",
 )
 c.add_member(c_name = "n_tau",

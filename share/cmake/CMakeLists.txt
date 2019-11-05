@@ -1,10 +1,10 @@
-configure_file(app4triqs-config.cmake.in app4triqs-config.cmake @ONLY)
-configure_file(app4triqs-config-version.cmake.in app4triqs-config-version.cmake @ONLY)
+configure_file(nrgljubljana_interface-config.cmake.in nrgljubljana_interface-config.cmake @ONLY)
+configure_file(nrgljubljana_interface-config-version.cmake.in nrgljubljana_interface-config-version.cmake @ONLY)
 install(
   FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/app4triqs-config.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/app4triqs-config-version.cmake
-  DESTINATION lib/cmake/app4triqs
+    ${CMAKE_CURRENT_BINARY_DIR}/nrgljubljana_interface-config.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/nrgljubljana_interface-config-version.cmake
+  DESTINATION lib/cmake/nrgljubljana_interface
 )
 
-install(EXPORT app4triqs-targets NAMESPACE app4triqs:: DESTINATION lib/cmake/app4triqs)
+install(EXPORT nrgljubljana_interface-targets NAMESPACE nrgljubljana_interface:: DESTINATION lib/cmake/nrgljubljana_interface)

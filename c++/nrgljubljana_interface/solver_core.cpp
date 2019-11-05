@@ -1,28 +1,28 @@
 /*******************************************************************************
  *
- * app4triqs: A TRIQS based impurity solver
+ * nrgljubljana_interface: A TRIQS based impurity solver
  *
  * Copyright (c) 2019 The Simons foundation
  *   authors: Nils Wentzell
  *
- * app4triqs is free software: you can redistribute it and/or modify it under the
+ * nrgljubljana_interface is free software: you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
  *
- * app4triqs is distributed in the hope that it will be useful, but WITHOUT ANY
+ * nrgljubljana_interface is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  *
  * You should have received a copy of the GNU General Public License along with
- * app4triqs. If not, see <http://www.gnu.org/licenses/>.
+ * nrgljubljana_interface. If not, see <http://www.gnu.org/licenses/>.
  *
  ******************************************************************************/
 #include "./solver_core.hpp"
 #include "./post_process.hpp"
 
-namespace app4triqs {
+namespace nrgljubljana_interface {
 
   solver_core::solver_core(constr_params_t const &p) : constr_params(p) {
 
@@ -43,7 +43,7 @@ namespace app4triqs {
 
     if (world.rank() == 0)
       std::cout << "\n"
-                   "APP4TRIQS Solver\n";
+                   "NRGLJUBLJANA_INTERFACE Solver\n";
 
     // Assert hermiticity of the given Weiss field
     if (!is_gf_hermitian(G0_iw)) TRIQS_RUNTIME_ERROR << "Please make sure that G0_iw fullfills the hermiticity relation G_ij[iw] = G_ji[-iw]*";
@@ -71,4 +71,4 @@ namespace app4triqs {
     // TODO
   }
 
-} // namespace app4triqs
+} // namespace nrgljubljana_interface

@@ -1,20 +1,20 @@
 # ##############################################################################
 #
-# app4triqs - An example application using triqs and cpp2py
+# nrgljubljana_interface - An example application using triqs and cpp2py
 #
 # Copyright (C) ...
 #
-# app4triqs is free software: you can redistribute it and/or modify it under the
+# nrgljubljana_interface is free software: you can redistribute it and/or modify it under the
 # terms of the GNU General Public License as published by the Free Software
 # Foundation, either version 3 of the License, or (at your option) any later
 # version.
 #
-# app4triqs is distributed in the hope that it will be useful, but WITHOUT ANY
+# nrgljubljana_interface is distributed in the hope that it will be useful, but WITHOUT ANY
 # WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
 # A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License along with
-# app4triqs (in the file COPYING.txt in this directory). If not, see
+# nrgljubljana_interface (in the file COPYING.txt in this directory). If not, see
 # <http://www.gnu.org/licenses/>.
 #
 # ##############################################################################
@@ -26,7 +26,7 @@ endif()
 
 # ############
 # Define Project
-project(APP4TRIQS VERSION 2.2.0 LANGUAGES C CXX)
+project(NRGLJUBLJANA_INTERFACE VERSION 2.2.0 LANGUAGES C CXX)
 
 # ############
 # Load TRIQS and CPP2PY
@@ -73,7 +73,7 @@ add_compile_options(
 
 # Create an Interface target for compiler warnings
 add_library(project_warnings INTERFACE)
-install(TARGETS project_warnings EXPORT app4triqs-targets)
+install(TARGETS project_warnings EXPORT nrgljubljana_interface-targets)
 target_compile_options(project_warnings
   INTERFACE
     -Wall
@@ -88,8 +88,8 @@ target_compile_options(project_warnings
 # #############
 # Build Project
 
-# Build and install the app4triqs library
-add_subdirectory(c++/app4triqs)
+# Build and install the nrgljubljana_interface library
+add_subdirectory(c++/nrgljubljana_interface)
 
 # Tests
 option(Build_Tests "Build tests" ON)
@@ -100,7 +100,7 @@ endif()
 
 if(TRIQS_WITH_PYTHON_SUPPORT)
   # Python interface
-  add_subdirectory(python/app4triqs)
+  add_subdirectory(python/nrgljubljana_interface)
 
   # Build the documentation
   option(Build_Documentation "Build documentation" OFF)
@@ -127,10 +127,10 @@ if(BUILD_DEBIAN_PACKAGE)
   if(NOT CMAKE_INSTALL_PREFIX STREQUAL "/usr")
     message(FATAL_ERROR "CMAKE_INSTALL_PREFIX must be /usr for packaging")
   endif()
-  set(CPACK_PACKAGE_NAME app4triqs)
+  set(CPACK_PACKAGE_NAME nrgljubljana_interface)
   set(CPACK_GENERATOR "DEB")
   set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
-  set(CPACK_PACKAGE_CONTACT "https://github.com/TRIQS/app4triqs")
+  set(CPACK_PACKAGE_CONTACT "https://github.com/TRIQS/nrgljubljana_interface")
   execute_process(COMMAND dpkg --print-architecture OUTPUT_VARIABLE CMAKE_DEBIAN_PACKAGE_ARCHITECTURE OUTPUT_STRIP_TRAILING_WHITESPACE)
   set(CPACK_DEBIAN_PACKAGE_DEPENDS "triqs (>= 2.2)")
   set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
