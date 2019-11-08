@@ -36,23 +36,23 @@ TEST(nrgljubljana_interface, HubbardAtom) { // NOLINT
 
   // Construct Parameters
   constr_params_t cp;
-  cp.beta      = 10.0;
-  cp.gf_struct = {{"up", {0}}, {"dn", {0}}};
-  cp.n_tau     = 10000;
-  cp.n_iw      = 500;
+  //cp.beta      = 10.0;
+//  cp.gf_struct = {{"up", {0}}, {"dn", {0}}};
+//  cp.n_tau     = 10000;
+//  cp.n_iw      = 500;
 
   // Set up the Solver
   solver_core S(cp);
-  int up = 0, dn = 1;
-  S.G0_iw[up](iw_) << 1.0 / (iw_ + mu + h);
-  S.G0_iw[dn](iw_) << 1.0 / (iw_ + mu - h);
+//  int up = 0, dn = 1;
+//  S.G0_iw[up](iw_) << 1.0 / (iw_ + mu + h);
+//  S.G0_iw[dn](iw_) << 1.0 / (iw_ + mu - h);
 
   // Solve Parameters
   solve_params_t sp;
-  sp.h_int        = U * n("up", 0) * n("down", 0);
-  sp.max_time     = -1;
-  sp.verbosity    = 3;
-  sp.post_process = true;
+//  sp.h_int        = U * n("up", 0) * n("down", 0);
+//  sp.max_time     = -1;
+//  sp.verbosity    = 3;
+//  sp.post_process = true;
 
   // Solve the impurity model
   S.solve(sp);

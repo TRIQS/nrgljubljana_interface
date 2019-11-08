@@ -29,12 +29,12 @@ namespace nrgljubljana_interface {
   solver_core::solver_core(constr_params_t const &p) : constr_params(p) {
 
     // Initialize the non-interacting Green function
-    G0_iw = block_gf<imfreq>{{p.beta, Fermion, p.n_iw}, p.gf_struct};
+    //G0_iw = block_gf<imfreq>{{p.beta, Fermion, p.n_iw}, p.gf_struct};
 
     // Initialize the result containers
-    G_tau    = block_gf<imtime>{{p.beta, Fermion, p.n_tau}, p.gf_struct};
-    G_iw     = G0_iw;
-    Sigma_iw = G0_iw;
+    //G_tau    = block_gf<imtime>{{p.beta, Fermion, p.n_tau}, p.gf_struct};
+    //G_iw     = G0_iw;
+    //Sigma_iw = G0_iw;
   }
 
   // -------------------------------------------------------------------------------
@@ -46,9 +46,6 @@ namespace nrgljubljana_interface {
     if (world.rank() == 0)
       std::cout << "\n"
                    "NRGLJUBLJANA_INTERFACE Solver\n";
-
-    // Assert hermiticity of the given Weiss field
-    if (!is_gf_hermitian(G0_iw)) TRIQS_RUNTIME_ERROR << "Please make sure that G0_iw fullfills the hermiticity relation G_ij[iw] = G_ji[-iw]*";
 
     // Merge constr_params and solve_params
     params_t params(constr_params, solve_params);
