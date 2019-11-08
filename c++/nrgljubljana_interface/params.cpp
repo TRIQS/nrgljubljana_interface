@@ -25,33 +25,21 @@ namespace nrgljubljana_interface {
 
   void h5_write(triqs::h5::group h5group, std::string subgroup_name, constr_params_t const &cp) {
     auto grp = h5group.create_group(subgroup_name);
-    h5_write(grp, "n_tau", cp.n_tau);
-    h5_write(grp, "n_iw", cp.n_iw);
-    h5_write(grp, "beta", cp.beta);
     h5_write(grp, "gf_struct", cp.gf_struct);
   }
 
   void h5_read(triqs::h5::group h5group, std::string subgroup_name, constr_params_t &cp) {
     auto grp = h5group.open_group(subgroup_name);
-    h5_read(grp, "n_tau", cp.n_tau);
-    h5_read(grp, "n_iw", cp.n_iw);
-    h5_read(grp, "beta", cp.beta);
     h5_read(grp, "gf_struct", cp.gf_struct);
   }
 
   void h5_write(triqs::h5::group h5group, std::string subgroup_name, solve_params_t const &sp) {
     auto grp = h5group.create_group(subgroup_name);
-    h5_write(grp, "h_int", sp.h_int);
-    h5_write(grp, "max_time", sp.max_time);
-    h5_write(grp, "verbosity", sp.verbosity);
     h5_write(grp, "post_process", sp.post_process);
   }
 
   void h5_read(triqs::h5::group h5group, std::string subgroup_name, solve_params_t &sp) {
     auto grp = h5group.open_group(subgroup_name);
-    // Take care! Do not read verbosity as they should be different based on mpi rank
-    h5_read(grp, "h_int", sp.h_int);
-    h5_read(grp, "max_time", sp.max_time);
     h5_read(grp, "post_process", sp.post_process);
   }
 

@@ -76,7 +76,7 @@ namespace nrgljubljana_interface {
     // Allow the user to retrigger post-processing with the last set of parameters
     void post_process() {
       if (not last_solve_params) TRIQS_RUNTIME_ERROR << "You need to run the solver once before you post-process";
-      post_process({constr_params, last_solve_params.value()});
+      post_process({constr_params, *last_solve_params});
     }
 
     static std::string hdf5_scheme() { return "NRGLJUBLJANA_INTERFACE_SolverCore"; }

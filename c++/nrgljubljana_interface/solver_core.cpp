@@ -22,6 +22,8 @@
 #include "./solver_core.hpp"
 #include "./post_process.hpp"
 
+#include <nrg-lib.h>
+
 namespace nrgljubljana_interface {
 
   solver_core::solver_core(constr_params_t const &p) : constr_params(p) {
