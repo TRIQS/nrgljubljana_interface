@@ -6,7 +6,6 @@ target_link_libraries(nrgljubljana_c PRIVATE project_warnings)
 
 # Configure compilation
 target_compile_options(nrgljubljana_c PRIVATE -fPIC -std=c++14)
-#target_compile_options(nrgljubljana_c PUBLIC -fPIC -std=c++14)
 target_include_directories(nrgljubljana_c PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/c++>)
 target_include_directories(nrgljubljana_c PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/c++/coefnew>)
 target_compile_definitions(nrgljubljana_c PUBLIC
