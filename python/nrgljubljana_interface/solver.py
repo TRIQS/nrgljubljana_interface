@@ -28,7 +28,7 @@ from pytriqs.utility import mpi
 # === The SolverCore Wrapper
 
 class Solver(SolverCore):
-    def __init__(self, bandrescale=1):
+    def __init__(self, **params_kw):
         """
         Initialise the solver.
 
@@ -36,8 +36,7 @@ class Solver(SolverCore):
         ----------
         """
         # Initialise the core solver
-        SolverCore.__init__(self,
-    			    bandrescale=bandrescale)
+        SolverCore.__init__(self, **params_kw)
 
     def solve(self, **params_kw):
         """

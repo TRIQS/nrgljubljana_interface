@@ -72,9 +72,6 @@ namespace nrgljubljana_interface {
     /// Number of discretization meshes
     int Nz = 1;
 
-    /// Largest x in discretization ODE solver
-    double xmax = 20;
-
     /// Lowest scale on the Wilson chain
     double Tmin = 1e-4;
 
@@ -108,7 +105,7 @@ namespace nrgljubljana_interface {
     /// Spectral functions (orbital triplet ops) to compute
     std::string specot = "";
 
-    /// Conductance curves to compute
+    /// Conductance curves to compu<te
     std::string specgt = "";
 
     /// I_1 curves to compute
@@ -154,7 +151,7 @@ namespace nrgljubljana_interface {
     double gamma = 0.2;
 
     /// Model parameters
-    // TO DOstd::map<std::string, double> model_parameters; 
+    std::map<std::string, double> model_parameters; 
 
     /// Perform post processing
     bool post_process = true;
@@ -168,6 +165,15 @@ namespace nrgljubljana_interface {
   
   /// NRG low-level parameters
   struct nrg_params_t {
+     
+    /// Number of sites in the star representation
+    int mMAX = -1;
+
+    /// Number of sites in the Wilson chain
+    int Nmax = -1;
+     
+    /// Largest x in the discretization ODE solver
+    double xmax = -1.0;
      
     /// Discretization scheme
     std::string discretization = "Z";
@@ -251,16 +257,16 @@ namespace nrgljubljana_interface {
     bool dm = false;
 
     /// Broadening mesh maximum frequency
-    double broaden_max = 10;
+    //double broaden_max = 10;
 
     /// Broadening mesh minimum frequency
-    double broaden_min = -99.;
+    //double broaden_min = -99.;
 
     /// Auto-tune broaden_min parameter
     double broaden_min_ratio = 3.0;
 
     /// Common ration of the geometric sequence
-    double broaden_ratio = 1.05;
+    //double broaden_ratio = 1.05;
 
     /// Smallest energy scale in the problem
     double omega0 = -1.0;
@@ -326,10 +332,10 @@ namespace nrgljubljana_interface {
     double linstep = 0;
 
     /// Peak clipping at the end of the run
-    double DISCARD_TRIM = 1e-16;
+    double discard_trim = 1e-16;
 
     /// Peak clipping on the fly
-    double DISCARD_IMMEDIATELY = 1e-16;
+    double discard_immediately = 1e-16;
 
     /// Energy window parameter for patching
     double goodE = 2.0;

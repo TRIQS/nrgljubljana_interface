@@ -12,7 +12,9 @@ module.add_include("nrgljubljana_interface/solver_core.hpp")
 
 # Add here anything to add in the C++ code at the start, e.g. namespace using
 module.add_preamble("""
+#include <cpp2py/converters/map.hpp>
 #include <cpp2py/converters/optional.hpp>
+#include <cpp2py/converters/pair.hpp>
 #include <cpp2py/converters/string.hpp>
 #include <cpp2py/converters/vector.hpp>
 #include <triqs/cpp2py_converters/h5.hpp>
@@ -68,69 +70,69 @@ c.add_method("""void solve (**nrgljubljana_interface::solve_params_t)""",
 
 
 
-+----------------+-------------+---------+------------------------------------------------------+
-| Parameter Name | Type        | Default | Documentation                                        |
-+================+=============+=========+======================================================+
-| Lambda         | double      | 2.0     | Logarithmic discretization parameter                 |
-+----------------+-------------+---------+------------------------------------------------------+
-| Nz             | int         | 1       | Number of discretization meshes                      |
-+----------------+-------------+---------+------------------------------------------------------+
-| xmax           | double      | 20      | Largest x in discretization ODE solver               |
-+----------------+-------------+---------+------------------------------------------------------+
-| Tmin           | double      | 1e-4    | Lowest scale on the Wilson chain                     |
-+----------------+-------------+---------+------------------------------------------------------+
-| keep           | size_t      | 100     | Maximum number of states to keep at each step        |
-+----------------+-------------+---------+------------------------------------------------------+
-| keepenergy     | double      | -1.0    | Cut-off energy for truncation                        |
-+----------------+-------------+---------+------------------------------------------------------+
-| keepmin        | size_t      | 0       | Minimum number of states to keep at each step        |
-+----------------+-------------+---------+------------------------------------------------------+
-| T              | double      | 0.001   | Temperature, k_B T/D,                                |
-+----------------+-------------+---------+------------------------------------------------------+
-| ops            | std::string | ""      | Operators to be calculated                           |
-+----------------+-------------+---------+------------------------------------------------------+
-| specs          | std::string | ""      | Spectral functions (singlet ops) to compute          |
-+----------------+-------------+---------+------------------------------------------------------+
-| specd          | std::string | ""      | Spectral functions (doublet ops) to compute          |
-+----------------+-------------+---------+------------------------------------------------------+
-| spect          | std::string | ""      | Spectral functions (triplet ops) to compute          |
-+----------------+-------------+---------+------------------------------------------------------+
-| specq          | std::string | ""      | Spectral functions (quadruplet ops) to compute       |
-+----------------+-------------+---------+------------------------------------------------------+
-| specot         | std::string | ""      | Spectral functions (orbital triplet ops) to compute  |
-+----------------+-------------+---------+------------------------------------------------------+
-| specgt         | std::string | ""      | Conductance curves to compute                        |
-+----------------+-------------+---------+------------------------------------------------------+
-| speci1t        | std::string | ""      | I_1 curves to compute                                |
-+----------------+-------------+---------+------------------------------------------------------+
-| speci2t        | std::string | ""      | I_2 curves to compute                                |
-+----------------+-------------+---------+------------------------------------------------------+
-| specchit       | std::string | ""      | Susceptibilities to compute                          |
-+----------------+-------------+---------+------------------------------------------------------+
-| specv3         | std::string | ""      | 3-leg vertex functions to compute?                   |
-+----------------+-------------+---------+------------------------------------------------------+
-| v3mm           | bool        | false   | Compute 3-leg vertex on matsubara/matsubara axis?    |
-+----------------+-------------+---------+------------------------------------------------------+
-| dmnrg          | bool        | false   | Perform DMNRG (density-matrix NRG) calculation       |
-+----------------+-------------+---------+------------------------------------------------------+
-| cfs            | bool        | false   | Perform CFS (complete Fock space) calculation        |
-+----------------+-------------+---------+------------------------------------------------------+
-| fdm            | bool        | false   | Perform FDM (full-density-matrix) calculation        |
-+----------------+-------------+---------+------------------------------------------------------+
-| fdmexpv        | bool        | false   | Calculate expectation values using FDM               |
-+----------------+-------------+---------+------------------------------------------------------+
-| dmnrgmats      | bool        | false   | DMNRG calculation on Matsubara axis                  |
-+----------------+-------------+---------+------------------------------------------------------+
-| fdmmats        | bool        | false   | FDM calculation on Matsubara axis                    |
-+----------------+-------------+---------+------------------------------------------------------+
-| mats           | size_t      | 100     | Number of Matsubara points to collect                |
-+----------------+-------------+---------+------------------------------------------------------+
-| alpha          | double      | 0.3     | Width of logarithmic gaussian                        |
-+----------------+-------------+---------+------------------------------------------------------+
-| gamma          | double      | 0.2     | Parameter for Gaussian convolution step              |
-+----------------+-------------+---------+------------------------------------------------------+
-| post_process   | bool        | true    | Perform post processing                              |
-+----------------+-------------+---------+------------------------------------------------------+
++------------------+-------------------------------+---------+------------------------------------------------------+
+| Parameter Name   | Type                          | Default | Documentation                                        |
++==================+===============================+=========+======================================================+
+| Lambda           | double                        | 2.0     | Logarithmic discretization parameter                 |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| Nz               | int                           | 1       | Number of discretization meshes                      |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| Tmin             | double                        | 1e-4    | Lowest scale on the Wilson chain                     |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| keep             | size_t                        | 100     | Maximum number of states to keep at each step        |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| keepenergy       | double                        | -1.0    | Cut-off energy for truncation                        |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| keepmin          | size_t                        | 0       | Minimum number of states to keep at each step        |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| T                | double                        | 0.001   | Temperature, k_B T/D,                                |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| ops              | std::string                   | ""      | Operators to be calculated                           |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| specs            | std::string                   | ""      | Spectral functions (singlet ops) to compute          |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| specd            | std::string                   | ""      | Spectral functions (doublet ops) to compute          |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| spect            | std::string                   | ""      | Spectral functions (triplet ops) to compute          |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| specq            | std::string                   | ""      | Spectral functions (quadruplet ops) to compute       |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| specot           | std::string                   | ""      | Spectral functions (orbital triplet ops) to compute  |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| specgt           | std::string                   | ""      | Conductance curves to compu<te                       |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| speci1t          | std::string                   | ""      | I_1 curves to compute                                |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| speci2t          | std::string                   | ""      | I_2 curves to compute                                |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| specchit         | std::string                   | ""      | Susceptibilities to compute                          |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| specv3           | std::string                   | ""      | 3-leg vertex functions to compute?                   |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| v3mm             | bool                          | false   | Compute 3-leg vertex on matsubara/matsubara axis?    |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| dmnrg            | bool                          | false   | Perform DMNRG (density-matrix NRG) calculation       |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| cfs              | bool                          | false   | Perform CFS (complete Fock space) calculation        |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| fdm              | bool                          | false   | Perform FDM (full-density-matrix) calculation        |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| fdmexpv          | bool                          | false   | Calculate expectation values using FDM               |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| dmnrgmats        | bool                          | false   | DMNRG calculation on Matsubara axis                  |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| fdmmats          | bool                          | false   | FDM calculation on Matsubara axis                    |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| mats             | size_t                        | 100     | Number of Matsubara points to collect                |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| alpha            | double                        | 0.3     | Width of logarithmic gaussian                        |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| gamma            | double                        | 0.2     | Parameter for Gaussian convolution step              |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| model_parameters | std::map<std::string, double> | --      | Model parameters                                     |
++------------------+-------------------------------+---------+------------------------------------------------------+
+| post_process     | bool                          | true    | Perform post processing                              |
++------------------+-------------------------------+---------+------------------------------------------------------+
 """)
 
 c.add_method("""void set_nrg_params (**nrgljubljana_interface::nrg_params_t)""",
@@ -141,6 +143,12 @@ c.add_method("""void set_nrg_params (**nrgljubljana_interface::nrg_params_t)""",
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | Parameter Name      | Type        | Default   | Documentation                                              |
 +=====================+=============+===========+============================================================+
+| mMAX                | int         | -1        | Number of sites in the star representation                 |
++---------------------+-------------+-----------+------------------------------------------------------------+
+| Nmax                | int         | -1        | Number of sites in the Wilson chain                        |
++---------------------+-------------+-----------+------------------------------------------------------------+
+| xmax                | double      | -1.0      | Largest x in the discretization ODE solver                 |
++---------------------+-------------+-----------+------------------------------------------------------------+
 | discretization      | std::string | "Z"       | Discretization scheme                                      |
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | z                   | double      | 1.0       | Parameter z in the logarithmic discretization              |
@@ -195,13 +203,7 @@ c.add_method("""void set_nrg_params (**nrgljubljana_interface::nrg_params_t)""",
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | dm                  | bool        | false     | Compute density matrixes?                                  |
 +---------------------+-------------+-----------+------------------------------------------------------------+
-| broaden_max         | double      | 10        | Broadening mesh maximum frequency                          |
-+---------------------+-------------+-----------+------------------------------------------------------------+
-| broaden_min         | double      | -99.      | Broadening mesh minimum frequency                          |
-+---------------------+-------------+-----------+------------------------------------------------------------+
 | broaden_min_ratio   | double      | 3.0       | Auto-tune broaden_min parameter                            |
-+---------------------+-------------+-----------+------------------------------------------------------------+
-| broaden_ratio       | double      | 1.05      | Common ration of the geometric sequence                    |
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | omega0              | double      | -1.0      | Smallest energy scale in the problem                       |
 +---------------------+-------------+-----------+------------------------------------------------------------+
@@ -245,9 +247,9 @@ c.add_method("""void set_nrg_params (**nrgljubljana_interface::nrg_params_t)""",
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | linstep             | double      | 0         | Bin width for linear mesh                                  |
 +---------------------+-------------+-----------+------------------------------------------------------------+
-| DISCARD_TRIM        | double      | 1e-16     | Peak clipping at the end of the run                        |
+| discard_trim        | double      | 1e-16     | Peak clipping at the end of the run                        |
 +---------------------+-------------+-----------+------------------------------------------------------------+
-| DISCARD_IMMEDIATELY | double      | 1e-16     | Peak clipping on the fly                                   |
+| discard_immediately | double      | 1e-16     | Peak clipping on the fly                                   |
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | goodE               | double      | 2.0       | Energy window parameter for patching                       |
 +---------------------+-------------+-----------+------------------------------------------------------------+
@@ -307,6 +309,9 @@ c.add_method("""void set_nrg_params (**nrgljubljana_interface::nrg_params_t)""",
 +---------------------+-------------+-----------+------------------------------------------------------------+
 """)
 
+c.add_method("""void generate_param_file (nrgljubljana_interface::constr_params_t cp, nrgljubljana_interface::solve_params_t sp, nrgljubljana_interface::nrg_params_t np)""",
+             doc = r"""""")
+
 c.add_method("""std::string hdf5_scheme ()""",
              is_static = True,
              doc = r"""""")
@@ -328,11 +333,6 @@ c.add_member(c_name = "Nz",
              c_type = "int",
              initializer = """ 1 """,
              doc = r"""Number of discretization meshes""")
-
-c.add_member(c_name = "xmax",
-             c_type = "double",
-             initializer = """ 20 """,
-             doc = r"""Largest x in discretization ODE solver""")
 
 c.add_member(c_name = "Tmin",
              c_type = "double",
@@ -392,7 +392,7 @@ c.add_member(c_name = "specot",
 c.add_member(c_name = "specgt",
              c_type = "std::string",
              initializer = """ "" """,
-             doc = r"""Conductance curves to compute""")
+             doc = r"""Conductance curves to compu<te""")
 
 c.add_member(c_name = "speci1t",
              c_type = "std::string",
@@ -464,6 +464,11 @@ c.add_member(c_name = "gamma",
              initializer = """ 0.2 """,
              doc = r"""Parameter for Gaussian convolution step""")
 
+c.add_member(c_name = "model_parameters",
+             c_type = "std::map<std::string, double>",
+             initializer = """  """,
+             doc = r"""Model parameters""")
+
 c.add_member(c_name = "post_process",
              c_type = "bool",
              initializer = """ true """,
@@ -476,6 +481,21 @@ c = converter_(
         c_type = "nrgljubljana_interface::nrg_params_t",
         doc = r"""NRG low-level parameters""",
 )
+c.add_member(c_name = "mMAX",
+             c_type = "int",
+             initializer = """ -1 """,
+             doc = r"""Number of sites in the star representation""")
+
+c.add_member(c_name = "Nmax",
+             c_type = "int",
+             initializer = """ -1 """,
+             doc = r"""Number of sites in the Wilson chain""")
+
+c.add_member(c_name = "xmax",
+             c_type = "double",
+             initializer = """ -1.0 """,
+             doc = r"""Largest x in the discretization ODE solver""")
+
 c.add_member(c_name = "discretization",
              c_type = "std::string",
              initializer = """ "Z" """,
@@ -611,25 +631,10 @@ c.add_member(c_name = "dm",
              initializer = """ false """,
              doc = r"""Compute density matrixes?""")
 
-c.add_member(c_name = "broaden_max",
-             c_type = "double",
-             initializer = """ 10 """,
-             doc = r"""Broadening mesh maximum frequency""")
-
-c.add_member(c_name = "broaden_min",
-             c_type = "double",
-             initializer = """ -99. """,
-             doc = r"""Broadening mesh minimum frequency""")
-
 c.add_member(c_name = "broaden_min_ratio",
              c_type = "double",
              initializer = """ 3.0 """,
              doc = r"""Auto-tune broaden_min parameter""")
-
-c.add_member(c_name = "broaden_ratio",
-             c_type = "double",
-             initializer = """ 1.05 """,
-             doc = r"""Common ration of the geometric sequence""")
 
 c.add_member(c_name = "omega0",
              c_type = "double",
@@ -736,12 +741,12 @@ c.add_member(c_name = "linstep",
              initializer = """ 0 """,
              doc = r"""Bin width for linear mesh""")
 
-c.add_member(c_name = "DISCARD_TRIM",
+c.add_member(c_name = "discard_trim",
              c_type = "double",
              initializer = """ 1e-16 """,
              doc = r"""Peak clipping at the end of the run""")
 
-c.add_member(c_name = "DISCARD_IMMEDIATELY",
+c.add_member(c_name = "discard_immediately",
              c_type = "double",
              initializer = """ 1e-16 """,
              doc = r"""Peak clipping on the fly""")
