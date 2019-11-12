@@ -25,22 +25,33 @@ namespace nrgljubljana_interface {
 
   void h5_write(triqs::h5::group h5group, std::string subgroup_name, constr_params_t const &cp) {
     auto grp = h5group.create_group(subgroup_name);
-    h5_write(grp, "gf_struct", cp.gf_struct);
+    h5_write(grp, "bandrescale", cp.bandrescale);
+    // to do
   }
 
   void h5_read(triqs::h5::group h5group, std::string subgroup_name, constr_params_t &cp) {
     auto grp = h5group.open_group(subgroup_name);
-    h5_read(grp, "gf_struct", cp.gf_struct);
+    h5_read(grp, "bandrescale", cp.bandrescale);
   }
 
   void h5_write(triqs::h5::group h5group, std::string subgroup_name, solve_params_t const &sp) {
     auto grp = h5group.create_group(subgroup_name);
-    h5_write(grp, "post_process", sp.post_process);
+    h5_write(grp, "Lambda", sp.Lambda);
   }
 
   void h5_read(triqs::h5::group h5group, std::string subgroup_name, solve_params_t &sp) {
     auto grp = h5group.open_group(subgroup_name);
-    h5_read(grp, "post_process", sp.post_process);
+    h5_read(grp, "Lambda", sp.Lambda);
+  }
+
+     void h5_write(triqs::h5::group h5group, std::string subgroup_name, nrg_params_t const &np) {
+    auto grp = h5group.create_group(subgroup_name);
+    h5_write(grp, "discretization", np.discretization);
+  }
+
+  void h5_read(triqs::h5::group h5group, std::string subgroup_name, nrg_params_t &np) {
+    auto grp = h5group.open_group(subgroup_name);
+    h5_read(grp, "discretization", np.discretization);
   }
 
 } // namespace nrgljubljana_interface

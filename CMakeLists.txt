@@ -72,9 +72,9 @@ add_compile_options(
 )
 
 # Create an Interface target for compiler warnings
-add_library(project_warnings INTERFACE)
-install(TARGETS project_warnings EXPORT nrgljubljana_interface-targets)
-target_compile_options(project_warnings
+add_library(if_project_warnings INTERFACE)
+install(TARGETS if_project_warnings EXPORT nrgljubljana_interface-targets)
+target_compile_options(if_project_warnings
   INTERFACE
     -Wall
     -Wextra
@@ -90,6 +90,9 @@ target_compile_options(project_warnings
 
 # Build and install the nrgljubljana_interface library
 add_subdirectory(c++/nrgljubljana_interface)
+
+# Build NRG Ljubljana
+add_subdirectory(nrgljubljana)
 
 # Tests
 option(Build_Tests "Build tests" ON)

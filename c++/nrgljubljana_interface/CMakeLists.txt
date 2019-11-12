@@ -2,7 +2,7 @@ file(GLOB_RECURSE sources *.cpp)
 add_library(nrgljubljana_interface_c ${sources})
 
 # Link against triqs and enable warnings
-target_link_libraries(nrgljubljana_interface_c PUBLIC triqs PRIVATE project_warnings)
+target_link_libraries(nrgljubljana_interface_c PUBLIC triqs PRIVATE if_project_warnings)
 
 # Configure compilation
 target_compile_options(nrgljubljana_interface_c PUBLIC -fPIC)
@@ -15,6 +15,9 @@ target_compile_definitions(nrgljubljana_interface_c PUBLIC
 				$<$<CONFIG:Debug>:TRIQS_DEBUG>
 				$<$<CONFIG:Debug>:TRIQS_ARRAYS_ENFORCE_BOUNDCHECK>
 			  )
+
+# Link against NRG
+target_link_libraries(nrgljubljana_interface_c PRIVATE nrgljubljana_c)
 
 # Install library and headers
 install(TARGETS nrgljubljana_interface_c EXPORT nrgljubljana_interface-targets DESTINATION lib)

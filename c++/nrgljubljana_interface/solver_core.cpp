@@ -27,14 +27,6 @@
 namespace nrgljubljana_interface {
 
   solver_core::solver_core(constr_params_t const &p) : constr_params(p) {
-
-    // Initialize the non-interacting Green function
-    //G0_iw = block_gf<imfreq>{{p.beta, Fermion, p.n_iw}, p.gf_struct};
-
-    // Initialize the result containers
-    //G_tau    = block_gf<imtime>{{p.beta, Fermion, p.n_tau}, p.gf_struct};
-    //G_iw     = G0_iw;
-    //Sigma_iw = G0_iw;
   }
 
   // -------------------------------------------------------------------------------
@@ -47,27 +39,44 @@ namespace nrgljubljana_interface {
       std::cout << "\n"
                    "NRGLJUBLJANA_INTERFACE Solver\n";
 
-    // Merge constr_params and solve_params
-    params_t params(constr_params, solve_params);
-
     // Reset the results
     container_set::operator=(container_set{});
 
     // TODO Solve the impurity model
-
-    // Post Processing
-    if (params.post_process) { post_process(params); }
+    set_workdir(".");
+    run_nrg_master();
   }
+
+  void solver_core::set_nrg_params(nrg_params_t const &nrg_params_) {
+    nrg_params = nrg_params_;
+  }
+
+//  void solver_core::run_single(all_solve_params_t const &all_solve_params) {
+//  }
 
   // -------------------------------------------------------------------------------
 
-  void solver_core::post_process(params_t const &p) {
+    // Function that writes a solver object to hdf5 file
 
-    if (world.rank() == 0)
-      std::cout << "\n"
-                   "Post-processing ... \n";
+  void h5_write(triqs::h5::group h5group, std::string subgroup_name, solver_core const &s) {
+      auto grp = h5group.create_group(subgroup_name);
+      h5_write_attribute(grp, "TRIQS_HDF5_data_scheme", solver_core::hdf5_scheme());
+      h5_write_attribute(grp, "TRIQS_GIT_HASH", std::string(AS_STRING(TRIQS_GIT_HASH)));
+      h5_write_attribute(grp, "NRGLJUBLJANA_INTERFACE_GIT_HASH", std::string(AS_STRING(NRGLJUBLJANA_INTERFACE_GIT_HASH)));
+      h5_write(grp, "", s.result_set());
+      h5_write(grp, "constr_params", s.constr_params);
+      h5_write(grp, "last_solve_params", s.last_solve_params);
+      h5_write(grp, "nrg_params", s.nrg_params);
+    }
 
-    // TODO
-  }
-
+    // Function that constructs a solver object from an hdf5 file
+    solver_core solver_core::h5_read_construct(triqs::h5::group h5group, std::string subgroup_name) {
+      auto grp           = h5group.open_group(subgroup_name);
+      auto constr_params = h5_read<constr_params_t>(grp, "constr_params");
+      auto s             = solver_core{constr_params};
+      h5_read(grp, "", s.result_set());
+      h5_read(grp, "last_solve_params", s.last_solve_params);
+      h5_read(grp, "nrg_params", s.nrg_params);
+      return s;
+    }
 } // namespace nrgljubljana_interface

@@ -43,15 +43,16 @@ namespace nrgljubljana_interface {
     double mesh_ratio = 1.05;
      
     /// Block structure of the gf
-    gf_struct_t gf_struct;
+    //gf_struct_t gf_struct;
 
     /// Number of block indeces for the Green function
-    int n_blocks() const { return gf_struct.size(); }
+    int n_blocks() const { return 1; }
+       //return gf_struct.size(); }
 
-    /// Names of block indeces for the Green function
+    // Names of block indeces for the Green function
     auto block_names() const {
       std::vector<std::string> v;
-      for (auto const &bl : gf_struct) v.push_back(bl.first);
+      //for (auto const &bl : gf_struct) v.push_back(bl.first);
       return v;
     }
 
@@ -152,6 +153,9 @@ namespace nrgljubljana_interface {
     /// Parameter for Gaussian convolution step
     double gamma = 0.2;
 
+    /// Model parameters
+    // TO DOstd::map<std::string, double> model_parameters; 
+
     /// Perform post processing
     bool post_process = true;
 
@@ -161,7 +165,8 @@ namespace nrgljubljana_interface {
     /// Read constr_params_t from hdf5
     friend void h5_read(triqs::h5::group h5group, std::string subgroup_name, solve_params_t &sp);
   };
-   
+  
+  /// NRG low-level parameters
   struct nrg_params_t {
      
     /// Discretization scheme
@@ -415,12 +420,6 @@ namespace nrgljubljana_interface {
 
     /// Read nrg_params_t from hdf5
     friend void h5_read(triqs::h5::group h5group, std::string subgroup_name, nrg_params_t &sp);
-  };
-
-  /// A struct combining both constr_params_t and solve_params_t
-  struct params_t : constr_params_t, solve_params_t {
-    params_t(constr_params_t const &constr_params_, solve_params_t const &solve_params_)
-       : constr_params_t(constr_params_), solve_params_t(solve_params_) {}
   };
 
 } // namespace nrgljubljana_interface

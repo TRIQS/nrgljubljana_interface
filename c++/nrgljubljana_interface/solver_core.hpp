@@ -37,9 +37,6 @@ namespace nrgljubljana_interface {
     container_set &result_set() { return static_cast<container_set &>(*this); }
     container_set const &result_set() const { return static_cast<container_set const &>(*this); }
 
-    // Function to perform the post-processing steps
-    void post_process(params_t const &p);
-
     public:
     /**
      * Construct a NRGLJUBLJANA_INTERFACE solver
@@ -64,45 +61,27 @@ namespace nrgljubljana_interface {
     CPP2PY_ARG_AS_DICT
     void solve(solve_params_t const &solve_params);
 
+    CPP2PY_ARG_AS_DICT
+    void set_nrg_params(nrg_params_t const &nrg_params);
+
+//    void run_single(all_solve_params_t const &solve_params);
+
     // Struct containing the parameters relevant for the solver construction
     constr_params_t constr_params;
+
+    // Low-level NRG parameters
+    nrg_params_t nrg_params;
 
     // Struct containing the parameters relevant for the solve process
     std::optional<solve_params_t> last_solve_params;
 
-    /// Noninteracting Green Function in Matsubara frequencies
-    g_iw_t G0_iw;
-
-    // Allow the user to retrigger post-processing with the last set of parameters
-    void post_process() {
-      if (not last_solve_params) TRIQS_RUNTIME_ERROR << "You need to run the solver once before you post-process";
-      post_process({constr_params, *last_solve_params});
-    }
-
     static std::string hdf5_scheme() { return "NRGLJUBLJANA_INTERFACE_SolverCore"; }
 
     // Function that writes a solver object to hdf5 file
-    friend void h5_write(triqs::h5::group h5group, std::string subgroup_name, solver_core const &s) {
-      auto grp = h5group.create_group(subgroup_name);
-      h5_write_attribute(grp, "TRIQS_HDF5_data_scheme", solver_core::hdf5_scheme());
-      h5_write_attribute(grp, "TRIQS_GIT_HASH", std::string(AS_STRING(TRIQS_GIT_HASH)));
-      h5_write_attribute(grp, "NRGLJUBLJANA_INTERFACE_GIT_HASH", std::string(AS_STRING(NRGLJUBLJANA_INTERFACE_GIT_HASH)));
-      h5_write(grp, "", s.result_set());
-      h5_write(grp, "constr_params", s.constr_params);
-      h5_write(grp, "last_solve_params", s.last_solve_params);
-      h5_write(grp, "G0_iw", s.G0_iw);
-    }
+    friend void h5_write(triqs::h5::group h5group, std::string subgroup_name, solver_core const &s);
 
     // Function that constructs a solver object from an hdf5 file
     CPP2PY_IGNORE
-    static solver_core h5_read_construct(triqs::h5::group h5group, std::string subgroup_name) {
-      auto grp           = h5group.open_group(subgroup_name);
-      auto constr_params = h5_read<constr_params_t>(grp, "constr_params");
-      auto s             = solver_core{constr_params};
-      h5_read(grp, "", s.result_set());
-      h5_read(grp, "last_solve_params", s.last_solve_params);
-      h5_read(grp, "G0_iw", s.G0_iw);
-      return s;
-    }
+    static solver_core h5_read_construct(triqs::h5::group h5group, std::string subgroup_name);
   };
 } // namespace nrgljubljana_interface

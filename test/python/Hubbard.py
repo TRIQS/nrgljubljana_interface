@@ -19,7 +19,7 @@
 # nrgljubljana_interface. If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 import unittest
 
@@ -40,22 +40,22 @@ class test_hubbard(unittest.TestCase):
 
     # Construct Parameters
     cp = {}
-    cp["beta"] = 10.0
-    cp["gf_struct"] = [("up", [0]), ("dn", [0])]
-    cp["n_tau"] = 10000
-    cp["n_iw"] = 500
+    cp["bandrescale"] = 1
+    #cp["gf_struct"] = [("up", [0]), ("dn", [0])]
+    #cp["n_tau"] = 10000
+    #cp["n_iw"] = 500
 
     # Set up the Solver
     S = Solver(**cp)
-    S.G0_iw["up"] << inverse(iOmega_n + mu + h)
-    S.G0_iw["dn"] << inverse(iOmega_n + mu - h)
+    #S.G0_iw["up"] << inverse(iOmega_n + mu + h)
+    #S.G0_iw["dn"] << inverse(iOmega_n + mu - h)
 
     # Solve Parameters
     sp = {}
-    sp["h_int"] = U * n("up", 0) * n("down", 0)
-    sp["max_time"] = -1
-    sp["verbosity"] = 3
-    sp["post_process"] = True
+    #sp["h_int"] = U * n("up", 0) * n("down", 0)
+    #sp["max_time"] = -1
+    #sp["verbosity"] = 3
+    #sp["post_process"] = True
 
     # Solve the impurity model
     S.solve(**sp)
