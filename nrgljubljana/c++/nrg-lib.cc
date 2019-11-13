@@ -53,7 +53,8 @@ int myrank() { return 0; }
 class sharedparam
 {
  public:
-   // Parameters which have to be known to the slave processes.
+   // Parameters which have to be known to the slave processes (which only
+   // perform diagonalizations).
    dr_value diagroutine;
    double diagratio;
    size_t dsyevrlimit;
@@ -105,7 +106,7 @@ typedef double t_eigen; // type for the eigenvalues
 typedef double t_coef; // type for the Wilson chain coefficients
 typedef double t_factor; // type for various prefactors in recalculations
 typedef double t_expv; // type for expectation values of operators
-#define CONJ_ME(x) (x) // Conjugation of matrix elements: no op
+inline double CONJ_ME(double x) { return x; } // Conjugation of matrix elements: no op
 #endif
 
 #ifdef NRG_COMPLEX
@@ -115,7 +116,7 @@ typedef cmpl t_coef;
 typedef cmpl t_factor;
 typedef cmpl t_expv; // we allow the calculation of expectation values of
                      // non-Hermitian operators!
-#define CONJ_ME(x) (conj(x))
+inline cmpl CONJ_ME(cmpl z) { return conj(z); }
 #endif
 
 typedef cmpl t_weight; // spectral weight accumulators (complex in general)
@@ -713,6 +714,11 @@ void dump_parameters()
   for (const auto &i : allparams) i->dump();
 }
 
+void remove_workdir()
+{
+   remove(P::workdir.c_str());
+}
+
 const string default_workdir = ".";
 
 void create_workdir(string workdir)
@@ -725,10 +731,16 @@ void create_workdir(string workdir)
    else
       P::workdir = default_workdir;
    cout << "workdir=" << P::workdir << endl << endl;
+   atexit(remove_workdir);
 }
 
-void set_workdir(string workdir)
+void set_workdir(string workdir_)
 {
+   string workdir = default_workdir;
+   if (const char* env_w = std::getenv("NRG_WORKDIR"))
+      workdir = env_w;
+   if (!workdir_.empty())
+      workdir = workdir_;
    create_workdir(workdir);
 }
 
@@ -740,12 +752,6 @@ void set_workdir(int argc, char *argv[])
    if (argc == 3 && strcmp(argv[1], "-w") == 0) 
       workdir = argv[2];
    create_workdir(workdir);
-}
-
-
-void remove_workdir()
-{
-   remove(P::workdir.c_str());
 }
 
 // This class holds table of generalized xi/zeta/etc. coefficients
@@ -3579,7 +3585,6 @@ void run_nrg_master()
      if (!D)
 	cout << "Can't create DONE." << endl;
   }
-  remove_workdir();
 }
 
 #ifdef NRG_MPI
@@ -3646,4 +3651,6 @@ void run_nrg_slave()
      }
   } // while(!done)
 }
+#else
+void run_nrg_scale() {}
 #endif
