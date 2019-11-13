@@ -13,12 +13,23 @@ use warnings;
 use File::Copy;
 use Math::Trig;
 
+my $target_dir = shift;
+
 # Paths to tools used
 my $matrix = "matrix";
 my $diag = "diag -B";
 my $unitary = "unitary -B";
+my $nrgchain = "nrgchain";
 
 my $verbose = 1;
+
+system "pwd";
+
+-e "Delta.dat" or die "Hybridisation funcrtion not found.";
+
+system "$nrgchain";
+
+-e "xi.dat" or die "Wilson chain coefficients not found.";
 
 # Split param file into sections
 my $fnparam = "param";
@@ -252,6 +263,10 @@ sub unitary
 	
         print OUT "$qn1spaces $qn2spaces\n$res";
     } # for $i
+}
+
+if (defined($target_dir) && -d $target_dir) {
+    system "cp param data $target_dir";
 }
 
 system "rm vec.* vec val mat mat.res ham ham.[-0-9]*";

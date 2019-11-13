@@ -1,0 +1,62 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+
+chomp(my $Nz = getparam("Nz"));
+chomp(my $min = getparam("broaden_min"));
+chomp(my $max = getparam("broaden_max"));
+chomp(my $ratio = getparam("broaden_ratio"));
+chomp(my $T = getparam("T"));
+chomp(my $alpha = getparam("alpha"));
+chomp(my $gamma = getparam("gamma"));
+print "Nz=$Nz min=$min max=$max ratio=$ratio T=$T alpha=$alpha gamma=$gamma\n";
+my $pr = "FDM_dens"; # prefix
+
+avg("spec_${pr}_A_d-A_d.bin", "G11-im");
+avg("corr_${pr}_n_d-n_d.bin", "nn11-im");
+avg("spin_${pr}_sigma_d-sigma_d.bin", "ss11-im");
+
+#avg("spec_${pr}_self_d-A_d.bin", "F11-im.dat");
+
+sub kk {
+        my $in = shift;
+        my $out;
+        ($out = $in) =~ s/im/re/;
+        -e $in or die "Input file not found: $in. Stopped";
+        system("kk $in $out");
+        -e $out or die "Output file not found:$ out. Stopped";
+    }
+
+sub avg
+{
+    my $in = shift;
+    my $out = shift;
+    $out .= ".dat";
+    unlink "$out";
+    system "broaden -x $gamma -m $min -M $max -r $ratio   $in $Nz $alpha $T 1e-9";
+    if ($?) {
+	system "echo Broadening of $in failed: $? >>>ERROR";
+	die "broaden failed: $?\n";                                                                                                                                                                                                                
+    }
+    my $specfn = "spec.dat";
+    if (!-e $specfn) {
+	system "echo Failed to produce broadened spectrum $specfn -> $out. >>>ERROR";
+	die "broaden failed\n";
+    }
+    system "mv $specfn $out";
+    kk($out);
+}
+
+sub getparam
+{
+    my $keyword = shift;
+    my $fn = "param";
+    open (F, "<", $fn) or die "Can't open $fn for reading: $!\n";
+    while (<F>) {
+	if (/^$keyword=(.*)/) {
+	    return $1;
+	}
+    }
+    close F;
+    die "Parsing failure: $keyword not found.";
+}

@@ -1,5 +1,5 @@
 #!/bin/bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-cp $DIR/data.in $DIR/ham* $DIR/discretize $DIR/instantiate .
+cp $DIR/data.in $DIR/ham* $DIR/discretize $DIR/instantiate $DIR/process .
 echo n_d n_d^2 hop0 A_d sigma_d >ops
-cp ../Delta.dat .
+
