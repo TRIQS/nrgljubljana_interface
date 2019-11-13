@@ -64,6 +64,8 @@ namespace nrgljubljana_interface {
     CPP2PY_ARG_AS_DICT
     void solve(solve_params_t const &solve_params);
 
+    void solve_one_z(solve_params_t const &solve_params, double z);
+
     CPP2PY_ARG_AS_DICT
     void set_nrg_params(nrg_params_t const &nrg_params);
 

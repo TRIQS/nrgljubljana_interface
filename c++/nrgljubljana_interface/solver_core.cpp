@@ -173,23 +173,23 @@ namespace nrgljubljana_interface {
 			       solve_params_t const &sp,
 			       nrg_params_t &np) // only these allowed to change!
    {
-      // Test if the low-level paramerers are sensible for use
-      // in the high-level interface.
-      if (np.discretization != "Z") {
-      }
+      // Test if the low-level paramerers are sensible for use with the
+      // high-level interface.
+      if (np.discretization != "Z")
+	  TRIQS_RUNTIME_ERROR << "Must use discretization=Z in the high-level solver interface.";
      
       // Automatically set (override) some low-level parameters
-      if (sp.Tmin > 0) {
+      if (sp.Tmin > 0) { // If Tmin is set, determine the required length of the Wilson chain.
 	 np.Nmax = 0;
 	 auto scale = [=](int n) { return (1.-1./sp.Lambda)/std::log(sp.Lambda)*std::pow(sp.Lambda,-(np.z-1))*
 	       std::pow(sp.Lambda,-(n-1)/2.); };
 	 while (scale(np.Nmax+1) >= sp.Tmin) np.Nmax++;
       }
-      if (np.mMAX < 0)
+      if (np.mMAX < 0) // Determine the number of sites in the star representation
 	 np.mMAX = std::max(80, 2*np.Nmax);
-      if (np.xmax < 0)
+      if (np.xmax < 0) // Length of the x-interval in the discretization=Z (ODE) approach
 	 np.xmax = np.Nmax/2. + 2.;
-      if (np.bandrescale < 0)
+      if (np.bandrescale < 0) // Make the NRG energy window correspond to the extend of the frequency mesh
 	 np.bandrescale = cp.mesh_max;
    }
 
@@ -198,14 +198,11 @@ namespace nrgljubljana_interface {
       nrg_params = nrg_params_;
    }
 
-   void solver_core::solve(solve_params_t const &solve_params) 
+   // Solve the problem for a given value of the twist parameter z
+   void solver_core::solve_one_z(solve_params_t const &solve_params, double z)
    {
-      last_solve_params = solve_params;
-      if (world.rank() == 0)
-	 std::cout <<  "\nNRGLJUBLJANA_INTERFACE Solver\n";
-      // Reset the results
-      container_set::operator=(container_set{});
-      // Automatically establish good default values for the high-level interface
+      nrg_params.z = z;
+      // Automatically establish appropriate default values for the high-level interface
       set_params(constr_params, solve_params, nrg_params);
       // Solve the impurity model
       generate_param_file(constr_params, solve_params, nrg_params);
@@ -215,8 +212,24 @@ namespace nrgljubljana_interface {
 	 system("./instantiate");
 	 run_nrg_master();
       }
+// #ifdef NRG_MPI
 //      else
 //	 run_nrg_slave();
+// #endif
+   }
+   
+   void solver_core::solve(solve_params_t const &solve_params) 
+   {
+      last_solve_params = solve_params;
+      if (world.rank() == 0)
+	 std::cout <<  "\nNRGLJUBLJANA_INTERFACE Solver\n";
+      // Reset the results
+      container_set::operator=(container_set{});
+      const double dz = 1.0/solve_params.Nz;
+      const double eps = 1e-8;
+      for (double z = dz; z <= 1.0+eps; z += dz) {
+	 solve_one_z(solve_params, z);
+      }
    }
 
 //  void solver_core::run_single(all_solve_params_t const &all_solve_params) {
