@@ -3,7 +3,7 @@
 # Using sneg version 	1.251
 #!9
 # Number of channels, chain sites, subspaces: 
-1	XX	6
+1	0	6
 # SCALE 	1.0201394465967895
 # Energies (GS energy subtracted, multiplied by 1/SCALE):
 -2	1
