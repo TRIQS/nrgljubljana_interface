@@ -7,7 +7,6 @@ target_link_libraries(nrgljubljana_interface_c PUBLIC triqs PRIVATE if_project_w
 # Configure compilation
 target_compile_options(nrgljubljana_interface_c PUBLIC -fPIC)
 target_include_directories(nrgljubljana_interface_c PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/c++>)
-target_include_directories(nrgljubljana_interface_c PUBLIC ${CMAKE_SOURCE_DIR}/nrgljubljana/c++)
 target_compile_definitions(nrgljubljana_interface_c PUBLIC
 				NRGLJUBLJANA_INTERFACE_GIT_HASH=${PROJECT_GIT_HASH}
 				TRIQS_GIT_HASH=${TRIQS_GIT_HASH}
