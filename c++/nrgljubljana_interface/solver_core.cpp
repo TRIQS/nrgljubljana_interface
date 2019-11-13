@@ -280,7 +280,11 @@ namespace nrgljubljana_interface {
 	 // Copy files from the template library & discretize
 	 std::string templatedir = constr_params.templatedir;
 	 if (templatedir.empty())
-	    templatedir = NRGIF_TEMPLATE_DIR;
+	    if (const char* env_tdir = std::getenv("NRGIF_TEMPLATE_DIR")) {
+	       templatedir = env_tdir;
+	    } else {
+	       templatedir = NRGIF_TEMPLATE_DIR;
+	    }
 	 std::string script = templatedir + "/" + constr_params.problem + "/prepare";
 	 if (system(script.c_str()) != 0)
 	    TRIQS_RUNTIME_ERROR << "Running prepare script failed: " << script;

@@ -40,7 +40,7 @@ class test_hubbard(unittest.TestCase):
 
     # Construct Parameters
     cp = {}
-    cp["bandrescale"] = 1
+    #cp["bandrescale"] = 1
     #cp["gf_struct"] = [("up", [0]), ("dn", [0])]
     #cp["n_tau"] = 10000
     #cp["n_iw"] = 500
