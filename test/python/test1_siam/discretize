@@ -1,0 +1,4 @@
+#!/bin/sh
+adapt P
+adapt N
+nrgchain
