@@ -61,3 +61,20 @@ TEST(refreq_pts, h5) {
     test_gfs_are_close(G, G_h5);
   }
 }
+
+TEST(refreq_pts, block_gf) {
+
+  // Construction
+  auto m   = gf_mesh<refreq_pts>{-1.0, 0.0, 2.0};
+  auto Gbl = block_gf<refreq_pts>{m, {{"bl1", {0, 1}}, {"bl2", {0, 1}}}};
+
+  // Mesh Loop Initialization
+  for (auto mp : m) {
+    Gbl[0][mp] = double(mp);
+    Gbl[1][mp] = 2 * double(mp);
+  }
+
+  auto Gprod = gf<refreq_pts>{Gbl[0] * Gbl[1]};
+
+  EXPECT_EQ(Gprod.data()(range(), 0, 0), (array<double, 1>{2.0, 0.0, 8.0}));
+}
