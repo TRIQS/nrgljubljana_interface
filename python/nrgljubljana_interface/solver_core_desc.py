@@ -132,7 +132,7 @@ c.add_method("""void solve (**nrgljubljana_interface::solve_params_t)""",
 +------------------+-------------------------------+---------+------------------------------------------------------+
 """)
 
-c.add_method("""void solve_one_z (double z)""",
+c.add_method("""void solve_one_z (double z, std::string taskdir)""",
              doc = r"""""")
 
 c.add_method("""void set_nrg_params (**nrgljubljana_interface::nrg_params_t)""",

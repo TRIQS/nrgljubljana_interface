@@ -69,7 +69,7 @@ namespace nrgljubljana_interface {
     std::string create_tempdir();
      
     // Perform an individual NRG calculation. Called from solve()
-    void solve_one_z(double z);
+    void solve_one_z(double z, std::string taskdir);
 
     CPP2PY_ARG_AS_DICT
     void set_nrg_params(nrg_params_t const &nrg_params);
@@ -80,7 +80,9 @@ namespace nrgljubljana_interface {
     // Produce param file for a given value of the twist parameter z.
     void generate_param_file(double z);
 
-//    void run_single(all_solve_params_t const &solve_params);
+    void generate_hyb_file();
+	
+    //    void run_single(all_solve_params_t const &solve_params);
 
     // Struct containing the parameters relevant for the solver construction
     constr_params_t constr_params;

@@ -34,6 +34,7 @@ class test_SIAM(unittest.TestCase):
     sp["specd"] = "A_d-A_d"
     sp["spect"] = "sigma_d-sigma_d"
     sp["dmnrg"] = True
+    sp["fdm"] = True
 
     # Model Parameters
     mp = {}

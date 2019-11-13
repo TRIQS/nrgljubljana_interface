@@ -2,16 +2,15 @@
 use strict;
 use warnings;
 
-chomp(my $Nz = getparam("Nz"));
-chomp(my $min = getparam("broaden_min"));
-chomp(my $max = getparam("broaden_max"));
-chomp(my $ratio = getparam("broaden_ratio"));
-chomp(my $T = getparam("T"));
-chomp(my $alpha = getparam("alpha"));
-chomp(my $gamma = getparam("gamma"));
+my $Nz = getparam("Nz");
+my $min = getparam("broaden_min");
+my $max = getparam("broaden_max");
+my $ratio = getparam("broaden_ratio");
+my $T = getparam("T");
+my $alpha = getparam("alpha");
+my $gamma = getparam("gamma");
 print "Nz=$Nz min=$min max=$max ratio=$ratio T=$T alpha=$alpha gamma=$gamma\n";
 my $pr = "FDM_dens"; # prefix
-
 avg("spec_${pr}_A_d-A_d.bin", "G11-im");
 avg("corr_${pr}_n_d-n_d.bin", "nn11-im");
 avg("spin_${pr}_sigma_d-sigma_d.bin", "ss11-im");

@@ -22,13 +22,26 @@
 #include "./solver_core.hpp"
 #include "./post_process.hpp"
 
+//#include <boost/filesystem.hpp> // or C++17 filesystem ?
+
 #include <triqs/utility/exceptions.hpp> // TRIQS_RUNTIME_ERROR
 
 #include <algorithm> // max
 #include <cmath> // pow, log
 #include <stdlib.h> // system
+#include <sys/stat.h> // mkdir
+#include <cassert> // assert
+#include <iostream>
+#include <fstream>
 
 #include <nrg-lib.h>
+
+#include <triqs/h5.hpp>
+#include <triqs/gfs.hpp>
+#include <triqs/gfs/meshes/refreq_pts.hpp>
+
+using namespace triqs::gfs;
+using namespace triqs::arrays;
 
 namespace nrgljubljana_interface {
 
@@ -53,7 +66,6 @@ namespace nrgljubljana_interface {
     F << "model=" << cp.problem << std::endl; // not required when using templates
     F << "symtype=QS" << std::endl; // from template database TODO
     F << "Lambda=" << sp.Lambda << std::endl;
-//    F << "Nz=" << sp.Nz << std::endl;
     F << "xmax=" << np.xmax << std::endl;
     F << "Nmax=" << np.Nmax << std::endl;
     F << "mMAX=" << np.mMAX << std::endl;
@@ -85,6 +97,7 @@ namespace nrgljubljana_interface {
     F << "gamma=" << sp.gamma << std::endl; // ?
     F << "discretization=" << np.discretization << std::endl;
     F << "z=" << np.z << std::endl;
+    F << "Nz=" << sp.Nz << std::endl; // !
     F << "polarized=" << np.polarized << std::endl;
     F << "pol2x2=" << np.pol2x2 << std::endl;
     F << "rungs=" << np.rungs << std::endl;
@@ -113,9 +126,6 @@ namespace nrgljubljana_interface {
     F << "broaden_max=" << cp.mesh_max << std::endl; // !
     F << "broaden_min=" << cp.mesh_min << std::endl; // !
     F << "broaden_ratio=" << cp.mesh_ratio << std::endl; // !
-//    F << "broaden_max=" << np.broaden_max << std::endl;
-//    F << "broaden_min=" << np.broaden_min << std::endl;
-//    F << "broaden_ratio=" << np.broaden_ratio << std::endl;
     F << "broaden_min_ratio=" << np.broaden_min_ratio << std::endl; // keep this one?
     F << "omega0=" << np.omega0 << std::endl;
     F << "omega0_ratio=" << np.omega0_ratio << std::endl;
@@ -178,7 +188,8 @@ namespace nrgljubljana_interface {
    {
       const constr_params_t &cp = constr_params;
       const solve_params_t &sp = solve_params;
-      nrg_params_t &np = nrg_params; // only these allowed to change!
+      nrg_params_t &np = nrg_params; // only nrg_params allowed to be changed!
+
       // Test if the low-level paramerers are sensible for use with the
       // high-level interface.
       if (np.discretization != "Z")
@@ -205,15 +216,22 @@ namespace nrgljubljana_interface {
    }
 
    // Solve the problem for a given value of the twist parameter z
-   void solver_core::solve_one_z(double z)
+   void solver_core::solve_one_z(double z, std::string taskdir)
    {
       if (world.rank() == 0) {
-	 // Solve the impurity model
 	 generate_param_file(z);
+	 if (mkdir(taskdir.c_str(), 0755) != 0)
+	    TRIQS_RUNTIME_ERROR << "failed to mkdir taskdir " << taskdir;
+	 std::string cmd = "./instantiate " + taskdir;
+	 if (system(cmd.c_str()) != 0)
+	    TRIQS_RUNTIME_ERROR << "Running " << cmd << " failed";
+	 if (chdir(taskdir.c_str()) != 0)
+	    TRIQS_RUNTIME_ERROR << "failed to chdir to taskdir " << taskdir;
+	 // Solve the impurity model
 	 set_workdir("."); // may be overridden by NRG_WORKDIR in environment
-	 if (system("./instantiate") != 0)
-	    TRIQS_RUNTIME_ERROR << "Running instantiate scripte failed";
 	 run_nrg_master();
+	 if (chdir("..") != 0) 
+	    TRIQS_RUNTIME_ERROR << "failed to return from taskdir " << taskdir;
       } else {
 //	 run_nrg_slave();
       }
@@ -230,6 +248,20 @@ namespace nrgljubljana_interface {
           TRIQS_RUNTIME_ERROR << "Failed to create a directory for temporary files.";	 
    }
    
+   void solver_core::generate_hyb_file()
+   {
+      auto m = gf_mesh<refreq_pts>{-1, -1e-99, 1e-99, 1};
+      auto g = gf<refreq_pts>{m,{1,1}};
+      g[0] = 0.1;
+      g[1] = 0.11;
+      g[2] = 0.3;
+      g[3] = 0.2;
+      //save_to_file(g, "Delta.dat");
+      std::ofstream F("Delta.dat");
+      for (auto w: g.mesh())
+	 F << double(w) << " " << g[w](0,0).real() << std::endl;
+   }
+   
    void solver_core::solve(solve_params_t const &solve_params_)
    {
       solve_params = solve_params_;
@@ -242,12 +274,16 @@ namespace nrgljubljana_interface {
 	 tempdir = create_tempdir();
 	 if (chdir(tempdir.c_str()) != 0)
 	    TRIQS_RUNTIME_ERROR << "chdir to tempdir failed.";
+	 // Generate the hybdridisation function
+	 generate_hyb_file();
+	 generate_param_file(1.0); // we need a mock param file for 'adapt' tool
 	 // Copy files from the template library & discretize
-	 std::string templatedir = "/home/zitko/repos/nrgljubljana_interface/templates";
+	 std::string templatedir = constr_params.templatedir;
+	 if (templatedir.empty())
+	    templatedir = NRGIF_TEMPLATE_DIR;
 	 std::string script = templatedir + "/" + constr_params.problem + "/prepare";
 	 if (system(script.c_str()) != 0)
 	    TRIQS_RUNTIME_ERROR << "Running prepare script failed: " << script;
-	 generate_param_file(1.0); // we need a mock param file for 'adapt'
 	 if (system("./discretize") != 0)
 	    TRIQS_RUNTIME_ERROR << "Running discretize script failed";
       }
@@ -255,9 +291,14 @@ namespace nrgljubljana_interface {
       const double dz = 1.0/solve_params.Nz;
       const double eps = 1e-8;
       int cnt = 1;
-      for (double z = dz; z <= 1.0+eps; z += dz, cnt++)
-	 solve_one_z(z);
+      for (double z = dz; z <= 1.0+eps; z += dz, cnt++) {
+	 std::string taskdir = std::to_string(cnt);
+	 solve_one_z(z, taskdir);
+      }
+      assert(cnt == solve_params.Nz+1);
       if (world.rank() == 0) {
+	 if (system("./process") != 0)
+	    TRIQS_RUNTIME_ERROR << "Running post-processing script failed";
 	 // Cleanup
 	 if (chdir("..") != 0)
 	    TRIQS_RUNTIME_ERROR << "failed to return from the tempdir";
@@ -279,7 +320,6 @@ namespace nrgljubljana_interface {
       h5_write_attribute(grp, "NRGLJUBLJANA_INTERFACE_GIT_HASH", std::string(AS_STRING(NRGLJUBLJANA_INTERFACE_GIT_HASH)));
       h5_write(grp, "", s.result_set());
       h5_write(grp, "constr_params", s.constr_params);
-//      h5_write(grp, "last_solve_params", s.last_solve_params);
       h5_write(grp, "solve_params", s.solve_params);
       h5_write(grp, "nrg_params", s.nrg_params);
     }

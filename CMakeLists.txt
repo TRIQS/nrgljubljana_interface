@@ -80,10 +80,16 @@ target_compile_options(if_project_warnings
     -Wextra
     -Wpedantic
     -Wno-sign-compare
+    -Wno-unused-variable # rz
+    -Wno-attributes # rz
     $<$<CXX_COMPILER_ID:GNU>:-Wshadow=local>
     $<$<CXX_COMPILER_ID:Clang>:-Wshadow>
     $<$<CXX_COMPILER_ID:Clang>:-Wno-gcc-compat>
 )
+
+# ################
+# Template library
+add_subdirectory(templates)
 
 # #############
 # Build Project

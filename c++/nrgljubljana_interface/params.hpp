@@ -27,6 +27,9 @@ namespace nrgljubljana_interface {
   /// The parameters for the solver construction
   struct constr_params_t {
 
+    /// Path to the template library ("" = bundled library)
+    std::string templatedir = ""; // QQQ: store this or not??
+     
     /// Model considered (templated)
     std::string problem = "SIAM";
 
@@ -311,7 +314,7 @@ namespace nrgljubljana_interface {
     size_t dumpdiagonal = 0;
 
     /// Save binned (unbroadened) data
-    bool savebins = false;
+    bool savebins = true; // !!
 
     /// Enable broadening of spectra
     bool broaden = true;
