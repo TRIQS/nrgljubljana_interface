@@ -13,7 +13,6 @@ module.add_include("nrgljubljana_interface/solver_core.hpp")
 # Add here anything to add in the C++ code at the start, e.g. namespace using
 module.add_preamble("""
 #include <cpp2py/converters/map.hpp>
-#include <cpp2py/converters/optional.hpp>
 #include <cpp2py/converters/pair.hpp>
 #include <cpp2py/converters/string.hpp>
 #include <cpp2py/converters/vector.hpp>
@@ -36,13 +35,13 @@ c.add_member(c_name = "constr_params",
              read_only= True,
              doc = r"""""")
 
-c.add_member(c_name = "nrg_params",
-             c_type = "nrgljubljana_interface::nrg_params_t",
+c.add_member(c_name = "solve_params",
+             c_type = "nrgljubljana_interface::solve_params_t",
              read_only= True,
              doc = r"""""")
 
-c.add_member(c_name = "last_solve_params",
-             c_type = "std::optional<solve_params_t>",
+c.add_member(c_name = "nrg_params",
+             c_type = "nrgljubljana_interface::nrg_params_t",
              read_only= True,
              doc = r"""""")
 
@@ -132,6 +131,9 @@ c.add_method("""void solve (**nrgljubljana_interface::solve_params_t)""",
 | post_process     | bool                          | true    | Perform post processing                              |
 +------------------+-------------------------------+---------+------------------------------------------------------+
 """)
+
+c.add_method("""void solve_one_z (double z)""",
+             doc = r"""""")
 
 c.add_method("""void set_nrg_params (**nrgljubljana_interface::nrg_params_t)""",
              doc = r"""
@@ -309,15 +311,16 @@ c.add_method("""void set_nrg_params (**nrgljubljana_interface::nrg_params_t)""",
 +---------------------+-------------+-----------+------------------------------------------------------------+
 """)
 
-c.add_method("""void set_params (nrgljubljana_interface::constr_params_t cp, nrgljubljana_interface::solve_params_t sp, nrgljubljana_interface::nrg_params_t np)""",
-             doc = r"""""")
-
-c.add_method("""void generate_param_file (nrgljubljana_interface::constr_params_t cp, nrgljubljana_interface::solve_params_t sp, nrgljubljana_interface::nrg_params_t np)""",
+c.add_method("""void generate_param_file (double z)""",
              doc = r"""""")
 
 c.add_method("""std::string hdf5_scheme ()""",
              is_static = True,
              doc = r"""""")
+
+c.add_property(name = "create_tempdir",
+               getter = cfunction("std::string create_tempdir ()"),
+               doc = r"""""")
 
 module.add_class(c)
 

@@ -22,11 +22,11 @@
 #include "./solver_core.hpp"
 #include "./post_process.hpp"
 
+#include <triqs/utility/exceptions.hpp> // TRIQS_RUNTIME_ERROR
+
 #include <algorithm> // max
 #include <cmath> // pow, log
 #include <stdlib.h> // system
-//#include <iostream> // boolalpha
-//#include <fstream>
 
 #include <nrg-lib.h>
 
@@ -37,12 +37,17 @@ namespace nrgljubljana_interface {
 
   // -------------------------------------------------------------------------------
 
-  void solver_core::generate_param_file(constr_params_t const &cp,
-                                        solve_params_t const &sp, 
-					nrg_params_t const &np)
+  void solver_core::generate_param_file(double z)
   {
+    const constr_params_t &cp = constr_params;
+    const solve_params_t &sp = solve_params;
+    nrg_params_t &np = nrg_params;
+    np.z = z;
+    // Automatically establish appropriate default values for the high-level interface
+    set_params();
+    // Generate the parameter file
     std::ofstream F("param");
-    F << std::boolalpha;
+    F << std::boolalpha; // important: we want to output true/false strings
     F << "[param]" << std::endl;
     F << "bandrescale=" << np.bandrescale << std::endl;
     F << "model=" << cp.problem << std::endl; // not required when using templates
@@ -169,10 +174,11 @@ namespace nrgljubljana_interface {
       F << i.first << "=" << i.second << std::endl;	
   }
 
-  void solver_core::set_params(constr_params_t const &cp,
-			       solve_params_t const &sp,
-			       nrg_params_t &np) // only these allowed to change!
+  void solver_core::set_params()
    {
+      const constr_params_t &cp = constr_params;
+      const solve_params_t &sp = solve_params;
+      nrg_params_t &np = nrg_params; // only these allowed to change!
       // Test if the low-level paramerers are sensible for use with the
       // high-level interface.
       if (np.discretization != "Z")
@@ -199,36 +205,63 @@ namespace nrgljubljana_interface {
    }
 
    // Solve the problem for a given value of the twist parameter z
-   void solver_core::solve_one_z(solve_params_t const &solve_params, double z)
+   void solver_core::solve_one_z(double z)
    {
-      nrg_params.z = z;
-      // Automatically establish appropriate default values for the high-level interface
-      set_params(constr_params, solve_params, nrg_params);
-      // Solve the impurity model
-      generate_param_file(constr_params, solve_params, nrg_params);
-      set_workdir(".");
       if (world.rank() == 0) {
-	 system("./discretize");
-	 system("./instantiate");
+	 // Solve the impurity model
+	 generate_param_file(z);
+	 set_workdir("."); // may be overridden by NRG_WORKDIR in environment
+	 if (system("./instantiate") != 0)
+	    TRIQS_RUNTIME_ERROR << "Running instantiate scripte failed";
 	 run_nrg_master();
-      }
-// #ifdef NRG_MPI
-//      else
+      } else {
 //	 run_nrg_slave();
-// #endif
+      }
+   }
+
+   std::string solver_core::create_tempdir()
+   {
+      std::string tempdir_template = "nrg_tempdir_XXXXXX";
+      char x[tempdir_template.length()+1];
+      strncpy(x, tempdir_template.c_str(), tempdir_template.length()+1);
+      if (char *w = mkdtemp(x)) // create a unique directory
+	 return w;
+      else
+          TRIQS_RUNTIME_ERROR << "Failed to create a directory for temporary files.";	 
    }
    
-   void solver_core::solve(solve_params_t const &solve_params) 
+   void solver_core::solve(solve_params_t const &solve_params_)
    {
-      last_solve_params = solve_params;
-      if (world.rank() == 0)
-	 std::cout <<  "\nNRGLJUBLJANA_INTERFACE Solver\n";
+      solve_params = solve_params_;
+      std::string tempdir;
       // Reset the results
       container_set::operator=(container_set{});
+      if (world.rank() == 0) {
+	 std::cout <<  "\nNRGLJUBLJANA_INTERFACE Solver\n";
+	 // Create a temporary directory
+	 tempdir = create_tempdir();
+	 if (chdir(tempdir.c_str()) != 0)
+	    TRIQS_RUNTIME_ERROR << "chdir to tempdir failed.";
+	 // Copy files from the template library & discretize
+	 std::string templatedir = "/home/zitko/repos/nrgljubljana_interface/templates";
+	 std::string script = templatedir + "/" + constr_params.problem + "/prepare";
+	 if (system(script.c_str()) != 0)
+	    TRIQS_RUNTIME_ERROR << "Running prepare script failed: " << script;
+	 generate_param_file(1.0); // we need a mock param file for 'adapt'
+	 if (system("./discretize") != 0)
+	    TRIQS_RUNTIME_ERROR << "Running discretize script failed";
+      }
+      // Perform the calculations (this must run in all MPI processes)
       const double dz = 1.0/solve_params.Nz;
       const double eps = 1e-8;
-      for (double z = dz; z <= 1.0+eps; z += dz) {
-	 solve_one_z(solve_params, z);
+      int cnt = 1;
+      for (double z = dz; z <= 1.0+eps; z += dz, cnt++)
+	 solve_one_z(z);
+      if (world.rank() == 0) {
+	 // Cleanup
+	 if (chdir("..") != 0)
+	    TRIQS_RUNTIME_ERROR << "failed to return from the tempdir";
+	 remove(tempdir.c_str());
       }
    }
 
@@ -246,7 +279,8 @@ namespace nrgljubljana_interface {
       h5_write_attribute(grp, "NRGLJUBLJANA_INTERFACE_GIT_HASH", std::string(AS_STRING(NRGLJUBLJANA_INTERFACE_GIT_HASH)));
       h5_write(grp, "", s.result_set());
       h5_write(grp, "constr_params", s.constr_params);
-      h5_write(grp, "last_solve_params", s.last_solve_params);
+//      h5_write(grp, "last_solve_params", s.last_solve_params);
+      h5_write(grp, "solve_params", s.solve_params);
       h5_write(grp, "nrg_params", s.nrg_params);
     }
 
@@ -256,7 +290,7 @@ namespace nrgljubljana_interface {
       auto constr_params = h5_read<constr_params_t>(grp, "constr_params");
       auto s             = solver_core{constr_params};
       h5_read(grp, "", s.result_set());
-      h5_read(grp, "last_solve_params", s.last_solve_params);
+      h5_read(grp, "solve_params", s.solve_params);
       h5_read(grp, "nrg_params", s.nrg_params);
       return s;
     }

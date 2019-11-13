@@ -26,6 +26,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <string>
 
 namespace nrgljubljana_interface {
 
@@ -64,29 +65,32 @@ namespace nrgljubljana_interface {
     CPP2PY_ARG_AS_DICT
     void solve(solve_params_t const &solve_params);
 
-    void solve_one_z(solve_params_t const &solve_params, double z);
+    // Create a temporary directory for a series of NRG runs
+    std::string create_tempdir();
+     
+    // Perform an individual NRG calculation. Called from solve()
+    void solve_one_z(double z);
 
     CPP2PY_ARG_AS_DICT
     void set_nrg_params(nrg_params_t const &nrg_params);
 
-    void set_params(constr_params_t const &cp,
-		    solve_params_t const &sp,
-		    nrg_params_t &np);
+    // Establish good defaults for nrg_params
+    void set_params();
 	
-    void generate_param_file(constr_params_t const &cp,
-			     solve_params_t const &sp,
-			     nrg_params_t const &np);
+    // Produce param file for a given value of the twist parameter z.
+    void generate_param_file(double z);
 
 //    void run_single(all_solve_params_t const &solve_params);
 
     // Struct containing the parameters relevant for the solver construction
     constr_params_t constr_params;
 
+    // Struct containing the parameters relevant for the solve process
+//    std::optional<solve_params_t> last_solve_params;
+    solve_params_t solve_params;
+
     // Low-level NRG parameters
     nrg_params_t nrg_params;
-
-    // Struct containing the parameters relevant for the solve process
-    std::optional<solve_params_t> last_solve_params;
 
     static std::string hdf5_scheme() { return "NRGLJUBLJANA_INTERFACE_SolverCore"; }
 
