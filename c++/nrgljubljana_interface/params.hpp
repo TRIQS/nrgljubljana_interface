@@ -27,9 +27,6 @@ namespace nrgljubljana_interface {
   /// The parameters for the solver construction
   struct constr_params_t {
 
-    /// Band rescaling factor
-    double bandrescale = 1.0;
-
     /// Model considered (templated)
     std::string problem = "SIAM";
 
@@ -166,6 +163,9 @@ namespace nrgljubljana_interface {
   /// NRG low-level parameters
   struct nrg_params_t {
      
+    /// Band rescaling factor
+    double bandrescale = -1.0;
+
     /// Number of sites in the star representation
     int mMAX = -1;
 

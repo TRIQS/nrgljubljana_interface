@@ -67,9 +67,13 @@ namespace nrgljubljana_interface {
     CPP2PY_ARG_AS_DICT
     void set_nrg_params(nrg_params_t const &nrg_params);
 
+    void set_params(constr_params_t const &cp,
+		    solve_params_t const &sp,
+		    nrg_params_t &np);
+	
     void generate_param_file(constr_params_t const &cp,
-                             solve_params_t const &sp,
-                             nrg_params_t const &np);
+			     solve_params_t const &sp,
+			     nrg_params_t const &np);
 
 //    void run_single(all_solve_params_t const &solve_params);
 

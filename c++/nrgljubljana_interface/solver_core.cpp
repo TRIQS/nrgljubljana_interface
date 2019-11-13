@@ -22,6 +22,12 @@
 #include "./solver_core.hpp"
 #include "./post_process.hpp"
 
+#include <algorithm> // max
+#include <cmath> // pow, log
+#include <stdlib.h> // system
+//#include <iostream> // boolalpha
+//#include <fstream>
+
 #include <nrg-lib.h>
 
 namespace nrgljubljana_interface {
@@ -36,8 +42,9 @@ namespace nrgljubljana_interface {
 					nrg_params_t const &np)
   {
     std::ofstream F("param");
+    F << std::boolalpha;
     F << "[param]" << std::endl;
-    F << "bandrescale=" << cp.bandrescale << std::endl; // related to mesh_max! autoconfig?
+    F << "bandrescale=" << np.bandrescale << std::endl;
     F << "model=" << cp.problem << std::endl; // not required when using templates
     F << "symtype=QS" << std::endl; // from template database TODO
     F << "Lambda=" << sp.Lambda << std::endl;
@@ -162,45 +169,55 @@ namespace nrgljubljana_interface {
       F << i.first << "=" << i.second << std::endl;	
   }
 
-  void solver_core::solve(solve_params_t const &solve_params) {
-
-    last_solve_params = solve_params;
-
-    if (world.rank() == 0)
-      std::cout << "\n"
-                   "NRGLJUBLJANA_INTERFACE Solver\n";
-
-    // Reset the results
-    container_set::operator=(container_set{});
-
-    // Test if low-level paramerers are sensible as used in
-    // the high-level interface
-    if (np.discretization != "Z") {
-    }
+  void solver_core::set_params(constr_params_t const &cp,
+			       solve_params_t const &sp,
+			       nrg_params_t &np) // only these allowed to change!
+   {
+      // Test if the low-level paramerers are sensible for use
+      // in the high-level interface.
+      if (np.discretization != "Z") {
+      }
      
-    // Automatically set (override) some low-level parameters
-    if (sp.Tmin > 0) {
-       np.Nmax = 0;
-       auto scale = (1.0-1.0/sp.Lambda)/log(sp.Lambda)*pow(sp.Lambda
-       while (scale(Nmax+1) >= sp.Tmin) np.Nmax++;
-    }
-    if (np.mMAX < 0)
-       np.mMAX = max(80, 2*np.Nmax);
-    if (np.xmax < 0)
-       np.xmax = np.Nmax + 2.0;
-     
-    // Solve the impurity model
-    generate_param_file(constr_params, solve_params, nrg_params);
-    set_workdir(".");
-     if (world.rank() == 0)
-	run_nrg_master();
-     else
-	run_nrg_slave();
-  }
+      // Automatically set (override) some low-level parameters
+      if (sp.Tmin > 0) {
+	 np.Nmax = 0;
+	 auto scale = [=](int n) { return (1.-1./sp.Lambda)/std::log(sp.Lambda)*std::pow(sp.Lambda,-(np.z-1))*
+	       std::pow(sp.Lambda,-(n-1)/2.); };
+	 while (scale(np.Nmax+1) >= sp.Tmin) np.Nmax++;
+      }
+      if (np.mMAX < 0)
+	 np.mMAX = std::max(80, 2*np.Nmax);
+      if (np.xmax < 0)
+	 np.xmax = np.Nmax/2. + 2.;
+      if (np.bandrescale < 0)
+	 np.bandrescale = cp.mesh_max;
+   }
 
-  void solver_core::set_nrg_params(nrg_params_t const &nrg_params_) {
-    nrg_params = nrg_params_;
-  }
+   void solver_core::set_nrg_params(nrg_params_t const &nrg_params_) 
+   {
+      nrg_params = nrg_params_;
+   }
+
+   void solver_core::solve(solve_params_t const &solve_params) 
+   {
+      last_solve_params = solve_params;
+      if (world.rank() == 0)
+	 std::cout <<  "\nNRGLJUBLJANA_INTERFACE Solver\n";
+      // Reset the results
+      container_set::operator=(container_set{});
+      // Automatically establish good default values for the high-level interface
+      set_params(constr_params, solve_params, nrg_params);
+      // Solve the impurity model
+      generate_param_file(constr_params, solve_params, nrg_params);
+      set_workdir(".");
+      if (world.rank() == 0) {
+	 system("./discretize");
+	 system("./instantiate");
+	 run_nrg_master();
+      }
+//      else
+//	 run_nrg_slave();
+   }
 
 //  void solver_core::run_single(all_solve_params_t const &all_solve_params) {
 //  }

@@ -25,18 +25,24 @@ namespace nrgljubljana_interface {
 
   void h5_write(triqs::h5::group h5group, std::string subgroup_name, constr_params_t const &cp) {
     auto grp = h5group.create_group(subgroup_name);
-    h5_write(grp, "bandrescale", cp.bandrescale);
-    // to do
+    h5_write(grp, "problem", cp.problem);
+    h5_write(grp, "mesh_max", cp.mesh_max);
+    h5_write(grp, "mesh_min", cp.mesh_min);
+    h5_write(grp, "mesh_ratio", cp.mesh_ratio);
   }
 
   void h5_read(triqs::h5::group h5group, std::string subgroup_name, constr_params_t &cp) {
     auto grp = h5group.open_group(subgroup_name);
-    h5_read(grp, "bandrescale", cp.bandrescale);
+    h5_read(grp, "problem", cp.problem);
+    h5_read(grp, "mesh_max", cp.mesh_max);
+    h5_read(grp, "mesh_min", cp.mesh_min);
+    h5_read(grp, "mesh_ratio", cp.mesh_ratio);
   }
 
   void h5_write(triqs::h5::group h5group, std::string subgroup_name, solve_params_t const &sp) {
     auto grp = h5group.create_group(subgroup_name);
     h5_write(grp, "Lambda", sp.Lambda);
+    // to do
   }
 
   void h5_read(triqs::h5::group h5group, std::string subgroup_name, solve_params_t &sp) {
@@ -46,12 +52,14 @@ namespace nrgljubljana_interface {
 
      void h5_write(triqs::h5::group h5group, std::string subgroup_name, nrg_params_t const &np) {
     auto grp = h5group.create_group(subgroup_name);
+    h5_write(grp, "bandrescale", np.bandrescale);
     h5_write(grp, "discretization", np.discretization);
   }
 
   void h5_read(triqs::h5::group h5group, std::string subgroup_name, nrg_params_t &np) {
     auto grp = h5group.open_group(subgroup_name);
     h5_read(grp, "discretization", np.discretization);
+    h5_read(grp, "bandrescale", np.bandrescale);
   }
 
 } // namespace nrgljubljana_interface

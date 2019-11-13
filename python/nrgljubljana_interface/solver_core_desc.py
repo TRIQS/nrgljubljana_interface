@@ -53,8 +53,6 @@ c.add_constructor("""(**nrgljubljana_interface::constr_params_t)""", doc = r"""C
 +----------------+-------------+---------+-----------------------------------------+
 | Parameter Name | Type        | Default | Documentation                           |
 +================+=============+=========+=========================================+
-| bandrescale    | double      | 1.0     | Band rescaling factor                   |
-+----------------+-------------+---------+-----------------------------------------+
 | problem        | std::string | "SIAM"  | Model considered (templated)            |
 +----------------+-------------+---------+-----------------------------------------+
 | mesh_max       | double      | 10      | Mesh maximum frequency                  |
@@ -143,6 +141,8 @@ c.add_method("""void set_nrg_params (**nrgljubljana_interface::nrg_params_t)""",
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | Parameter Name      | Type        | Default   | Documentation                                              |
 +=====================+=============+===========+============================================================+
+| bandrescale         | double      | -1.0      | Band rescaling factor                                      |
++---------------------+-------------+-----------+------------------------------------------------------------+
 | mMAX                | int         | -1        | Number of sites in the star representation                 |
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | Nmax                | int         | -1        | Number of sites in the Wilson chain                        |
@@ -308,6 +308,9 @@ c.add_method("""void set_nrg_params (**nrgljubljana_interface::nrg_params_t)""",
 | checkrho            | bool        | false     | Test tr(rho)=1                                             |
 +---------------------+-------------+-----------+------------------------------------------------------------+
 """)
+
+c.add_method("""void set_params (nrgljubljana_interface::constr_params_t cp, nrgljubljana_interface::solve_params_t sp, nrgljubljana_interface::nrg_params_t np)""",
+             doc = r"""""")
 
 c.add_method("""void generate_param_file (nrgljubljana_interface::constr_params_t cp, nrgljubljana_interface::solve_params_t sp, nrgljubljana_interface::nrg_params_t np)""",
              doc = r"""""")
@@ -481,6 +484,11 @@ c = converter_(
         c_type = "nrgljubljana_interface::nrg_params_t",
         doc = r"""NRG low-level parameters""",
 )
+c.add_member(c_name = "bandrescale",
+             c_type = "double",
+             initializer = """ -1.0 """,
+             doc = r"""Band rescaling factor""")
+
 c.add_member(c_name = "mMAX",
              c_type = "int",
              initializer = """ -1 """,
@@ -898,11 +906,6 @@ c = converter_(
         c_type = "nrgljubljana_interface::constr_params_t",
         doc = r"""The parameters for the solver construction""",
 )
-c.add_member(c_name = "bandrescale",
-             c_type = "double",
-             initializer = """ 1.0 """,
-             doc = r"""Band rescaling factor""")
-
 c.add_member(c_name = "problem",
              c_type = "std::string",
              initializer = """ "SIAM" """,
