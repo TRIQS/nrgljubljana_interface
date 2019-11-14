@@ -1,3 +1,5 @@
+#pragma once
+
 #include "./point_mesh.hpp"
 
 namespace triqs::gfs {

@@ -1,11 +1,12 @@
 # Generated automatically using the command :
-# c++2py ../../c++/nrgljubljana_interface/solver_core.hpp -p --members_read_only -N nrgljubljana_interface -a nrgljubljana_interface -m solver_core -o solver_core --moduledoc="The nrgljubljana_interface solve_core module" -C pytriqs --cxxflags="-std=c++17" --target_file_only
+# c++2py ../../c++/nrgljubljana_interface/solver_core.hpp -p --members_read_only -N nrgljubljana_interface -a nrgljubljana_interface -m solver_core -o solver_core --moduledoc="The nrgljubljana_interface solve_core module" -C pytriqs --cxxflags="-std=c++17" --target_file_only -I../../c++
 from cpp2py.wrap_generator import *
 
 # The module
 module = module_(full_name = "solver_core", doc = r"The nrgljubljana_interface solve_core module", app_name = "nrgljubljana_interface")
 
 # Imports
+module.add_imports(*['pytriqs.gf'])
 
 # Add here all includes
 module.add_include("nrgljubljana_interface/solver_core.hpp")
@@ -13,9 +14,11 @@ module.add_include("nrgljubljana_interface/solver_core.hpp")
 # Add here anything to add in the C++ code at the start, e.g. namespace using
 module.add_preamble("""
 #include <cpp2py/converters/map.hpp>
+#include <cpp2py/converters/optional.hpp>
 #include <cpp2py/converters/pair.hpp>
 #include <cpp2py/converters/string.hpp>
 #include <cpp2py/converters/vector.hpp>
+#include <triqs/cpp2py_converters/gf.hpp>
 #include <triqs/cpp2py_converters/h5.hpp>
 
 using namespace nrgljubljana_interface;
@@ -29,6 +32,21 @@ c = class_(
         doc = r"""The Solver class""",   # doc of the C++ class
         hdf5 = True,
 )
+
+c.add_member(c_name = "A_w",
+             c_type = "std::optional<g_w_t>",
+             read_only= True,
+             doc = r"""The spectral function""")
+
+c.add_member(c_name = "G_w",
+             c_type = "std::optional<g_w_t>",
+             read_only= True,
+             doc = r"""The retarded Greens function""")
+
+c.add_member(c_name = "Sigma_w",
+             c_type = "std::optional<g_w_t>",
+             read_only= True,
+             doc = r"""The retarded Self energy""")
 
 c.add_member(c_name = "constr_params",
              c_type = "nrgljubljana_interface::constr_params_t",
@@ -45,21 +63,28 @@ c.add_member(c_name = "nrg_params",
              read_only= True,
              doc = r"""""")
 
+c.add_member(c_name = "Delta_w",
+             c_type = "nrgljubljana_interface::g_w_t",
+             read_only= True,
+             doc = r"""The hybridization function in real frequencies""")
+
 c.add_constructor("""(**nrgljubljana_interface::constr_params_t)""", doc = r"""Construct a NRGLJUBLJANA_INTERFACE solver
 
 
 
-+----------------+-------------+---------+-----------------------------------------+
-| Parameter Name | Type        | Default | Documentation                           |
-+================+=============+=========+=========================================+
-| problem        | std::string | "SIAM"  | Model considered (templated)            |
-+----------------+-------------+---------+-----------------------------------------+
-| mesh_max       | double      | 10      | Mesh maximum frequency                  |
-+----------------+-------------+---------+-----------------------------------------+
-| mesh_min       | double      | 1e-4    | Mesh minimum frequency                  |
-+----------------+-------------+---------+-----------------------------------------+
-| mesh_ratio     | double      | 1.05    | Common ratio of the geometric sequence  |
-+----------------+-------------+---------+-----------------------------------------+
++----------------+-------------+---------+------------------------------------------------------+
+| Parameter Name | Type        | Default | Documentation                                        |
++================+=============+=========+======================================================+
+| templatedir    | std::string | ""      | Path to the template library ("" = bundled library)  |
++----------------+-------------+---------+------------------------------------------------------+
+| problem        | std::string | "SIAM"  | Model considered (templated)                         |
++----------------+-------------+---------+------------------------------------------------------+
+| mesh_max       | double      | 10      | Mesh maximum frequency                               |
++----------------+-------------+---------+------------------------------------------------------+
+| mesh_min       | double      | 1e-4    | Mesh minimum frequency                               |
++----------------+-------------+---------+------------------------------------------------------+
+| mesh_ratio     | double      | 1.05    | Common ratio of the geometric sequence               |
++----------------+-------------+---------+------------------------------------------------------+
 """)
 
 c.add_method("""void solve (**nrgljubljana_interface::solve_params_t)""",
@@ -235,7 +260,7 @@ c.add_method("""void set_nrg_params (**nrgljubljana_interface::nrg_params_t)""",
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | dumpdiagonal        | size_t      | 0         | Dump diagonal matrix elements                              |
 +---------------------+-------------+-----------+------------------------------------------------------------+
-| savebins            | bool        | false     | Save binned (unbroadened) data                             |
+| savebins            | bool        | true      | Save binned (unbroadened) data                             |
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | broaden             | bool        | true      | Enable broadening of spectra                               |
 +---------------------+-------------+-----------+------------------------------------------------------------+
@@ -320,6 +345,10 @@ c.add_method("""std::string hdf5_scheme ()""",
 
 c.add_property(name = "create_tempdir",
                getter = cfunction("std::string create_tempdir ()"),
+               doc = r"""""")
+
+c.add_property(name = "generate_hyb_file",
+               getter = cfunction("void generate_hyb_file ()"),
                doc = r"""""")
 
 module.add_class(c)
@@ -719,7 +748,7 @@ c.add_member(c_name = "dumpdiagonal",
 
 c.add_member(c_name = "savebins",
              c_type = "bool",
-             initializer = """ false """,
+             initializer = """ true """,
              doc = r"""Save binned (unbroadened) data""")
 
 c.add_member(c_name = "broaden",
@@ -909,6 +938,11 @@ c = converter_(
         c_type = "nrgljubljana_interface::constr_params_t",
         doc = r"""The parameters for the solver construction""",
 )
+c.add_member(c_name = "templatedir",
+             c_type = "std::string",
+             initializer = """ "" """,
+             doc = r"""Path to the template library ("" = bundled library)""")
+
 c.add_member(c_name = "problem",
              c_type = "std::string",
              initializer = """ "SIAM" """,
