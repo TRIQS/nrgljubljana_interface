@@ -58,7 +58,7 @@ class test_hubbard(unittest.TestCase):
     #sp["post_process"] = True
 
     # Solve the impurity model
-    S.solve(**sp)
+    #S.solve(**sp)
 
     # Store the Result
     with HDFArchive("Hubbard.out.h5", 'w') as arch:

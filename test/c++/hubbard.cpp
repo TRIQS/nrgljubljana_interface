@@ -55,7 +55,7 @@ TEST(nrgljubljana_interface, HubbardAtom) { // NOLINT
 //  sp.post_process = true;
 
   // Solve the impurity model
-  S.solve(sp);
+//  S.solve(sp);
 
   // Store the Result
   {
