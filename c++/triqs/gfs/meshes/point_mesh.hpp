@@ -125,6 +125,14 @@ namespace triqs::gfs {
       h5_read(gr, "points", m._pts);
     }
 
+    // -------------------- serialization -------------------
+
+    friend class boost::serialization::access;
+    template <class Archive> void serialize(Archive &ar, const unsigned int version) {
+      ar &TRIQS_MAKE_NVP("domain", _dom);
+      ar &TRIQS_MAKE_NVP("points", _pts);
+    }
+
     // ------------------------------------------------
 
     private:
@@ -154,6 +162,7 @@ namespace triqs::gfs {
 
     /// The value type of the mesh point
     using value_t = typename mesh_t::domain_pt_t;
+    using cast_t  = value_t;
 
     private:
     /// The mesh that we belong to
