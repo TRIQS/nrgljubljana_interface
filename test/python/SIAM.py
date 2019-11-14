@@ -47,9 +47,9 @@ class test_SIAM(unittest.TestCase):
     #np["bandrescale"] = 1
     #S.set_nrg_params(**np)
 
-    # # Initialize hybridization function
-    # D = 1.0 # Half Bandwidth
-    # S.Delta_w << D*D/4.0 * SemiCircular(D)
+    # Initialize hybridization function
+    D = 1.0 # Half Bandwidth
+    S.Delta_w << D*D/4.0 * SemiCircular(D)
 
     # Solve the impurity model
     S.solve(**sp)

@@ -36,16 +36,13 @@
 
 #include <nrg-lib.h>
 
-#include <triqs/h5.hpp>
-#include <triqs/gfs.hpp>
-#include <triqs/gfs/meshes/refreq_pts.hpp>
-
-using namespace triqs::gfs;
-using namespace triqs::arrays;
-
 namespace nrgljubljana_interface {
 
-  solver_core::solver_core(constr_params_t cp) : constr_params(cp) {}
+  solver_core::solver_core(constr_params_t cp) : constr_params(cp) {
+
+    // Initialize the hybridization function container TODO Generate Log Mesh
+    Delta_w = g_w_t{{-1, -1e-99, 1e-99, 1}, {1, 1}};
+  }
 
   // -------------------------------------------------------------------------------
 
