@@ -1,6 +1,6 @@
 /*******************************************************************************
  *
- * nrgljubljana_interface: A TRIQS based impurity solver
+ * nrgljubljana_interface: A TRIQS interface to the nrgljubliana impurity solver
  *
  * Copyright (c) 2019 The Simons foundation
  *   authors: Nils Wentzell
