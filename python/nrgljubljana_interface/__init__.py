@@ -29,5 +29,11 @@ DOC
 """
 from solver import Solver
 from solver_core import SolverCore
+from mesh_refreq_pts import MeshReFreqPts
 
-__all__ = ['Solver','SolverCore']
+__all__ = ['Solver','SolverCore', 'MeshReFreqPts']
+
+import pytriqs.gf.gf
+print pytriqs.gf.gf.all_meshes
+pytriqs.gf.gf.all_meshes = pytriqs.gf.gf.all_meshes + (MeshReFreqPts,)
+print pytriqs.gf.gf.all_meshes
