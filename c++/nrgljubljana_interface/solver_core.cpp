@@ -26,11 +26,11 @@
 
 #include <triqs/utility/exceptions.hpp> // TRIQS_RUNTIME_ERROR
 
-#include <algorithm> // max
-#include <cmath> // pow, log
-#include <stdlib.h> // system
+#include <algorithm>  // max
+#include <cmath>      // pow, log
+#include <stdlib.h>   // system
 #include <sys/stat.h> // mkdir
-#include <cassert> // assert
+#include <cassert>    // assert
 #include <iostream>
 #include <fstream>
 
@@ -45,17 +45,15 @@ using namespace triqs::arrays;
 
 namespace nrgljubljana_interface {
 
-  solver_core::solver_core(constr_params_t const &p) : constr_params(p) {
-  }
+  solver_core::solver_core(constr_params_t const &p) : constr_params(p) {}
 
   // -------------------------------------------------------------------------------
 
-  void solver_core::generate_param_file(double z)
-  {
+  void solver_core::generate_param_file(double z) {
     const constr_params_t &cp = constr_params;
-    const solve_params_t &sp = solve_params;
-    nrg_params_t &np = nrg_params;
-    np.z = z;
+    const solve_params_t &sp  = solve_params;
+    nrg_params_t &np          = nrg_params;
+    np.z                      = z;
     // Automatically establish appropriate default values for the high-level interface
     set_params();
     // Generate the parameter file
@@ -64,12 +62,12 @@ namespace nrgljubljana_interface {
     F << "[param]" << std::endl;
     F << "bandrescale=" << np.bandrescale << std::endl;
     F << "model=" << cp.problem << std::endl; // not required when using templates
-    F << "symtype=QS" << std::endl; // from template database TODO
+    F << "symtype=QS" << std::endl;           // from template database TODO
     F << "Lambda=" << sp.Lambda << std::endl;
     F << "xmax=" << np.xmax << std::endl;
     F << "Nmax=" << np.Nmax << std::endl;
     F << "mMAX=" << np.mMAX << std::endl;
-//    F << "Tmin=" << sp.Tmin << std::endl;
+    //    F << "Tmin=" << sp.Tmin << std::endl;
     F << "keep=" << sp.keep << std::endl;
     F << "keepenergy=" << sp.keepenergy << std::endl;
     F << "keepmin=" << sp.keepmin << std::endl;
@@ -123,9 +121,9 @@ namespace nrgljubljana_interface {
     F << "fdmexpvn=" << np.fdmexpvn << std::endl;
     F << "finitemats=" << np.finitemats << std::endl;
     F << "dm=" << np.dm << std::endl;
-    F << "broaden_max=" << cp.mesh_max << std::endl; // !
-    F << "broaden_min=" << cp.mesh_min << std::endl; // !
-    F << "broaden_ratio=" << cp.mesh_ratio << std::endl; // !
+    F << "broaden_max=" << cp.mesh_max << std::endl;                // !
+    F << "broaden_min=" << cp.mesh_min << std::endl;                // !
+    F << "broaden_ratio=" << cp.mesh_ratio << std::endl;            // !
     F << "broaden_min_ratio=" << np.broaden_min_ratio << std::endl; // keep this one?
     F << "omega0=" << np.omega0 << std::endl;
     F << "omega0_ratio=" << np.omega0_ratio << std::endl;
@@ -180,162 +178,143 @@ namespace nrgljubljana_interface {
     F << "checkrho=" << np.checkrho << std::endl;
     F << "dos=Delta.dat" << std::endl; // hard-coded
     F << "[extra]" << std::endl;
-    for (const auto &i : sp.model_parameters)
-      F << i.first << "=" << i.second << std::endl;	
+    for (const auto &i : sp.model_parameters) F << i.first << "=" << i.second << std::endl;
   }
 
-  void solver_core::set_params()
-   {
-      const constr_params_t &cp = constr_params;
-      const solve_params_t &sp = solve_params;
-      nrg_params_t &np = nrg_params; // only nrg_params allowed to be changed!
+  void solver_core::set_params() {
+    const constr_params_t &cp = constr_params;
+    const solve_params_t &sp  = solve_params;
+    nrg_params_t &np          = nrg_params; // only nrg_params allowed to be changed!
 
-      // Test if the low-level paramerers are sensible for use with the
-      // high-level interface.
-      if (np.discretization != "Z")
-	  TRIQS_RUNTIME_ERROR << "Must use discretization=Z in the high-level solver interface.";
-     
-      // Automatically set (override) some low-level parameters
-      if (sp.Tmin > 0) { // If Tmin is set, determine the required length of the Wilson chain.
-	 np.Nmax = 0;
-	 auto scale = [=](int n) { return (1.-1./sp.Lambda)/std::log(sp.Lambda)*std::pow(sp.Lambda,-(np.z-1))*
-	       std::pow(sp.Lambda,-(n-1)/2.); };
-	 while (scale(np.Nmax+1) >= sp.Tmin) np.Nmax++;
-      }
-      if (np.mMAX < 0) // Determine the number of sites in the star representation
-	 np.mMAX = std::max(80, 2*np.Nmax);
-      if (np.xmax < 0) // Length of the x-interval in the discretization=Z (ODE) approach
-	 np.xmax = np.Nmax/2. + 2.;
-      if (np.bandrescale < 0) // Make the NRG energy window correspond to the extend of the frequency mesh
-	 np.bandrescale = cp.mesh_max;
-   }
+    // Test if the low-level paramerers are sensible for use with the
+    // high-level interface.
+    if (np.discretization != "Z") TRIQS_RUNTIME_ERROR << "Must use discretization=Z in the high-level solver interface.";
 
-   void solver_core::set_nrg_params(nrg_params_t const &nrg_params_) 
-   {
-      nrg_params = nrg_params_;
-   }
+    // Automatically set (override) some low-level parameters
+    if (sp.Tmin > 0) { // If Tmin is set, determine the required length of the Wilson chain.
+      np.Nmax    = 0;
+      auto scale = [=](int n) {
+        return (1. - 1. / sp.Lambda) / std::log(sp.Lambda) * std::pow(sp.Lambda, -(np.z - 1)) * std::pow(sp.Lambda, -(n - 1) / 2.);
+      };
+      while (scale(np.Nmax + 1) >= sp.Tmin) np.Nmax++;
+    }
+    if (np.mMAX < 0) // Determine the number of sites in the star representation
+      np.mMAX = std::max(80, 2 * np.Nmax);
+    if (np.xmax < 0) // Length of the x-interval in the discretization=Z (ODE) approach
+      np.xmax = np.Nmax / 2. + 2.;
+    if (np.bandrescale < 0) // Make the NRG energy window correspond to the extend of the frequency mesh
+      np.bandrescale = cp.mesh_max;
+  }
 
-   // Solve the problem for a given value of the twist parameter z
-   void solver_core::solve_one_z(double z, std::string taskdir)
-   {
-      if (world.rank() == 0) {
-	 generate_param_file(z);
-	 if (mkdir(taskdir.c_str(), 0755) != 0)
-	    TRIQS_RUNTIME_ERROR << "failed to mkdir taskdir " << taskdir;
-	 std::string cmd = "./instantiate " + taskdir;
-	 if (system(cmd.c_str()) != 0)
-	    TRIQS_RUNTIME_ERROR << "Running " << cmd << " failed";
-	 if (chdir(taskdir.c_str()) != 0)
-	    TRIQS_RUNTIME_ERROR << "failed to chdir to taskdir " << taskdir;
-	 // Solve the impurity model
-	 set_workdir("."); // may be overridden by NRG_WORKDIR in environment
-	 run_nrg_master();
-	 if (chdir("..") != 0) 
-	    TRIQS_RUNTIME_ERROR << "failed to return from taskdir " << taskdir;
-      } else {
-//	 run_nrg_slave();
-      }
-   }
+  void solver_core::set_nrg_params(nrg_params_t const &nrg_params_) { nrg_params = nrg_params_; }
 
-   std::string solver_core::create_tempdir()
-   {
-      std::string tempdir_template = "nrg_tempdir_XXXXXX";
-      char x[tempdir_template.length()+1];
-      strncpy(x, tempdir_template.c_str(), tempdir_template.length()+1);
-      if (char *w = mkdtemp(x)) // create a unique directory
-	 return w;
-      else
-          TRIQS_RUNTIME_ERROR << "Failed to create a directory for temporary files.";	 
-   }
-   
-   void solver_core::generate_hyb_file()
-   {
-      auto m = gf_mesh<refreq_pts>{-1, -1e-99, 1e-99, 1};
-      auto g = gf<refreq_pts>{m,{1,1}};
-      g[0] = 0.1;
-      g[1] = 0.11;
-      g[2] = 0.3;
-      g[3] = 0.2;
-      //save_to_file(g, "Delta.dat");
-      std::ofstream F("Delta.dat");
-      for (auto w: g.mesh())
-	 F << double(w) << " " << g[w](0,0).real() << std::endl;
-   }
-   
-   void solver_core::solve(solve_params_t const &solve_params_)
-   {
-      solve_params = solve_params_;
-      std::string tempdir;
-      // Reset the results
-      container_set::operator=(container_set{});
-      if (world.rank() == 0) {
-	 std::cout <<  "\nNRGLJUBLJANA_INTERFACE Solver\n";
-	 // Create a temporary directory
-	 tempdir = create_tempdir();
-	 if (chdir(tempdir.c_str()) != 0)
-	    TRIQS_RUNTIME_ERROR << "chdir to tempdir failed.";
-	 // Generate the hybdridisation function
-	 generate_hyb_file();
-	 generate_param_file(1.0); // we need a mock param file for 'adapt' tool
-	 // Copy files from the template library & discretize
-	 std::string templatedir = constr_params.templatedir;
-	 if (templatedir.empty())
-	    if (const char* env_tdir = std::getenv("NRGIF_TEMPLATE_DIR")) {
-	       templatedir = env_tdir;
-	    } else {
-	       templatedir = NRGIF_TEMPLATE_DIR;
-	    }
-	 std::string script = templatedir + "/" + constr_params.problem + "/prepare";
-	 if (system(script.c_str()) != 0)
-	    TRIQS_RUNTIME_ERROR << "Running prepare script failed: " << script;
-	 if (system("./discretize") != 0)
-	    TRIQS_RUNTIME_ERROR << "Running discretize script failed";
-      }
-      // Perform the calculations (this must run in all MPI processes)
-      const double dz = 1.0/solve_params.Nz;
-      const double eps = 1e-8;
-      int cnt = 1;
-      for (double z = dz; z <= 1.0+eps; z += dz, cnt++) {
-	 std::string taskdir = std::to_string(cnt);
-	 solve_one_z(z, taskdir);
-      }
-      assert(cnt == solve_params.Nz+1);
-      if (world.rank() == 0) {
-	 if (system("./process") != 0)
-	    TRIQS_RUNTIME_ERROR << "Running post-processing script failed";
-	 // Cleanup
-	 if (chdir("..") != 0)
-	    TRIQS_RUNTIME_ERROR << "failed to return from the tempdir";
-	 remove(tempdir.c_str());
-      }
-   }
+  // Solve the problem for a given value of the twist parameter z
+  void solver_core::solve_one_z(double z, std::string taskdir) {
+    if (world.rank() == 0) {
+      generate_param_file(z);
+      if (mkdir(taskdir.c_str(), 0755) != 0) TRIQS_RUNTIME_ERROR << "failed to mkdir taskdir " << taskdir;
+      std::string cmd = "./instantiate " + taskdir;
+      if (system(cmd.c_str()) != 0) TRIQS_RUNTIME_ERROR << "Running " << cmd << " failed";
+      if (chdir(taskdir.c_str()) != 0) TRIQS_RUNTIME_ERROR << "failed to chdir to taskdir " << taskdir;
+      // Solve the impurity model
+      set_workdir("."); // may be overridden by NRG_WORKDIR in environment
+      run_nrg_master();
+      if (chdir("..") != 0) TRIQS_RUNTIME_ERROR << "failed to return from taskdir " << taskdir;
+    } else {
+      //	 run_nrg_slave();
+    }
+  }
 
-//  void solver_core::run_single(all_solve_params_t const &all_solve_params) {
-//  }
+  std::string solver_core::create_tempdir() {
+    std::string tempdir_template = "nrg_tempdir_XXXXXX";
+    char x[tempdir_template.length() + 1];
+    strncpy(x, tempdir_template.c_str(), tempdir_template.length() + 1);
+    if (char *w = mkdtemp(x)) // create a unique directory
+      return w;
+    else
+      TRIQS_RUNTIME_ERROR << "Failed to create a directory for temporary files.";
+  }
+
+  void solver_core::generate_hyb_file() {
+    auto m = gf_mesh<refreq_pts>{-1, -1e-99, 1e-99, 1};
+    auto g = gf<refreq_pts>{m, {1, 1}};
+    g[0]   = 0.1;
+    g[1]   = 0.11;
+    g[2]   = 0.3;
+    g[3]   = 0.2;
+    //save_to_file(g, "Delta.dat");
+    std::ofstream F("Delta.dat");
+    for (auto w : g.mesh()) F << double(w) << " " << g[w](0, 0).real() << std::endl;
+  }
+
+  void solver_core::solve(solve_params_t const &solve_params_) {
+    solve_params = solve_params_;
+    std::string tempdir;
+    // Reset the results
+    container_set::operator=(container_set{});
+    if (world.rank() == 0) {
+      std::cout << "\nNRGLJUBLJANA_INTERFACE Solver\n";
+      // Create a temporary directory
+      tempdir = create_tempdir();
+      if (chdir(tempdir.c_str()) != 0) TRIQS_RUNTIME_ERROR << "chdir to tempdir failed.";
+      // Generate the hybdridisation function
+      generate_hyb_file();
+      generate_param_file(1.0); // we need a mock param file for 'adapt' tool
+      // Copy files from the template library & discretize
+      std::string templatedir = constr_params.templatedir;
+      if (templatedir.empty())
+        if (const char *env_tdir = std::getenv("NRGIF_TEMPLATE_DIR")) {
+          templatedir = env_tdir;
+        } else {
+          templatedir = NRGIF_TEMPLATE_DIR;
+        }
+      std::string script = templatedir + "/" + constr_params.problem + "/prepare";
+      if (system(script.c_str()) != 0) TRIQS_RUNTIME_ERROR << "Running prepare script failed: " << script;
+      if (system("./discretize") != 0) TRIQS_RUNTIME_ERROR << "Running discretize script failed";
+    }
+    // Perform the calculations (this must run in all MPI processes)
+    const double dz  = 1.0 / solve_params.Nz;
+    const double eps = 1e-8;
+    int cnt          = 1;
+    for (double z = dz; z <= 1.0 + eps; z += dz, cnt++) {
+      std::string taskdir = std::to_string(cnt);
+      solve_one_z(z, taskdir);
+    }
+    assert(cnt == solve_params.Nz + 1);
+    if (world.rank() == 0) {
+      if (system("./process") != 0) TRIQS_RUNTIME_ERROR << "Running post-processing script failed";
+      // Cleanup
+      if (chdir("..") != 0) TRIQS_RUNTIME_ERROR << "failed to return from the tempdir";
+      remove(tempdir.c_str());
+    }
+  }
+
+  //  void solver_core::run_single(all_solve_params_t const &all_solve_params) {
+  //  }
 
   // -------------------------------------------------------------------------------
 
-    // Function that writes a solver object to hdf5 file
+  // Function that writes a solver object to hdf5 file
 
   void h5_write(triqs::h5::group h5group, std::string subgroup_name, solver_core const &s) {
-      auto grp = h5group.create_group(subgroup_name);
-      h5_write_attribute(grp, "TRIQS_HDF5_data_scheme", solver_core::hdf5_scheme());
-      h5_write_attribute(grp, "TRIQS_GIT_HASH", std::string(AS_STRING(TRIQS_GIT_HASH)));
-      h5_write_attribute(grp, "NRGLJUBLJANA_INTERFACE_GIT_HASH", std::string(AS_STRING(NRGLJUBLJANA_INTERFACE_GIT_HASH)));
-      h5_write(grp, "", s.result_set());
-      h5_write(grp, "constr_params", s.constr_params);
-      h5_write(grp, "solve_params", s.solve_params);
-      h5_write(grp, "nrg_params", s.nrg_params);
-    }
+    auto grp = h5group.create_group(subgroup_name);
+    h5_write_attribute(grp, "TRIQS_HDF5_data_scheme", solver_core::hdf5_scheme());
+    h5_write_attribute(grp, "TRIQS_GIT_HASH", std::string(AS_STRING(TRIQS_GIT_HASH)));
+    h5_write_attribute(grp, "NRGLJUBLJANA_INTERFACE_GIT_HASH", std::string(AS_STRING(NRGLJUBLJANA_INTERFACE_GIT_HASH)));
+    h5_write(grp, "", s.result_set());
+    h5_write(grp, "constr_params", s.constr_params);
+    h5_write(grp, "solve_params", s.solve_params);
+    h5_write(grp, "nrg_params", s.nrg_params);
+  }
 
-    // Function that constructs a solver object from an hdf5 file
-    solver_core solver_core::h5_read_construct(triqs::h5::group h5group, std::string subgroup_name) {
-      auto grp           = h5group.open_group(subgroup_name);
-      auto constr_params = h5_read<constr_params_t>(grp, "constr_params");
-      auto s             = solver_core{constr_params};
-      h5_read(grp, "", s.result_set());
-      h5_read(grp, "solve_params", s.solve_params);
-      h5_read(grp, "nrg_params", s.nrg_params);
-      return s;
-    }
+  // Function that constructs a solver object from an hdf5 file
+  solver_core solver_core::h5_read_construct(triqs::h5::group h5group, std::string subgroup_name) {
+    auto grp           = h5group.open_group(subgroup_name);
+    auto constr_params = h5_read<constr_params_t>(grp, "constr_params");
+    auto s             = solver_core{constr_params};
+    h5_read(grp, "", s.result_set());
+    h5_read(grp, "solve_params", s.solve_params);
+    h5_read(grp, "nrg_params", s.nrg_params);
+    return s;
+  }
 } // namespace nrgljubljana_interface

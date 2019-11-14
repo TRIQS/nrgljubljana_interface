@@ -29,7 +29,7 @@ namespace nrgljubljana_interface {
 
     /// Path to the template library ("" = bundled library)
     std::string templatedir = ""; // QQQ: store this or not??
-     
+
     /// Model considered (templated)
     std::string problem = "SIAM";
 
@@ -41,13 +41,13 @@ namespace nrgljubljana_interface {
 
     /// Common ratio of the geometric sequence
     double mesh_ratio = 1.05;
-     
+
     /// Block structure of the gf
     //gf_struct_t gf_struct;
 
     /// Number of block indeces for the Green function
     int n_blocks() const { return 1; }
-       //return gf_struct.size(); }
+    //return gf_struct.size(); }
 
     // Names of block indeces for the Green function
     auto block_names() const {
@@ -151,7 +151,7 @@ namespace nrgljubljana_interface {
     double gamma = 0.2;
 
     /// Model parameters
-    std::map<std::string, double> model_parameters; 
+    std::map<std::string, double> model_parameters;
 
     /// Perform post processing
     bool post_process = true;
@@ -162,10 +162,10 @@ namespace nrgljubljana_interface {
     /// Read constr_params_t from hdf5
     friend void h5_read(triqs::h5::group h5group, std::string subgroup_name, solve_params_t &sp);
   };
-  
+
   /// NRG low-level parameters
   struct nrg_params_t {
-     
+
     /// Band rescaling factor
     double bandrescale = -1.0;
 
@@ -174,10 +174,10 @@ namespace nrgljubljana_interface {
 
     /// Number of sites in the Wilson chain
     int Nmax = -1;
-     
+
     /// Largest x in the discretization ODE solver
     double xmax = -1.0;
-     
+
     /// Discretization scheme
     std::string discretization = "Z";
 
@@ -423,7 +423,7 @@ namespace nrgljubljana_interface {
 
     /// Test tr(rho)=1
     bool checkrho = false;
-     
+
     /// Write nrg_params_t to hdf5
     friend void h5_write(triqs::h5::group h5group, std::string subgroup_name, nrg_params_t const &sp);
 

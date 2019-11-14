@@ -50,7 +50,7 @@ namespace nrgljubljana_interface {
     h5_read(grp, "Lambda", sp.Lambda);
   }
 
-     void h5_write(triqs::h5::group h5group, std::string subgroup_name, nrg_params_t const &np) {
+  void h5_write(triqs::h5::group h5group, std::string subgroup_name, nrg_params_t const &np) {
     auto grp = h5group.create_group(subgroup_name);
     h5_write(grp, "bandrescale", np.bandrescale);
     h5_write(grp, "discretization", np.discretization);
