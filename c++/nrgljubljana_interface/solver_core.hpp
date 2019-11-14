@@ -93,6 +93,9 @@ namespace nrgljubljana_interface {
     // Low-level NRG parameters
     nrg_params_t nrg_params;
 
+    /// The hybridization function in real frequencies
+    g_w_t Delta_w;
+
     static std::string hdf5_scheme() { return "NRGLJUBLJANA_INTERFACE_SolverCore"; }
 
     // Function that writes a solver object to hdf5 file

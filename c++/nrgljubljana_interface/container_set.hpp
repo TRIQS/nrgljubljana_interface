@@ -27,29 +27,29 @@ namespace nrgljubljana_interface {
   /// The collection of all output containers in solver_core
   struct container_set {
 
-    /// Greens function in imaginary time
-    //    g_tau_t G_tau;
+    /// The spectral function
+    std::optional<g_w_t> A_w;
 
-    /// Greens function in Matsubara frequencies
-    //    g_iw_t G_iw;
+    /// The retarded Greens function
+    std::optional<g_w_t> G_w;
 
-    /// Self-energy in Matsubara frequencies
-    //    g_iw_t Sigma_iw;
+    /// The retarded Self energy
+    std::optional<g_w_t> Sigma_w;
 
     /// Function that writes all containers to hdf5 file
     friend void h5_write(triqs::h5::group h5group, std::string subgroup_name, container_set const &c) {
       auto grp = h5group.create_group(subgroup_name);
-      //      h5_write(grp, "G_tau", c.G_tau);
-      //      h5_write(grp, "G_iw", c.G_iw);
-      //      h5_write(grp, "Sigma_iw", c.Sigma_iw);
+      h5_write(grp, "A_w", c.A_w);
+      h5_write(grp, "G_w", c.G_w);
+      h5_write(grp, "Sigma_w", c.Sigma_w);
     }
 
     /// Function that reads all containers from hdf5 file
     friend void h5_read(triqs::h5::group h5group, std::string subgroup_name, container_set &c) {
       auto grp = h5group.open_group(subgroup_name);
-      //      h5_read(grp, "G_tau", c.G_tau);
-      //      h5_read(grp, "G_iw", c.G_iw);
-      //      h5_read(grp, "Sigma_iw", c.Sigma_iw);
+      h5_read(grp, "A_w", c.A_w);
+      h5_read(grp, "G_w", c.G_w);
+      h5_read(grp, "Sigma_w", c.Sigma_w);
     }
   };
 
