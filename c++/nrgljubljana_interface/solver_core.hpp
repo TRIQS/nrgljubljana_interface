@@ -76,12 +76,10 @@ namespace nrgljubljana_interface {
     // Establish good defaults for nrg_params
     void set_params();
 
-    // Produce param file for a given value of the twist parameter z.
-    void generate_param_file(double z);
-
     void generate_hyb_file();
 
-    //    void run_single(all_solve_params_t const &solve_params);
+    // Produce param file for a given value of the twist parameter z.
+    void generate_param_file(double z);
 
     // Struct containing the parameters relevant for the solver construction
     constr_params_t constr_params;

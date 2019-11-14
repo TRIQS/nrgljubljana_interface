@@ -46,6 +46,116 @@ namespace nrgljubljana_interface {
 
   // -------------------------------------------------------------------------------
 
+  void solver_core::solve(solve_params_t const &sp) {
+    last_solve_params = sp;
+    std::string tempdir;
+    // Reset the results
+    container_set::operator=(container_set{});
+    if (world.rank() == 0) {
+      std::cout << "\nNRGLJUBLJANA_INTERFACE Solver\n";
+      // Create a temporary directory
+      tempdir = create_tempdir();
+      if (chdir(tempdir.c_str()) != 0) TRIQS_RUNTIME_ERROR << "chdir to tempdir failed.";
+      // Generate the hybdridisation function
+      generate_hyb_file();
+      generate_param_file(1.0); // we need a mock param file for 'adapt' tool
+      // Copy files from the template library & discretize
+      std::string templatedir = constr_params.templatedir;
+      if (templatedir.empty())
+        if (const char *env_tdir = std::getenv("NRGIF_TEMPLATE_DIR")) {
+          templatedir = env_tdir;
+        } else {
+          templatedir = NRGIF_TEMPLATE_DIR;
+        }
+      std::string script = templatedir + "/" + constr_params.problem + "/prepare";
+      if (system(script.c_str()) != 0) TRIQS_RUNTIME_ERROR << "Running prepare script failed: " << script;
+      if (system("./discretize") != 0) TRIQS_RUNTIME_ERROR << "Running discretize script failed";
+    }
+    // Perform the calculations (this must run in all MPI processes)
+    const double dz  = 1.0 / sp.Nz;
+    const double eps = 1e-8;
+    int cnt          = 1;
+    for (double z = dz; z <= 1.0 + eps; z += dz, cnt++) {
+      std::string taskdir = std::to_string(cnt);
+      solve_one_z(z, taskdir);
+    }
+    assert(cnt == sp.Nz + 1);
+    if (world.rank() == 0) {
+      if (system("./process") != 0) TRIQS_RUNTIME_ERROR << "Running post-processing script failed";
+      // Cleanup
+      if (chdir("..") != 0) TRIQS_RUNTIME_ERROR << "failed to return from the tempdir";
+      remove(tempdir.c_str());
+    }
+  }
+
+  // -------------------------------------------------------------------------------
+
+  void solver_core::set_params() {
+    const constr_params_t &cp = constr_params;
+    const solve_params_t &sp  = *last_solve_params;
+    nrg_params_t &np          = nrg_params; // only nrg_params allowed to be changed!
+
+    // Test if the low-level paramerers are sensible for use with the
+    // high-level interface.
+    if (np.discretization != "Z") TRIQS_RUNTIME_ERROR << "Must use discretization=Z in the high-level solver interface.";
+
+    // Automatically set (override) some low-level parameters
+    if (sp.Tmin > 0) { // If Tmin is set, determine the required length of the Wilson chain.
+      np.Nmax    = 0;
+      auto scale = [=](int n) {
+        return (1. - 1. / sp.Lambda) / std::log(sp.Lambda) * std::pow(sp.Lambda, -(np.z - 1)) * std::pow(sp.Lambda, -(n - 1) / 2.);
+      };
+      while (scale(np.Nmax + 1) >= sp.Tmin) np.Nmax++;
+    }
+    if (np.mMAX < 0) // Determine the number of sites in the star representation
+      np.mMAX = std::max(80, 2 * np.Nmax);
+    if (np.xmax < 0) // Length of the x-interval in the discretization=Z (ODE) approach
+      np.xmax = np.Nmax / 2. + 2.;
+    if (np.bandrescale < 0) // Make the NRG energy window correspond to the extend of the frequency mesh
+      np.bandrescale = cp.mesh_max;
+  }
+
+  void solver_core::set_nrg_params(nrg_params_t const &nrg_params_) { nrg_params = nrg_params_; }
+
+  // Solve the problem for a given value of the twist parameter z
+  void solver_core::solve_one_z(double z, std::string taskdir) {
+    if (world.rank() == 0) {
+      generate_param_file(z);
+      if (mkdir(taskdir.c_str(), 0755) != 0) TRIQS_RUNTIME_ERROR << "failed to mkdir taskdir " << taskdir;
+      std::string cmd = "./instantiate " + taskdir;
+      if (system(cmd.c_str()) != 0) TRIQS_RUNTIME_ERROR << "Running " << cmd << " failed";
+      if (chdir(taskdir.c_str()) != 0) TRIQS_RUNTIME_ERROR << "failed to chdir to taskdir " << taskdir;
+      // Solve the impurity model
+      set_workdir("."); // may be overridden by NRG_WORKDIR in environment
+      run_nrg_master();
+      if (chdir("..") != 0) TRIQS_RUNTIME_ERROR << "failed to return from taskdir " << taskdir;
+    } else {
+      //	 run_nrg_slave();
+    }
+  }
+
+  std::string solver_core::create_tempdir() {
+    std::string tempdir_template = "nrg_tempdir_XXXXXX";
+    char x[tempdir_template.length() + 1];
+    strncpy(x, tempdir_template.c_str(), tempdir_template.length() + 1);
+    if (char *w = mkdtemp(x)) // create a unique directory
+      return w;
+    else
+      TRIQS_RUNTIME_ERROR << "Failed to create a directory for temporary files.";
+  }
+
+  void solver_core::generate_hyb_file() {
+    auto m = gf_mesh<refreq_pts>{-1, -1e-99, 1e-99, 1};
+    auto g = gf<refreq_pts>{m, {1, 1}};
+    g[0]   = 0.1;
+    g[1]   = 0.11;
+    g[2]   = 0.3;
+    g[3]   = 0.2;
+    //save_to_file(g, "Delta.dat");
+    std::ofstream F("Delta.dat");
+    for (auto w : g.mesh()) F << double(w) << " " << g[w](0, 0).real() << std::endl;
+  }
+
   void solver_core::generate_param_file(double z) {
     const constr_params_t &cp = constr_params;
     const solve_params_t &sp  = *last_solve_params;
@@ -177,117 +287,6 @@ namespace nrgljubljana_interface {
     F << "[extra]" << std::endl;
     for (const auto &i : sp.model_parameters) F << i.first << "=" << i.second << std::endl;
   }
-
-  void solver_core::set_params() {
-    const constr_params_t &cp = constr_params;
-    const solve_params_t &sp  = *last_solve_params;
-    nrg_params_t &np          = nrg_params; // only nrg_params allowed to be changed!
-
-    // Test if the low-level paramerers are sensible for use with the
-    // high-level interface.
-    if (np.discretization != "Z") TRIQS_RUNTIME_ERROR << "Must use discretization=Z in the high-level solver interface.";
-
-    // Automatically set (override) some low-level parameters
-    if (sp.Tmin > 0) { // If Tmin is set, determine the required length of the Wilson chain.
-      np.Nmax    = 0;
-      auto scale = [=](int n) {
-        return (1. - 1. / sp.Lambda) / std::log(sp.Lambda) * std::pow(sp.Lambda, -(np.z - 1)) * std::pow(sp.Lambda, -(n - 1) / 2.);
-      };
-      while (scale(np.Nmax + 1) >= sp.Tmin) np.Nmax++;
-    }
-    if (np.mMAX < 0) // Determine the number of sites in the star representation
-      np.mMAX = std::max(80, 2 * np.Nmax);
-    if (np.xmax < 0) // Length of the x-interval in the discretization=Z (ODE) approach
-      np.xmax = np.Nmax / 2. + 2.;
-    if (np.bandrescale < 0) // Make the NRG energy window correspond to the extend of the frequency mesh
-      np.bandrescale = cp.mesh_max;
-  }
-
-  void solver_core::set_nrg_params(nrg_params_t const &nrg_params_) { nrg_params = nrg_params_; }
-
-  // Solve the problem for a given value of the twist parameter z
-  void solver_core::solve_one_z(double z, std::string taskdir) {
-    if (world.rank() == 0) {
-      generate_param_file(z);
-      if (mkdir(taskdir.c_str(), 0755) != 0) TRIQS_RUNTIME_ERROR << "failed to mkdir taskdir " << taskdir;
-      std::string cmd = "./instantiate " + taskdir;
-      if (system(cmd.c_str()) != 0) TRIQS_RUNTIME_ERROR << "Running " << cmd << " failed";
-      if (chdir(taskdir.c_str()) != 0) TRIQS_RUNTIME_ERROR << "failed to chdir to taskdir " << taskdir;
-      // Solve the impurity model
-      set_workdir("."); // may be overridden by NRG_WORKDIR in environment
-      run_nrg_master();
-      if (chdir("..") != 0) TRIQS_RUNTIME_ERROR << "failed to return from taskdir " << taskdir;
-    } else {
-      //	 run_nrg_slave();
-    }
-  }
-
-  std::string solver_core::create_tempdir() {
-    std::string tempdir_template = "nrg_tempdir_XXXXXX";
-    char x[tempdir_template.length() + 1];
-    strncpy(x, tempdir_template.c_str(), tempdir_template.length() + 1);
-    if (char *w = mkdtemp(x)) // create a unique directory
-      return w;
-    else
-      TRIQS_RUNTIME_ERROR << "Failed to create a directory for temporary files.";
-  }
-
-  void solver_core::generate_hyb_file() {
-    auto m = gf_mesh<refreq_pts>{-1, -1e-99, 1e-99, 1};
-    auto g = gf<refreq_pts>{m, {1, 1}};
-    g[0]   = 0.1;
-    g[1]   = 0.11;
-    g[2]   = 0.3;
-    g[3]   = 0.2;
-    //save_to_file(g, "Delta.dat");
-    std::ofstream F("Delta.dat");
-    for (auto w : g.mesh()) F << double(w) << " " << g[w](0, 0).real() << std::endl;
-  }
-
-  void solver_core::solve(solve_params_t const &sp) {
-    last_solve_params = sp;
-    std::string tempdir;
-    // Reset the results
-    container_set::operator=(container_set{});
-    if (world.rank() == 0) {
-      std::cout << "\nNRGLJUBLJANA_INTERFACE Solver\n";
-      // Create a temporary directory
-      tempdir = create_tempdir();
-      if (chdir(tempdir.c_str()) != 0) TRIQS_RUNTIME_ERROR << "chdir to tempdir failed.";
-      // Generate the hybdridisation function
-      generate_hyb_file();
-      generate_param_file(1.0); // we need a mock param file for 'adapt' tool
-      // Copy files from the template library & discretize
-      std::string templatedir = constr_params.templatedir;
-      if (templatedir.empty())
-        if (const char *env_tdir = std::getenv("NRGIF_TEMPLATE_DIR")) {
-          templatedir = env_tdir;
-        } else {
-          templatedir = NRGIF_TEMPLATE_DIR;
-        }
-      std::string script = templatedir + "/" + constr_params.problem + "/prepare";
-      if (system(script.c_str()) != 0) TRIQS_RUNTIME_ERROR << "Running prepare script failed: " << script;
-      if (system("./discretize") != 0) TRIQS_RUNTIME_ERROR << "Running discretize script failed";
-    }
-    // Perform the calculations (this must run in all MPI processes)
-    const double dz  = 1.0 / sp.Nz;
-    const double eps = 1e-8;
-    int cnt          = 1;
-    for (double z = dz; z <= 1.0 + eps; z += dz, cnt++) {
-      std::string taskdir = std::to_string(cnt);
-      solve_one_z(z, taskdir);
-    }
-    assert(cnt == sp.Nz + 1);
-    if (world.rank() == 0) {
-      if (system("./process") != 0) TRIQS_RUNTIME_ERROR << "Running post-processing script failed";
-      // Cleanup
-      if (chdir("..") != 0) TRIQS_RUNTIME_ERROR << "failed to return from the tempdir";
-      remove(tempdir.c_str());
-    }
-  }
-
-  //  void solver_core::run_single(all_solve_params_t const &all_solve_params) {
-  //  }
 
   // -------------------------------------------------------------------------------
 
