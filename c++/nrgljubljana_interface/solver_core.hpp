@@ -39,7 +39,7 @@ namespace nrgljubljana_interface {
 
     // Return reference to container_set
     container_set &result_set() { return static_cast<container_set &>(*this); }
-    container_set const &result_set() const { return static_cast<container_set const &>(*this); }
+    [[nodiscard]] container_set const &result_set() const { return static_cast<container_set const &>(*this); }
 
     public:
     /**
@@ -48,14 +48,13 @@ namespace nrgljubljana_interface {
      * @param construct_parameters Set of parameters specific to the NRGLJUBLJANA_INTERFACE solver
      */
     CPP2PY_ARG_AS_DICT
-    solver_core(constr_params_t const &constr_params_);
+    solver_core(constr_params_t cp);
 
     // Delete assignement operator because of const members
-    solver_core(solver_core const &p) = default;
-    solver_core(solver_core &&p)      = default;
-    ~solver_core()                    = default;
-    solver_core &operator=(solver_core const &p) = delete;
-    solver_core &operator=(solver_core &&p) = default;
+    solver_core(solver_core const &s) = default;
+    solver_core(solver_core &&s)      = default;
+    solver_core &operator=(solver_core const &s) = delete;
+    solver_core &operator=(solver_core &&s) = default;
 
     /**
      * Solve method that performs NRGLJUBLJANA_INTERFACE calculation

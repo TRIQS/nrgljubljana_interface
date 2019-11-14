@@ -46,11 +46,11 @@ namespace nrgljubljana_interface {
     //gf_struct_t gf_struct;
 
     /// Number of block indeces for the Green function
-    int n_blocks() const { return 1; }
+    [[nodiscard]] int n_blocks() const { return 1; }
     //return gf_struct.size(); }
 
     // Names of block indeces for the Green function
-    auto block_names() const {
+    [[nodiscard]] auto block_names() const {
       std::vector<std::string> v;
       //for (auto const &bl : gf_struct) v.push_back(bl.first);
       return v;

@@ -28,11 +28,12 @@
 
 #include <algorithm>  // max
 #include <cmath>      // pow, log
-#include <stdlib.h>   // system
+#include <cstdlib>    // system
 #include <sys/stat.h> // mkdir
 #include <cassert>    // assert
 #include <iostream>
 #include <fstream>
+#include <utility>
 
 #include <nrg-lib.h>
 
@@ -45,7 +46,7 @@ using namespace triqs::arrays;
 
 namespace nrgljubljana_interface {
 
-  solver_core::solver_core(constr_params_t const &p) : constr_params(p) {}
+  solver_core::solver_core(constr_params_t cp) : constr_params(cp) {}
 
   // -------------------------------------------------------------------------------
 
@@ -247,8 +248,8 @@ namespace nrgljubljana_interface {
     for (auto w : g.mesh()) F << double(w) << " " << g[w](0, 0).real() << std::endl;
   }
 
-  void solver_core::solve(solve_params_t const &solve_params_) {
-    solve_params = solve_params_;
+  void solver_core::solve(solve_params_t const &sp) {
+    solve_params = sp;
     std::string tempdir;
     // Reset the results
     container_set::operator=(container_set{});
@@ -273,14 +274,14 @@ namespace nrgljubljana_interface {
       if (system("./discretize") != 0) TRIQS_RUNTIME_ERROR << "Running discretize script failed";
     }
     // Perform the calculations (this must run in all MPI processes)
-    const double dz  = 1.0 / solve_params.Nz;
+    const double dz  = 1.0 / sp.Nz;
     const double eps = 1e-8;
     int cnt          = 1;
     for (double z = dz; z <= 1.0 + eps; z += dz, cnt++) {
       std::string taskdir = std::to_string(cnt);
       solve_one_z(z, taskdir);
     }
-    assert(cnt == solve_params.Nz + 1);
+    assert(cnt == sp.Nz + 1);
     if (world.rank() == 0) {
       if (system("./process") != 0) TRIQS_RUNTIME_ERROR << "Running post-processing script failed";
       // Cleanup

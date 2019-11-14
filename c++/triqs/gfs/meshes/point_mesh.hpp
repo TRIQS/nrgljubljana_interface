@@ -83,7 +83,7 @@ namespace triqs::gfs {
 
     // -------------- Evaluation of a function on the domain --------------------------
 
-    interpol_data_lin_t<index_t, 2> get_interpolation_data(domain_pt_t x) const noexcept {
+    [[nodiscard]] interpol_data_lin_t<index_t, 2> get_interpolation_data(domain_pt_t x) const noexcept {
       // indices to the left and right
       index_t i_r = std::distance(_pts.begin(), std::lower_bound(_pts.begin(), _pts.end(), x));
       index_t i_l = i_r - 1;
