@@ -41,8 +41,7 @@ namespace nrgljubljana_interface {
 
   void h5_write(triqs::h5::group h5group, std::string subgroup_name, solve_params_t const &sp) {
     auto grp = h5group.create_group(subgroup_name);
-    h5_write(grp, "Lambda", sp.Lambda);
-    // to do
+    h5_write(grp, "Lambda", sp.Lambda); // TODO Fill list
   }
 
   void h5_read(triqs::h5::group h5group, std::string subgroup_name, solve_params_t &sp) {
@@ -58,8 +57,8 @@ namespace nrgljubljana_interface {
 
   void h5_read(triqs::h5::group h5group, std::string subgroup_name, nrg_params_t &np) {
     auto grp = h5group.open_group(subgroup_name);
-    h5_read(grp, "discretization", np.discretization);
     h5_read(grp, "bandrescale", np.bandrescale);
+    h5_read(grp, "discretization", np.discretization);
   }
 
 } // namespace nrgljubljana_interface

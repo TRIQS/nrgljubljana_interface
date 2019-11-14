@@ -28,7 +28,7 @@ namespace nrgljubljana_interface {
   struct constr_params_t {
 
     /// Path to the template library ("" = bundled library)
-    std::string templatedir = ""; // QQQ: store this or not??
+    std::string templatedir = "";
 
     /// Model considered (templated)
     std::string problem = "SIAM";
