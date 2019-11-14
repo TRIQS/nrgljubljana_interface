@@ -86,12 +86,11 @@ namespace nrgljubljana_interface {
     // Struct containing the parameters relevant for the solver construction
     constr_params_t constr_params;
 
-    // Struct containing the parameters relevant for the solve process
-    //    std::optional<solve_params_t> last_solve_params;
-    solve_params_t solve_params;
-
     // Low-level NRG parameters
     nrg_params_t nrg_params;
+
+    // Struct containing the parameters relevant for the solve process
+    std::optional<solve_params_t> last_solve_params;
 
     /// The hybridization function in real frequencies
     g_w_t Delta_w;

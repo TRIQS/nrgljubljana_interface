@@ -53,13 +53,13 @@ c.add_member(c_name = "constr_params",
              read_only= True,
              doc = r"""""")
 
-c.add_member(c_name = "solve_params",
-             c_type = "nrgljubljana_interface::solve_params_t",
+c.add_member(c_name = "nrg_params",
+             c_type = "nrgljubljana_interface::nrg_params_t",
              read_only= True,
              doc = r"""""")
 
-c.add_member(c_name = "nrg_params",
-             c_type = "nrgljubljana_interface::nrg_params_t",
+c.add_member(c_name = "last_solve_params",
+             c_type = "std::optional<solve_params_t>",
              read_only= True,
              doc = r"""""")
 

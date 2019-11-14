@@ -48,7 +48,7 @@ namespace nrgljubljana_interface {
 
   void solver_core::generate_param_file(double z) {
     const constr_params_t &cp = constr_params;
-    const solve_params_t &sp  = solve_params;
+    const solve_params_t &sp  = *last_solve_params;
     nrg_params_t &np          = nrg_params;
     np.z                      = z;
     // Automatically establish appropriate default values for the high-level interface
@@ -180,7 +180,7 @@ namespace nrgljubljana_interface {
 
   void solver_core::set_params() {
     const constr_params_t &cp = constr_params;
-    const solve_params_t &sp  = solve_params;
+    const solve_params_t &sp  = *last_solve_params;
     nrg_params_t &np          = nrg_params; // only nrg_params allowed to be changed!
 
     // Test if the low-level paramerers are sensible for use with the
@@ -245,7 +245,7 @@ namespace nrgljubljana_interface {
   }
 
   void solver_core::solve(solve_params_t const &sp) {
-    solve_params = sp;
+    last_solve_params = sp;
     std::string tempdir;
     // Reset the results
     container_set::operator=(container_set{});
@@ -300,8 +300,8 @@ namespace nrgljubljana_interface {
     h5_write_attribute(grp, "NRGLJUBLJANA_INTERFACE_GIT_HASH", std::string(AS_STRING(NRGLJUBLJANA_INTERFACE_GIT_HASH)));
     h5_write(grp, "", s.result_set());
     h5_write(grp, "constr_params", s.constr_params);
-    h5_write(grp, "solve_params", s.solve_params);
     h5_write(grp, "nrg_params", s.nrg_params);
+    h5_write(grp, "last_solve_params", s.last_solve_params);
   }
 
   // Function that constructs a solver object from an hdf5 file
@@ -310,8 +310,8 @@ namespace nrgljubljana_interface {
     auto constr_params = h5_read<constr_params_t>(grp, "constr_params");
     auto s             = solver_core{constr_params};
     h5_read(grp, "", s.result_set());
-    h5_read(grp, "solve_params", s.solve_params);
     h5_read(grp, "nrg_params", s.nrg_params);
+    h5_read(grp, "last_solve_params", s.last_solve_params);
     return s;
   }
 } // namespace nrgljubljana_interface
