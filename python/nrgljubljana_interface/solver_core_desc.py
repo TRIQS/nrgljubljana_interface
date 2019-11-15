@@ -43,6 +43,11 @@ c.add_member(c_name = "G_w",
              read_only= True,
              doc = r"""The retarded Greens function""")
 
+c.add_member(c_name = "F_w",
+             c_type = "std::optional<g_w_t>",
+             read_only= True,
+             doc = r"""The auxiliary Green function F_w = Sigma_w * G_w""")
+
 c.add_member(c_name = "Sigma_w",
              c_type = "std::optional<g_w_t>",
              read_only= True,
