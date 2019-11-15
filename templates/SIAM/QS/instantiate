@@ -28,6 +28,7 @@ system "pwd";
 my $hybfn = "Gamma_imp_00.dat";
 -e $hybfn or die "Hybridisation funcrtion not found.";
 
+system "echo dos=Gamma_imp_00.dat >>param";
 system "$nrgchain";
 
 -e "xi.dat" or die "Wilson chain coefficients not found.";
