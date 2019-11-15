@@ -11,11 +11,11 @@ my $alpha = getparam("alpha");
 my $gamma = getparam("gamma");
 print "Nz=$Nz min=$min max=$max ratio=$ratio T=$T alpha=$alpha gamma=$gamma\n";
 my $pr = "FDM_dens"; # prefix
-avg("spec_${pr}_A_d-A_d.bin", "G11-im");
-avg("corr_${pr}_n_d-n_d.bin", "nn11-im");
-avg("spin_${pr}_sigma_d-sigma_d.bin", "ss11-im");
 
-#avg("spec_${pr}_self_d-A_d.bin", "F11-im.dat");
+avg("spec_${pr}_A_d-A_d.bin",    "A11");
+avg("spec_${pr}_self_d-A_d.bin", "B11.dat");
+avg("corr_${pr}_n_d-n_d.bin", "nn11");
+avg("spin_${pr}_sigma_d-sigma_d.bin", "ss11");
 
 sub kk {
         my $in = shift;
@@ -58,4 +58,25 @@ sub getparam
     }
     close F;
     die "Parsing failure: $keyword not found.";
+}
+
+sub scaley
+{
+    my $fnin = shift;
+    my $factor = eval(shift);
+    my $fnout = shift;
+    open (F, "<", $fnin) or die "Can't open $fnin for reading: $!\n";
+    open (G, ">", $fnout) or die "Can't open $fnout for writing: $!\n";
+    while (<F>) {
+	if (!/^#/) {
+	    chomp;
+	    my @d = split;
+	    $d[1] = $d[1] * $factor;
+	    print G "@d\n";
+	} else {
+	    print G;
+	}
+    }
+    close G;
+    close F;
 }

@@ -69,9 +69,9 @@ namespace nrgljubljana_interface {
       tempdir = create_tempdir();
       if (chdir(tempdir.c_str()) != 0) TRIQS_RUNTIME_ERROR << "chdir to tempdir failed.";
 
-      // Write the hybridization function to file
+      // Write the hybridization function Gamma=-Im(Delta) to a file
       {
-        std::ofstream F("Delta.dat");
+        std::ofstream F("Gamma.dat");
         for (auto const &w : Delta_w.mesh()) F << double(w) << " " << -Delta_w[w](0, 0).imag() << std::endl;
       }
 
@@ -294,7 +294,7 @@ namespace nrgljubljana_interface {
     F << "checksumrules=" << np.checksumrules << std::endl;
     F << "checkdiag=" << np.checkdiag << std::endl;
     F << "checkrho=" << np.checkrho << std::endl;
-    F << "dos=Delta.dat" << std::endl; // hard-coded
+    F << "dos=Gamma.dat" << std::endl; // hard-coded
     F << "[extra]" << std::endl;
     for (const auto &i : sp.model_parameters) F << i.first << "=" << i.second << std::endl;
   }
