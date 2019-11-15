@@ -13,16 +13,16 @@ my $gamma = getparam("gamma");
 print "Nz=$Nz min=$min max=$max ratio=$ratio T=$T alpha=$alpha gamma=$gamma\n";
 my $pr = "FDM_dens"; # prefix
 
-avg("spec_${pr}_A_d-A_d.bin",    "A00-imp");
-avg("spec_${pr}_self_d-A_d.bin", "B00-imp");
-avg("corr_${pr}_n_d-n_d.bin", "nn00-imp");
-avg("spin_${pr}_sigma_d-sigma_d.bin", "ss00-imp");
+avg("spec_${pr}_A_d-A_d.bin",    "A_imp_00");
+avg("spec_${pr}_self_d-A_d.bin", "B_imp_00");
+avg("corr_${pr}_n_d-n_d.bin", "nn_imp_00");
+avg("spin_${pr}_sigma_d-sigma_d.bin", "ss_imp_00");
 
-scaley("A00", -pi, "imG00-imp");
-scaley("B00", -pi, "imF00-imp");
+scaley("A_imp_00", -pi, "imG_imp_00");
+scaley("B_imp_00", -pi, "imF_imp_00");
 
-kk("imG00-imp");
-kk("imF00-imp");
+kk("imG_imp_00");
+kk("imF_imp_00");
 
 sub kk {
         my $in = shift;
