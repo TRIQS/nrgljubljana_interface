@@ -28,7 +28,7 @@ sub kk {
         my $in = shift;
         $in .= ".dat";
         my $out;
-        ($out = $in) =~ s/im/re/;
+        ($out = $in) =~ s/^im/re/;
         -e $in or die "Input file not found: $in. Stopped";
         system("kk $in $out");
         -e $out or die "Output file not found:$ out. Stopped";
@@ -51,7 +51,6 @@ sub avg
 	die "broaden failed\n";
     }
     system "mv $specfn $out";
-    kk($out);
 }
 
 sub getparam
