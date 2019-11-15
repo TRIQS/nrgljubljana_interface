@@ -33,6 +33,9 @@ namespace nrgljubljana_interface {
     /// The retarded Greens function
     std::optional<g_w_t> G_w;
 
+    /// The auxiliary Green function F_w = Sigma_w * G_w
+    std::optional<g_w_t> F_w;
+
     /// The retarded Self energy
     std::optional<g_w_t> Sigma_w;
 
@@ -41,6 +44,7 @@ namespace nrgljubljana_interface {
       auto grp = h5group.create_group(subgroup_name);
       h5_write(grp, "A_w", c.A_w);
       h5_write(grp, "G_w", c.G_w);
+      h5_write(grp, "F_w", c.F_w);
       h5_write(grp, "Sigma_w", c.Sigma_w);
     }
 
@@ -49,6 +53,7 @@ namespace nrgljubljana_interface {
       auto grp = h5group.open_group(subgroup_name);
       h5_read(grp, "A_w", c.A_w);
       h5_read(grp, "G_w", c.G_w);
+      h5_read(grp, "F_w", c.F_w);
       h5_read(grp, "Sigma_w", c.Sigma_w);
     }
   };
