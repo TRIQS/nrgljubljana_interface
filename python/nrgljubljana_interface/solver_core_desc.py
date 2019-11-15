@@ -1,5 +1,5 @@
 # Generated automatically using the command :
-# c++2py ../../c++/nrgljubljana_interface/solver_core.hpp -p --members_read_only -N nrgljubljana_interface -a nrgljubljana_interface -m solver_core -o solver_core --moduledoc="The nrgljubljana_interface solve_core module" -C pytriqs --cxxflags="-std=c++17" --target_file_only -I../../c++
+# c++2py ../../c++/nrgljubljana_interface/solver_core.hpp -p --members_read_only -N nrgljubljana_interface -a nrgljubljana_interface -m solver_core -o solver_core --moduledoc="The nrgljubljana_interface solve_core module" -C pytriqs --cxxflags="-std=c++17 -DNRGIF_TEMPLATE_DIR=\"\"" --target_file_only -I../../c++
 from cpp2py.wrap_generator import *
 
 # The module
@@ -17,6 +17,7 @@ module.add_preamble("""
 #include <cpp2py/converters/optional.hpp>
 #include <cpp2py/converters/pair.hpp>
 #include <cpp2py/converters/string.hpp>
+#include <cpp2py/converters/variant.hpp>
 #include <cpp2py/converters/vector.hpp>
 #include <triqs/cpp2py_converters/gf.hpp>
 #include <triqs/cpp2py_converters/h5.hpp>
@@ -68,6 +69,11 @@ c.add_member(c_name = "last_solve_params",
              read_only= True,
              doc = r"""""")
 
+c.add_member(c_name = "gf_struct",
+             c_type = "triqs::hilbert_space::gf_struct_t",
+             read_only= True,
+             doc = r"""The Green function structure object""")
+
 c.add_member(c_name = "Delta_w",
              c_type = "nrgljubljana_interface::g_w_t",
              read_only= True,
@@ -77,19 +83,21 @@ c.add_constructor("""(**nrgljubljana_interface::constr_params_t)""", doc = r"""C
 
 
 
-+----------------+-------------+---------+------------------------------------------------------+
-| Parameter Name | Type        | Default | Documentation                                        |
-+================+=============+=========+======================================================+
-| templatedir    | std::string | ""      | Path to the template library ("" = bundled library)  |
-+----------------+-------------+---------+------------------------------------------------------+
-| problem        | std::string | "SIAM"  | Model considered (templated)                         |
-+----------------+-------------+---------+------------------------------------------------------+
-| mesh_max       | double      | 10      | Mesh maximum frequency                               |
-+----------------+-------------+---------+------------------------------------------------------+
-| mesh_min       | double      | 1e-4    | Mesh minimum frequency                               |
-+----------------+-------------+---------+------------------------------------------------------+
-| mesh_ratio     | double      | 1.05    | Common ratio of the geometric sequence               |
-+----------------+-------------+---------+------------------------------------------------------+
++----------------+-------------+--------------------+--------------------------------------------------------------+
+| Parameter Name | Type        | Default            | Documentation                                                |
++================+=============+====================+==============================================================+
+| templatedir    | std::string | NRGIF_TEMPLATE_DIR | Path to the template library (default to bundled templates)  |
++----------------+-------------+--------------------+--------------------------------------------------------------+
+| model          | std::string | "SIAM"             | Model considered (templated)                                 |
++----------------+-------------+--------------------+--------------------------------------------------------------+
+| symtype        | std::string | "QS"               | Symmetry                                                     |
++----------------+-------------+--------------------+--------------------------------------------------------------+
+| mesh_max       | double      | 10                 | Mesh maximum frequency                                       |
++----------------+-------------+--------------------+--------------------------------------------------------------+
+| mesh_min       | double      | 1e-4               | Mesh minimum frequency                                       |
++----------------+-------------+--------------------+--------------------------------------------------------------+
+| mesh_ratio     | double      | 1.05               | Common ratio of the geometric sequence                       |
++----------------+-------------+--------------------+--------------------------------------------------------------+
 """)
 
 c.add_method("""void solve (**nrgljubljana_interface::solve_params_t)""",
@@ -941,13 +949,18 @@ c = converter_(
 )
 c.add_member(c_name = "templatedir",
              c_type = "std::string",
-             initializer = """ "" """,
-             doc = r"""Path to the template library ("" = bundled library)""")
+             initializer = """ NRGIF_TEMPLATE_DIR """,
+             doc = r"""Path to the template library (default to bundled templates)""")
 
-c.add_member(c_name = "problem",
+c.add_member(c_name = "model",
              c_type = "std::string",
              initializer = """ "SIAM" """,
              doc = r"""Model considered (templated)""")
+
+c.add_member(c_name = "symtype",
+             c_type = "std::string",
+             initializer = """ "QS" """,
+             doc = r"""Symmetry""")
 
 c.add_member(c_name = "mesh_max",
              c_type = "double",

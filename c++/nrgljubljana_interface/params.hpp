@@ -27,11 +27,14 @@ namespace nrgljubljana_interface {
   /// The parameters for the solver construction
   struct constr_params_t {
 
-    /// Path to the template library ("" = bundled library)
-    std::string templatedir = "";
+    /// Path to the template library (default to bundled templates)
+    std::string templatedir = NRGIF_TEMPLATE_DIR;
 
     /// Model considered (templated)
-    std::string problem = "SIAM";
+    std::string model = "SIAM";
+
+    /// Symmetry
+    std::string symtype = "QS";
 
     /// Mesh maximum frequency
     double mesh_max = 10;
@@ -42,18 +45,12 @@ namespace nrgljubljana_interface {
     /// Common ratio of the geometric sequence
     double mesh_ratio = 1.05;
 
-    /// Block structure of the gf
-    //gf_struct_t gf_struct;
-
-    /// Number of block indeces for the Green function
-    [[nodiscard]] int n_blocks() const { return 1; }
-    //return gf_struct.size(); }
-
-    // Names of block indeces for the Green function
-    [[nodiscard]] auto block_names() const {
-      std::vector<std::string> v;
-      //for (auto const &bl : gf_struct) v.push_back(bl.first);
-      return v;
+    std::string get_model_dir() const {
+      if (const char *env_tdir = std::getenv("NRGIF_TEMPLATE_DIR")) {
+        return std::string{env_tdir} + "/" + model + "/" + symtype;
+      } else {
+        return templatedir + "/" + model + "/" + symtype;
+      }
     }
 
     /// Write constr_params_t to hdf5
