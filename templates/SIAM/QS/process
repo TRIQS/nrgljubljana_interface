@@ -26,6 +26,7 @@ kk("imF_imp_00");
 
 sub kk {
         my $in = shift;
+        $in .= ".dat";
         my $out;
         ($out = $in) =~ s/im/re/;
         -e $in or die "Input file not found: $in. Stopped";
