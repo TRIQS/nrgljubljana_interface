@@ -347,10 +347,6 @@ c.add_property(name = "create_tempdir",
                getter = cfunction("std::string create_tempdir ()"),
                doc = r"""""")
 
-c.add_property(name = "generate_hyb_file",
-               getter = cfunction("void generate_hyb_file ()"),
-               doc = r"""""")
-
 module.add_class(c)
 
 

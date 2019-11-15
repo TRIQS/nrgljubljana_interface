@@ -40,25 +40,44 @@ namespace nrgljubljana_interface {
 
   solver_core::solver_core(constr_params_t cp) : constr_params(cp) {
 
-    // Initialize the hybridization function container TODO Generate Log Mesh
-    Delta_w = g_w_t{{-1, -1e-99, 1e-99, 1}, {1, 1}};
+    // Create the hybridization function on a logarithmic mesh
+    std::vector<double> log_mesh;
+    for (double w = cp.mesh_max; w > cp.mesh_min; w /= cp.mesh_ratio) {
+      log_mesh.push_back(w);
+      log_mesh.push_back(-w);
+    }
+    std::sort(begin(log_mesh), end(log_mesh));
+    Delta_w = g_w_t{log_mesh, {1, 1}};
   }
 
   // -------------------------------------------------------------------------------
 
   void solver_core::solve(solve_params_t const &sp) {
+
     last_solve_params = sp;
-    std::string tempdir;
+
+    std::string tempdir{};
+
     // Reset the results
     container_set::operator=(container_set{});
+
+    // Pre-Processing
     if (world.rank() == 0) {
       std::cout << "\nNRGLJUBLJANA_INTERFACE Solver\n";
+
       // Create a temporary directory
       tempdir = create_tempdir();
       if (chdir(tempdir.c_str()) != 0) TRIQS_RUNTIME_ERROR << "chdir to tempdir failed.";
-      // Generate the hybdridisation function
-      generate_hyb_file();
-      generate_param_file(1.0); // we need a mock param file for 'adapt' tool
+
+      // Write the hybridization function to file
+      {
+        std::ofstream F("Delta.dat");
+        for (auto const &w : Delta_w.mesh()) F << double(w) << " " << -Delta_w[w](0, 0).imag() << std::endl;
+      }
+
+      // we need a mock param file for 'adapt' tool
+      generate_param_file(1.0);
+
       // Copy files from the template library & discretize
       std::string templatedir = constr_params.templatedir;
       if (templatedir.empty())
@@ -71,6 +90,7 @@ namespace nrgljubljana_interface {
       if (system(script.c_str()) != 0) TRIQS_RUNTIME_ERROR << "Running prepare script failed: " << script;
       if (system("./discretize") != 0) TRIQS_RUNTIME_ERROR << "Running discretize script failed";
     }
+
     // Perform the calculations (this must run in all MPI processes)
     const double dz  = 1.0 / sp.Nz;
     const double eps = 1e-8;
@@ -79,9 +99,12 @@ namespace nrgljubljana_interface {
       std::string taskdir = std::to_string(cnt);
       solve_one_z(z, taskdir);
     }
+
+    // Post-Processing
     assert(cnt == sp.Nz + 1);
     if (world.rank() == 0) {
       if (system("./process") != 0) TRIQS_RUNTIME_ERROR << "Running post-processing script failed";
+      // TODO Read results
       // Cleanup
       if (chdir("..") != 0) TRIQS_RUNTIME_ERROR << "failed to return from the tempdir";
       remove(tempdir.c_str());
@@ -142,18 +165,6 @@ namespace nrgljubljana_interface {
       return w;
     else
       TRIQS_RUNTIME_ERROR << "Failed to create a directory for temporary files.";
-  }
-
-  void solver_core::generate_hyb_file() {
-    auto m = gf_mesh<refreq_pts>{-1, -1e-99, 1e-99, 1};
-    auto g = gf<refreq_pts>{m, {1, 1}};
-    g[0]   = 0.1;
-    g[1]   = 0.11;
-    g[2]   = 0.3;
-    g[3]   = 0.2;
-    //save_to_file(g, "Delta.dat");
-    std::ofstream F("Delta.dat");
-    for (auto w : g.mesh()) F << double(w) << " " << g[w](0, 0).real() << std::endl;
   }
 
   void solver_core::generate_param_file(double z) {

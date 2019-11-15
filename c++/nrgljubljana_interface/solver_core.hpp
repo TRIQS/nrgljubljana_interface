@@ -70,13 +70,12 @@ namespace nrgljubljana_interface {
     // Perform an individual NRG calculation. Called from solve()
     void solve_one_z(double z, std::string taskdir);
 
+    // Adjust the advanced NRG parameters
     CPP2PY_ARG_AS_DICT
     void set_nrg_params(nrg_params_t const &nrg_params);
 
     // Establish good defaults for nrg_params
     void set_params();
-
-    void generate_hyb_file();
 
     // Produce param file for a given value of the twist parameter z.
     void generate_param_file(double z);
