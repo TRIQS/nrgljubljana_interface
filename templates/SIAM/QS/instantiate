@@ -25,7 +25,8 @@ my $verbose = 1;
 
 system "pwd";
 
--e "Delta.dat" or die "Hybridisation funcrtion not found.";
+my $hybfn = "Gamma_imp_00.dat";
+-e $hybfn" or die "Hybridisation funcrtion not found.";
 
 system "$nrgchain";
 
