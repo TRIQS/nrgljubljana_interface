@@ -16,8 +16,8 @@ class test_SIAM(unittest.TestCase):
     cp = {}
     cp["problem"] = "SIAM"
     cp["mesh_max"] = 1.0
-    cp["mesh_min"] = 1e-4
-    cp["mesh_ratio"] = 1.02
+    cp["mesh_min"] = 1e-15
+    cp["mesh_ratio"] = 1.1
 
     # Set up the Solver
     S = Solver(**cp)
@@ -48,8 +48,8 @@ class test_SIAM(unittest.TestCase):
     #S.set_nrg_params(**np)
 
     # Initialize hybridization function
-    D = 1.0 # Half Bandwidth
-    S.Delta_w << D*D/4.0 * SemiCircular(D)
+    # for w in S.Delta_w.mesh: S.Delta_w[w] = 1 / w
+    S.Delta_w << SemiCircular(1.0)
 
     # Solve the impurity model
     S.solve(**sp)
