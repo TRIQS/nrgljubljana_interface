@@ -24,6 +24,7 @@
 //#include <boost/filesystem.hpp> // or C++17 filesystem ?
 
 #include <triqs/utility/exceptions.hpp> // TRIQS_RUNTIME_ERROR
+#include <itertools/itertools.hpp>
 
 #include <algorithm>  // max
 #include <cmath>      // pow, log
@@ -40,14 +41,28 @@ namespace nrgljubljana_interface {
 
   solver_core::solver_core(constr_params_t cp) : constr_params(cp) {
 
-    // Create the hybridization function on a logarithmic mesh
-    std::vector<double> log_mesh;
-    for (double w = cp.mesh_max; w > cp.mesh_min; w /= cp.mesh_ratio) {
-      log_mesh.push_back(w);
-      log_mesh.push_back(-w);
+    // Read the Green function structure from file
+    {
+      std::string bl_name;
+      int bl_size;
+      std::ifstream F(constr_params.get_model_dir() + "/gf_struct");
+      if (not F.is_open()) TRIQS_RUNTIME_ERROR << "Failed to open gf_struct file\n";
+      while (F >> bl_name >> bl_size) {
+        indices_t idx_lst;
+        for (int i : range(bl_size)) idx_lst.push_back(i);
+        gf_struct.emplace_back(bl_name, idx_lst);
+      }
     }
-    std::sort(begin(log_mesh), end(log_mesh));
-    Delta_w = g_w_t{log_mesh, {1, 1}};
+
+    // Create the hybridization function on a logarithmic mesh
+    std::vector<double> mesh_points;
+    for (double w = cp.mesh_max; w > cp.mesh_min; w /= cp.mesh_ratio) {
+      mesh_points.push_back(w);
+      mesh_points.push_back(-w);
+    }
+    std::sort(begin(mesh_points), end(mesh_points));
+    auto log_mesh = gf_mesh<refreq_pts>{mesh_points};
+    Delta_w       = g_w_t{log_mesh, gf_struct};
   }
 
   // -------------------------------------------------------------------------------
@@ -69,24 +84,20 @@ namespace nrgljubljana_interface {
       tempdir = create_tempdir();
       if (chdir(tempdir.c_str()) != 0) TRIQS_RUNTIME_ERROR << "chdir to tempdir failed.";
 
-      // Write the hybridization function Gamma=-Im(Delta) to a file
-      {
-        std::ofstream F("Gamma.dat");
-        for (auto const &w : Delta_w.mesh()) F << double(w) << " " << -Delta_w[w](0, 0).imag() << std::endl;
+      // Write Gamma=-Im(Delta_w) to a file
+      for (int bl_idx : range(gf_struct.size())) {
+        long bl_size = Delta_w[bl_idx].target_shape()[0];
+        auto bl_name = Delta_w.block_names()[bl_idx];
+        for (auto [i, j] : product_range(bl_size, bl_size)) {
+          std::ofstream F(std::string{} + "Gamma_" + bl_name + "_" + std::to_string(i) + std::to_string(j) + ".dat");
+          for (auto const &w : Delta_w[bl_idx].mesh()) F << double(w) << " " << -Delta_w[bl_idx][w](i, j).imag() << std::endl;
+        }
       }
 
       // we need a mock param file for 'adapt' tool
       generate_param_file(1.0);
 
-      // Copy files from the template library & discretize
-      std::string templatedir = constr_params.templatedir;
-      if (templatedir.empty())
-        if (const char *env_tdir = std::getenv("NRGIF_TEMPLATE_DIR")) {
-          templatedir = env_tdir;
-        } else {
-          templatedir = NRGIF_TEMPLATE_DIR;
-        }
-      std::string script = templatedir + "/" + constr_params.problem + "/prepare";
+      std::string script = constr_params.get_model_dir() + "/prepare";
       if (system(script.c_str()) != 0) TRIQS_RUNTIME_ERROR << "Running prepare script failed: " << script;
       if (system("./discretize") != 0) TRIQS_RUNTIME_ERROR << "Running discretize script failed";
     }
@@ -102,10 +113,54 @@ namespace nrgljubljana_interface {
 
     // Post-Processing
     assert(cnt == sp.Nz + 1);
-    if (world.rank() == 0) {
+    if (world.rank() == 0)
       if (system("./process") != 0) TRIQS_RUNTIME_ERROR << "Running post-processing script failed";
-      // TODO Read results
-      // Cleanup
+
+    // Read Results into TRIQS Containers
+    auto log_mesh = Delta_w[0].mesh();
+    A_w           = g_w_t{log_mesh, gf_struct};
+    G_w           = g_w_t{log_mesh, gf_struct};
+    F_w           = g_w_t{log_mesh, gf_struct};
+
+    for (int bl_idx : range(gf_struct.size())) {
+      long bl_size = Delta_w[bl_idx].target_shape()[0];
+
+      for (auto [i, j] : product_range(bl_size, bl_size)) {
+        auto bl_name     = Delta_w.block_names()[bl_idx];
+        auto file_ending = std::string{"_"} + bl_name + "_" + std::to_string(i) + std::to_string(j) + ".dat";
+
+        double w, re, im;
+        {
+          std::ifstream A(std::string{"A"} + file_ending);
+          for (auto const &mp : log_mesh) {
+            A >> w >> re;
+            (*A_w)[bl_idx][mp](i, j) = re;
+          }
+        }
+        {
+          std::ifstream imG(std::string{"imG"} + file_ending);
+          std::ifstream reG(std::string{"reG"} + file_ending);
+          for (auto const &mp : log_mesh) {
+            imG >> w >> im;
+            reG >> w >> re;
+            (*G_w)[bl_idx][mp](i, j) = re + 1i * im;
+          }
+        }
+        {
+          std::ifstream imF(std::string{"imF"} + file_ending);
+          std::ifstream reF(std::string{"reF"} + file_ending);
+          for (auto const &mp : log_mesh) {
+            imF >> w >> im;
+            reF >> w >> re;
+            (*F_w)[bl_idx][mp](i, j) = re + 1i * im;
+          }
+        }
+      }
+    }
+
+    // Cleanup
+    world.barrier();
+    if (world.rank() == 0) {
       if (chdir("..") != 0) TRIQS_RUNTIME_ERROR << "failed to return from the tempdir";
       remove(tempdir.c_str());
     }
@@ -176,11 +231,13 @@ namespace nrgljubljana_interface {
     set_params();
     // Generate the parameter file
     std::ofstream F("param");
+    F << "[extra]" << std::endl;
+    for (const auto &i : sp.model_parameters) F << i.first << "=" << i.second << std::endl;
     F << std::boolalpha; // important: we want to output true/false strings
     F << "[param]" << std::endl;
     F << "bandrescale=" << np.bandrescale << std::endl;
-    F << "model=" << cp.problem << std::endl; // not required when using templates
-    F << "symtype=QS" << std::endl;           // from template database TODO
+    F << "model=" << cp.model << std::endl;
+    F << "symtype=" << cp.symtype << std::endl;
     F << "Lambda=" << sp.Lambda << std::endl;
     F << "xmax=" << np.xmax << std::endl;
     F << "Nmax=" << np.Nmax << std::endl;
@@ -294,9 +351,6 @@ namespace nrgljubljana_interface {
     F << "checksumrules=" << np.checksumrules << std::endl;
     F << "checkdiag=" << np.checkdiag << std::endl;
     F << "checkrho=" << np.checkrho << std::endl;
-    F << "dos=Gamma.dat" << std::endl; // hard-coded
-    F << "[extra]" << std::endl;
-    for (const auto &i : sp.model_parameters) F << i.first << "=" << i.second << std::endl;
   }
 
   // -------------------------------------------------------------------------------

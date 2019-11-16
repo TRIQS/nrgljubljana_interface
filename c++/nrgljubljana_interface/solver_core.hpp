@@ -89,6 +89,9 @@ namespace nrgljubljana_interface {
     // Struct containing the parameters relevant for the solve process
     std::optional<solve_params_t> last_solve_params;
 
+    /// The Green function structure object
+    gf_struct_t gf_struct;
+
     /// The hybridization function in real frequencies
     g_w_t Delta_w;
 

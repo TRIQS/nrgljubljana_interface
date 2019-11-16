@@ -28,6 +28,7 @@
 
 #include <triqs/gfs/meshes/refreq_pts.hpp>
 
+#include <itertools/itertools.hpp>
 #include <mpi/mpi.hpp>
 
 #include <iostream>
@@ -43,11 +44,13 @@ namespace nrgljubljana_interface {
   using namespace triqs::utility;
   using namespace triqs::h5;
 
+  using namespace itertools;
+
   ///// The structure of the gf : block_idx -> pair of block_name and index list (int/string)
   //using triqs::hilbert_space::gf_struct_t;
 
   /// Container type
-  using g_w_t = gf<refreq_pts, matrix_valued>;
+  using g_w_t = block_gf<refreq_pts, matrix_valued>;
 
   /// A view to a g_w_t
   using g_w_vt = g_w_t::view_type;

@@ -25,7 +25,8 @@ namespace nrgljubljana_interface {
 
   void h5_write(triqs::h5::group h5group, std::string subgroup_name, constr_params_t const &cp) {
     auto grp = h5group.create_group(subgroup_name);
-    h5_write(grp, "problem", cp.problem);
+    h5_write(grp, "model", cp.model);
+    h5_write(grp, "symtype", cp.symtype);
     h5_write(grp, "mesh_max", cp.mesh_max);
     h5_write(grp, "mesh_min", cp.mesh_min);
     h5_write(grp, "mesh_ratio", cp.mesh_ratio);
@@ -33,7 +34,8 @@ namespace nrgljubljana_interface {
 
   void h5_read(triqs::h5::group h5group, std::string subgroup_name, constr_params_t &cp) {
     auto grp = h5group.open_group(subgroup_name);
-    h5_read(grp, "problem", cp.problem);
+    h5_read(grp, "model", cp.model);
+    h5_read(grp, "symtype", cp.symtype);
     h5_read(grp, "mesh_max", cp.mesh_max);
     h5_read(grp, "mesh_min", cp.mesh_min);
     h5_read(grp, "mesh_ratio", cp.mesh_ratio);
