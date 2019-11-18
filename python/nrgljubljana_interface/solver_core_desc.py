@@ -105,69 +105,33 @@ c.add_method("""void solve (**nrgljubljana_interface::solve_params_t)""",
 
 
 
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| Parameter Name   | Type                          | Default | Documentation                                        |
-+==================+===============================+=========+======================================================+
-| Lambda           | double                        | 2.0     | Logarithmic discretization parameter                 |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| Nz               | int                           | 1       | Number of discretization meshes                      |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| Tmin             | double                        | 1e-4    | Lowest scale on the Wilson chain                     |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| keep             | size_t                        | 100     | Maximum number of states to keep at each step        |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| keepenergy       | double                        | -1.0    | Cut-off energy for truncation                        |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| keepmin          | size_t                        | 0       | Minimum number of states to keep at each step        |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| T                | double                        | 0.001   | Temperature, k_B T/D,                                |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| ops              | std::string                   | ""      | Operators to be calculated                           |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| specs            | std::string                   | ""      | Spectral functions (singlet ops) to compute          |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| specd            | std::string                   | ""      | Spectral functions (doublet ops) to compute          |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| spect            | std::string                   | ""      | Spectral functions (triplet ops) to compute          |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| specq            | std::string                   | ""      | Spectral functions (quadruplet ops) to compute       |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| specot           | std::string                   | ""      | Spectral functions (orbital triplet ops) to compute  |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| specgt           | std::string                   | ""      | Conductance curves to compu<te                       |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| speci1t          | std::string                   | ""      | I_1 curves to compute                                |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| speci2t          | std::string                   | ""      | I_2 curves to compute                                |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| specchit         | std::string                   | ""      | Susceptibilities to compute                          |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| specv3           | std::string                   | ""      | 3-leg vertex functions to compute?                   |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| v3mm             | bool                          | false   | Compute 3-leg vertex on matsubara/matsubara axis?    |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| dmnrg            | bool                          | false   | Perform DMNRG (density-matrix NRG) calculation       |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| cfs              | bool                          | false   | Perform CFS (complete Fock space) calculation        |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| fdm              | bool                          | false   | Perform FDM (full-density-matrix) calculation        |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| fdmexpv          | bool                          | false   | Calculate expectation values using FDM               |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| dmnrgmats        | bool                          | false   | DMNRG calculation on Matsubara axis                  |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| fdmmats          | bool                          | false   | FDM calculation on Matsubara axis                    |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| mats             | size_t                        | 100     | Number of Matsubara points to collect                |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| alpha            | double                        | 0.3     | Width of logarithmic gaussian                        |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| gamma            | double                        | 0.2     | Parameter for Gaussian convolution step              |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| model_parameters | std::map<std::string, double> | --      | Model parameters                                     |
-+------------------+-------------------------------+---------+------------------------------------------------------+
-| post_process     | bool                          | true    | Perform post processing                              |
-+------------------+-------------------------------+---------+------------------------------------------------------+
++------------------+-------------------------------+---------+--------------------------------------------------+
+| Parameter Name   | Type                          | Default | Documentation                                    |
++==================+===============================+=========+==================================================+
+| Lambda           | double                        | 2.0     | Logarithmic discretization parameter             |
++------------------+-------------------------------+---------+--------------------------------------------------+
+| Nz               | int                           | 1       | Number of discretization meshes                  |
++------------------+-------------------------------+---------+--------------------------------------------------+
+| Tmin             | double                        | 1e-4    | Lowest scale on the Wilson chain                 |
++------------------+-------------------------------+---------+--------------------------------------------------+
+| keep             | size_t                        | 100     | Maximum number of states to keep at each step    |
++------------------+-------------------------------+---------+--------------------------------------------------+
+| keepenergy       | double                        | -1.0    | Cut-off energy for truncation                    |
++------------------+-------------------------------+---------+--------------------------------------------------+
+| keepmin          | size_t                        | 0       | Minimum number of states to keep at each step    |
++------------------+-------------------------------+---------+--------------------------------------------------+
+| T                | double                        | 0.001   | Temperature, k_B T/D,                            |
++------------------+-------------------------------+---------+--------------------------------------------------+
+| alpha            | double                        | 0.3     | Width of logarithmic gaussian                    |
++------------------+-------------------------------+---------+--------------------------------------------------+
+| gamma            | double                        | 0.2     | Parameter for Gaussian convolution step          |
++------------------+-------------------------------+---------+--------------------------------------------------+
+| method           | std::string                   | "fdm"   | Method for calculating the dynamical quantities  |
++------------------+-------------------------------+---------+--------------------------------------------------+
+| model_parameters | std::map<std::string, double> | --      | Model parameters                                 |
++------------------+-------------------------------+---------+--------------------------------------------------+
+| post_process     | bool                          | true    | Perform post processing                          |
++------------------+-------------------------------+---------+--------------------------------------------------+
 """)
 
 c.add_method("""void solve_one_z (double z, std::string taskdir)""",
@@ -181,6 +145,44 @@ c.add_method("""void set_nrg_params (**nrgljubljana_interface::nrg_params_t)""",
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | Parameter Name      | Type        | Default   | Documentation                                              |
 +=====================+=============+===========+============================================================+
+| dmnrg               | bool        | false     | Perform DMNRG (density-matrix NRG) calculation             |
++---------------------+-------------+-----------+------------------------------------------------------------+
+| cfs                 | bool        | false     | Perform CFS (complete Fock space) calculation              |
++---------------------+-------------+-----------+------------------------------------------------------------+
+| fdm                 | bool        | true      | Perform FDM (full-density-matrix) calculation              |
++---------------------+-------------+-----------+------------------------------------------------------------+
+| fdmexpv             | bool        | true      | Calculate expectation values using FDM                     |
++---------------------+-------------+-----------+------------------------------------------------------------+
+| dmnrgmats           | bool        | false     | DMNRG calculation on Matsubara axis                        |
++---------------------+-------------+-----------+------------------------------------------------------------+
+| fdmmats             | bool        | false     | FDM calculation on Matsubara axis                          |
++---------------------+-------------+-----------+------------------------------------------------------------+
+| mats                | size_t      | 100       | Number of Matsubara points to collect                      |
++---------------------+-------------+-----------+------------------------------------------------------------+
+| ops                 | std::string | ""        | Operators to be calculated                                 |
++---------------------+-------------+-----------+------------------------------------------------------------+
+| specs               | std::string | ""        | Spectral functions (singlet ops) to compute                |
++---------------------+-------------+-----------+------------------------------------------------------------+
+| specd               | std::string | ""        | Spectral functions (doublet ops) to compute                |
++---------------------+-------------+-----------+------------------------------------------------------------+
+| spect               | std::string | ""        | Spectral functions (triplet ops) to compute                |
++---------------------+-------------+-----------+------------------------------------------------------------+
+| specq               | std::string | ""        | Spectral functions (quadruplet ops) to compute             |
++---------------------+-------------+-----------+------------------------------------------------------------+
+| specot              | std::string | ""        | Spectral functions (orbital triplet ops) to compute        |
++---------------------+-------------+-----------+------------------------------------------------------------+
+| specgt              | std::string | ""        | Conductance curves to compu<te                             |
++---------------------+-------------+-----------+------------------------------------------------------------+
+| speci1t             | std::string | ""        | I_1 curves to compute                                      |
++---------------------+-------------+-----------+------------------------------------------------------------+
+| speci2t             | std::string | ""        | I_2 curves to compute                                      |
++---------------------+-------------+-----------+------------------------------------------------------------+
+| specchit            | std::string | ""        | Susceptibilities to compute                                |
++---------------------+-------------+-----------+------------------------------------------------------------+
+| specv3              | std::string | ""        | 3-leg vertex functions to compute?                         |
++---------------------+-------------+-----------+------------------------------------------------------------+
+| v3mm                | bool        | false     | Compute 3-leg vertex on matsubara/matsubara axis?          |
++---------------------+-------------+-----------+------------------------------------------------------------+
 | bandrescale         | double      | -1.0      | Band rescaling factor                                      |
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | mMAX                | int         | -1        | Number of sites in the star representation                 |
@@ -403,6 +405,73 @@ c.add_member(c_name = "T",
              initializer = """ 0.001 """,
              doc = r"""Temperature, k_B T/D,""")
 
+c.add_member(c_name = "alpha",
+             c_type = "double",
+             initializer = """ 0.3 """,
+             doc = r"""Width of logarithmic gaussian""")
+
+c.add_member(c_name = "gamma",
+             c_type = "double",
+             initializer = """ 0.2 """,
+             doc = r"""Parameter for Gaussian convolution step""")
+
+c.add_member(c_name = "method",
+             c_type = "std::string",
+             initializer = """ "fdm" """,
+             doc = r"""Method for calculating the dynamical quantities""")
+
+c.add_member(c_name = "model_parameters",
+             c_type = "std::map<std::string, double>",
+             initializer = """  """,
+             doc = r"""Model parameters""")
+
+c.add_member(c_name = "post_process",
+             c_type = "bool",
+             initializer = """ true """,
+             doc = r"""Perform post processing""")
+
+module.add_converter(c)
+
+# Converter for nrg_params_t
+c = converter_(
+        c_type = "nrgljubljana_interface::nrg_params_t",
+        doc = r"""NRG low-level parameters""",
+)
+c.add_member(c_name = "dmnrg",
+             c_type = "bool",
+             initializer = """ false """,
+             doc = r"""Perform DMNRG (density-matrix NRG) calculation""")
+
+c.add_member(c_name = "cfs",
+             c_type = "bool",
+             initializer = """ false """,
+             doc = r"""Perform CFS (complete Fock space) calculation""")
+
+c.add_member(c_name = "fdm",
+             c_type = "bool",
+             initializer = """ true """,
+             doc = r"""Perform FDM (full-density-matrix) calculation""")
+
+c.add_member(c_name = "fdmexpv",
+             c_type = "bool",
+             initializer = """ true """,
+             doc = r"""Calculate expectation values using FDM""")
+
+c.add_member(c_name = "dmnrgmats",
+             c_type = "bool",
+             initializer = """ false """,
+             doc = r"""DMNRG calculation on Matsubara axis""")
+
+c.add_member(c_name = "fdmmats",
+             c_type = "bool",
+             initializer = """ false """,
+             doc = r"""FDM calculation on Matsubara axis""")
+
+c.add_member(c_name = "mats",
+             c_type = "size_t",
+             initializer = """ 100 """,
+             doc = r"""Number of Matsubara points to collect""")
+
 c.add_member(c_name = "ops",
              c_type = "std::string",
              initializer = """ "" """,
@@ -463,68 +532,6 @@ c.add_member(c_name = "v3mm",
              initializer = """ false """,
              doc = r"""Compute 3-leg vertex on matsubara/matsubara axis?""")
 
-c.add_member(c_name = "dmnrg",
-             c_type = "bool",
-             initializer = """ false """,
-             doc = r"""Perform DMNRG (density-matrix NRG) calculation""")
-
-c.add_member(c_name = "cfs",
-             c_type = "bool",
-             initializer = """ false """,
-             doc = r"""Perform CFS (complete Fock space) calculation""")
-
-c.add_member(c_name = "fdm",
-             c_type = "bool",
-             initializer = """ false """,
-             doc = r"""Perform FDM (full-density-matrix) calculation""")
-
-c.add_member(c_name = "fdmexpv",
-             c_type = "bool",
-             initializer = """ false """,
-             doc = r"""Calculate expectation values using FDM""")
-
-c.add_member(c_name = "dmnrgmats",
-             c_type = "bool",
-             initializer = """ false """,
-             doc = r"""DMNRG calculation on Matsubara axis""")
-
-c.add_member(c_name = "fdmmats",
-             c_type = "bool",
-             initializer = """ false """,
-             doc = r"""FDM calculation on Matsubara axis""")
-
-c.add_member(c_name = "mats",
-             c_type = "size_t",
-             initializer = """ 100 """,
-             doc = r"""Number of Matsubara points to collect""")
-
-c.add_member(c_name = "alpha",
-             c_type = "double",
-             initializer = """ 0.3 """,
-             doc = r"""Width of logarithmic gaussian""")
-
-c.add_member(c_name = "gamma",
-             c_type = "double",
-             initializer = """ 0.2 """,
-             doc = r"""Parameter for Gaussian convolution step""")
-
-c.add_member(c_name = "model_parameters",
-             c_type = "std::map<std::string, double>",
-             initializer = """  """,
-             doc = r"""Model parameters""")
-
-c.add_member(c_name = "post_process",
-             c_type = "bool",
-             initializer = """ true """,
-             doc = r"""Perform post processing""")
-
-module.add_converter(c)
-
-# Converter for nrg_params_t
-c = converter_(
-        c_type = "nrgljubljana_interface::nrg_params_t",
-        doc = r"""NRG low-level parameters""",
-)
 c.add_member(c_name = "bandrescale",
              c_type = "double",
              initializer = """ -1.0 """,

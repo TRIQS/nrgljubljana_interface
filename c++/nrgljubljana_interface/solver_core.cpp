@@ -55,19 +55,19 @@ namespace nrgljubljana_interface {
     }
     
     // Read model-specific parameter defaults (file may not exist)
-    auto getline = [](string fn) {
-      std::ifstream F(constr_param.get_model_dir() + "/" + fn);
+    auto getline = [=](std::string fn) -> std::string {
+      std::ifstream F(constr_params.get_model_dir() + "/" + fn);
       if (!F) { return ""; }
       std::string s; 
       std::getline(F, s);
       return s;
-    }
-    np.ops = getline("ops");
-    np.specs = getline("specs");
-    np.specd = getline("specd");
-    np.spect = getline("spect");
-    np.specq = setline("specq");
-    np.specot = setline("specot");
+    };
+    nrg_params.ops = getline("ops");
+    nrg_params.specs = getline("specs");
+    nrg_params.specd = getline("specd");
+    nrg_params.spect = getline("spect");
+    nrg_params.specq = getline("specq");
+    nrg_params.specot = getline("specot");
 
     // Create the hybridization function on a logarithmic mesh
     std::vector<double> mesh_points;
