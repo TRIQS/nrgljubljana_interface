@@ -18,7 +18,7 @@ class test_SIAM(unittest.TestCase):
     cp["model"] = "SIAM"
     cp["symtype"] = "QS"
     cp["mesh_max"] = 1.0
-    cp["mesh_min"] = 1e-15
+    cp["mesh_min"] = 1e-14
     cp["mesh_ratio"] = 1.03
 
     # Set up the Solver
@@ -27,9 +27,9 @@ class test_SIAM(unittest.TestCase):
     # Solve Parameters
     sp = {}
     sp["Lambda"] = 2.0
-    sp["Nz"] = 1
+    sp["Nz"] = 2
     sp["Tmin"] = 1e-7
-    sp["keep"] = 1000
+    sp["keep"] = 100
     sp["keepenergy"] = 8.0
     sp["ops"] = "n_d n_d^2 hop0 A_d sigma_d self_d"
     sp["specs"] = "n_d-n_d"
