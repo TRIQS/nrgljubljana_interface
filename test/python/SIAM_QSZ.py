@@ -14,11 +14,10 @@ class test_SIAM(unittest.TestCase):
 
     # Construct Parameters
     cp = {}
-
     cp["model"] = "SIAM"
     cp["symtype"] = "QSZ"
     cp["mesh_max"] = 1.0
-    cp["mesh_min"] = 1e-14
+    cp["mesh_min"] = 1e-6
     cp["mesh_ratio"] = 1.03
 
     # Set up the Solver
@@ -31,18 +30,12 @@ class test_SIAM(unittest.TestCase):
     sp["Tmin"] = 1e-7
     sp["keep"] = 100
     sp["keepenergy"] = 8.0
-    sp["ops"] = "n_d n_d^2 hop0 A_d sigma_d self_d"
-    sp["specs"] = "n_d-n_d"
-    sp["specd"] = "A_d-A_d self_d-A_d"
-    sp["spect"] = "sigma_d-sigma_d"
-    sp["dmnrg"] = True
-    sp["fdm"] = True
 
     # Model Parameters
     mp = {}
     mp["U1"] = 0.2
     mp["eps1"] = -0.08
-    mp["B1"] = 0.
+    mp["B1"] = -0.02
     sp["model_parameters"] = mp
 
     # Low-level NRG Parameters
