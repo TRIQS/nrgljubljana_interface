@@ -84,6 +84,52 @@ namespace nrgljubljana_interface {
     /// Temperature, k_B T/D,
     double T = 0.001;
 
+    /// Width of logarithmic gaussian
+    double alpha = 0.3;
+
+    /// Parameter for Gaussian convolution step
+    double gamma = 0.2;
+     
+    /// Method for calculating the dynamical quantities
+    std::string method = "fdm";
+
+    /// Model parameters
+    std::map<std::string, double> model_parameters;
+
+    /// Perform post processing
+    bool post_process = true;
+
+    /// Write constr_params_t to hdf5
+    friend void h5_write(triqs::h5::group h5group, std::string subgroup_name, solve_params_t const &sp);
+
+    /// Read constr_params_t from hdf5
+    friend void h5_read(triqs::h5::group h5group, std::string subgroup_name, solve_params_t &sp);
+  };
+
+  /// NRG low-level parameters
+  struct nrg_params_t {
+
+    /// Perform DMNRG (density-matrix NRG) calculation
+    bool dmnrg = false;
+
+    /// Perform CFS (complete Fock space) calculation
+    bool cfs = false;
+
+    /// Perform FDM (full-density-matrix) calculation
+    bool fdm = true;
+
+    /// Calculate expectation values using FDM
+    bool fdmexpv = true;
+
+    /// DMNRG calculation on Matsubara axis
+    bool dmnrgmats = false;
+
+    /// FDM calculation on Matsubara axis
+    bool fdmmats = false;
+
+    /// Number of Matsubara points to collect
+    size_t mats = 100;
+
     /// Operators to be calculated
     std::string ops = "";
 
@@ -119,49 +165,6 @@ namespace nrgljubljana_interface {
 
     /// Compute 3-leg vertex on matsubara/matsubara axis?
     bool v3mm = false;
-
-    /// Perform DMNRG (density-matrix NRG) calculation
-    bool dmnrg = false;
-
-    /// Perform CFS (complete Fock space) calculation
-    bool cfs = false;
-
-    /// Perform FDM (full-density-matrix) calculation
-    bool fdm = false;
-
-    /// Calculate expectation values using FDM
-    bool fdmexpv = false;
-
-    /// DMNRG calculation on Matsubara axis
-    bool dmnrgmats = false;
-
-    /// FDM calculation on Matsubara axis
-    bool fdmmats = false;
-
-    /// Number of Matsubara points to collect
-    size_t mats = 100;
-
-    /// Width of logarithmic gaussian
-    double alpha = 0.3;
-
-    /// Parameter for Gaussian convolution step
-    double gamma = 0.2;
-
-    /// Model parameters
-    std::map<std::string, double> model_parameters;
-
-    /// Perform post processing
-    bool post_process = true;
-
-    /// Write constr_params_t to hdf5
-    friend void h5_write(triqs::h5::group h5group, std::string subgroup_name, solve_params_t const &sp);
-
-    /// Read constr_params_t from hdf5
-    friend void h5_read(triqs::h5::group h5group, std::string subgroup_name, solve_params_t &sp);
-  };
-
-  /// NRG low-level parameters
-  struct nrg_params_t {
 
     /// Band rescaling factor
     double bandrescale = -1.0;

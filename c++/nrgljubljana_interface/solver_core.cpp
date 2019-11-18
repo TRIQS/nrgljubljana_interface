@@ -53,6 +53,21 @@ namespace nrgljubljana_interface {
         gf_struct.emplace_back(bl_name, idx_lst);
       }
     }
+    
+    // Read model-specific parameter defaults (file may not exist)
+    auto getline = [](string fn) {
+      std::ifstream F(constr_param.get_model_dir() + "/" + fn);
+      if (!F) { return ""; }
+      std::string s; 
+      std::getline(F, s);
+      return s;
+    }
+    np.ops = getline("ops");
+    np.specs = getline("specs");
+    np.specd = getline("specd");
+    np.spect = getline("spect");
+    np.specq = setline("specq");
+    np.specot = setline("specot");
 
     // Create the hybridization function on a logarithmic mesh
     std::vector<double> mesh_points;
@@ -191,6 +206,11 @@ namespace nrgljubljana_interface {
       np.xmax = np.Nmax / 2. + 2.;
     if (np.bandrescale < 0) // Make the NRG energy window correspond to the extend of the frequency mesh
       np.bandrescale = cp.mesh_max;
+    // Ensure the selected method is enabled. Other methods may be enables as well, but only the output files for the selected method well be read-in by the nrglj-interface.
+    if (sp.method == "fdm") { np.fdm = true; }
+    if (sp.method == "dmnrg") { np.dmnrg = true; }
+    if (sp.method == "cfs") { np.cfs = true; }
+    if (sp.method == "finite") { np.finite = true; }	  
   }
 
   void solver_core::set_nrg_params(nrg_params_t const &nrg_params_) { nrg_params = nrg_params_; }
@@ -247,25 +267,25 @@ namespace nrgljubljana_interface {
     F << "keepenergy=" << sp.keepenergy << std::endl;
     F << "keepmin=" << sp.keepmin << std::endl;
     F << "T=" << sp.T << std::endl;
-    F << "ops=" << sp.ops << std::endl;
-    F << "specs=" << sp.specs << std::endl;
-    F << "specd=" << sp.specd << std::endl;
-    F << "spect=" << sp.spect << std::endl;
-    F << "specq=" << sp.specq << std::endl;
-    F << "specot=" << sp.specot << std::endl;
-    F << "specgt=" << sp.specgt << std::endl;
-    F << "speci1t=" << sp.speci1t << std::endl;
-    F << "speci2t=" << sp.speci2t << std::endl;
-    F << "specchit=" << sp.specchit << std::endl;
-    F << "specv3=" << sp.specv3 << std::endl;
-    F << "v3mm=" << sp.v3mm << std::endl;
-    F << "dmnrg=" << sp.dmnrg << std::endl;
-    F << "cfs=" << sp.cfs << std::endl;
-    F << "fdm=" << sp.fdm << std::endl;
-    F << "fdmexpv=" << sp.fdmexpv << std::endl;
-    F << "dmnrgmats=" << sp.dmnrgmats << std::endl;
-    F << "fdmmats=" << sp.fdmmats << std::endl;
-    F << "mats=" << sp.mats << std::endl;
+    F << "ops=" << np.ops << std::endl;
+    F << "specs=" << np.specs << std::endl;
+    F << "specd=" << np.specd << std::endl;
+    F << "spect=" << np.spect << std::endl;
+    F << "specq=" << np.specq << std::endl;
+    F << "specot=" << np.specot << std::endl;
+    F << "specgt=" << np.specgt << std::endl;
+    F << "speci1t=" << np.speci1t << std::endl;
+    F << "speci2t=" << np.speci2t << std::endl;
+    F << "specchit=" << np.specchit << std::endl;
+    F << "specv3=" << np.specv3 << std::endl;
+    F << "v3mm=" << np.v3mm << std::endl;
+    F << "dmnrg=" << np.dmnrg << std::endl;
+    F << "cfs=" << np.cfs << std::endl;
+    F << "fdm=" << np.fdm << std::endl;
+    F << "fdmexpv=" << np.fdmexpv << std::endl;
+    F << "dmnrgmats=" << np.dmnrgmats << std::endl;
+    F << "fdmmats=" << np.fdmmats << std::endl;
+    F << "mats=" << np.mats << std::endl;
     F << "alpha=" << sp.alpha << std::endl;
     F << "gamma=" << sp.gamma << std::endl; // ?
     F << "discretization=" << np.discretization << std::endl;
