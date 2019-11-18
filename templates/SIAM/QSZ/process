@@ -1,0 +1,97 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use Math::Trig;
+
+my $Nz = getparam("Nz");
+my $min = getparam("broaden_min");
+my $max = getparam("broaden_max");
+my $ratio = getparam("broaden_ratio");
+my $T = getparam("T");
+my $alpha = getparam("alpha");
+my $gamma = getparam("gamma");
+print "Nz=$Nz min=$min max=$max ratio=$ratio T=$T alpha=$alpha gamma=$gamma\n";
+my $pr = "FDM_dens"; # prefix
+
+avg("spec_${pr}_A_d-A_d-u.bin",    "A_up_00");
+avg("spec_${pr}_A_d-A_d-d.bin",    "A_dn_00");
+avg("spec_${pr}_self_d-A_d-u.bin", "B_up_00");
+avg("spec_${pr}_self_d-A_d-d.bin", "B_dn_00");
+avg("corr_${pr}_n_d-n_d.bin",      "nn_00");
+avg("corr_${pr}_SZd-SZd.bin",      "ss_zz_00");
+
+scaley("A_up_00", -pi, "imG_up_00");
+scaley("A_dn_00", -pi, "imG_dn_00");
+scaley("B_up_00", -pi, "imF_up_00");
+scaley("B_dn_00", -pi, "imF_dn_00");
+
+kk("imG_up_00");
+kk("imG_dn_00");
+kk("imF_up_00");
+kk("imF_dn_00");
+
+sub kk {
+        my $in = shift;
+        $in .= ".dat";
+        my $out;
+        ($out = $in) =~ s/^im/re/;
+        -e $in or die "Input file not found: $in. Stopped";
+        system("kk $in $out");
+        -e $out or die "Output file not found:$ out. Stopped";
+    }
+
+sub avg
+{
+    my $in = shift;
+    my $out = shift;
+    $out .= ".dat";
+    unlink "$out";
+    system "broaden -x $gamma -m $min -M $max -r $ratio   $in $Nz $alpha $T 1e-9";
+    if ($?) {
+	system "echo Broadening of $in failed: $? >>>ERROR";
+	die "broaden failed: $?\n";                                                                                                                                                                                                                
+    }
+    my $specfn = "spec.dat";
+    if (!-e $specfn) {
+	system "echo Failed to produce broadened spectrum $specfn -> $out. >>>ERROR";
+	die "broaden failed\n";
+    }
+    system "mv $specfn $out";
+}
+
+sub getparam
+{
+    my $keyword = shift;
+    my $fn = "param";
+    open (F, "<", $fn) or die "Can't open $fn for reading: $!\n";
+    while (<F>) {
+	if (/^$keyword=(.*)/) {
+	    return $1;
+	}
+    }
+    close F;
+    die "Parsing failure: $keyword not found.";
+}
+
+sub scaley
+{
+    my $fnin = shift;
+    my $factor = eval(shift);
+    my $fnout = shift;
+    $fnin .= ".dat";
+    $fnout .= ".dat";
+    open (F, "<", $fnin) or die "Can't open $fnin for reading: $!\n";
+    open (G, ">", $fnout) or die "Can't open $fnout for writing: $!\n";
+    while (<F>) {
+	if (!/^#/) {
+	    chomp;
+	    my @d = split;
+	    $d[1] = $d[1] * $factor;
+	    print G "@d\n";
+	} else {
+	    print G;
+	}
+    }
+    close G;
+    close F;
+}

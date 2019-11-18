@@ -1,0 +1,13 @@
+[extra]
+U1=1
+eps1=1
+B1=1
+
+[param]
+options=GENERATE_TEMPLATE
+symtype=QSZ
+polarized=true
+model=SIAM.m
+ops=n_d n_d^2 hop0 A_d self_d sigma_d SZd
+specs=n_d-n_d SZd-SZd
+specd=A_d-A_d-u A_d-A_d-d self_d-A_d-u self_d-A_d-d
