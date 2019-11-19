@@ -70,7 +70,6 @@ namespace nrgljubljana_interface {
     nrg_params.spect = getline("spect");
     nrg_params.specq = getline("specq");
     nrg_params.specot = getline("specot");
-//    nrg_params.polarized = boost::lexical_cast<bool>(getline("polarized", "true"));
     nrg_params.polarized = getline("polarized") == "true";
 
     // Create the hybridization function on a logarithmic mesh
