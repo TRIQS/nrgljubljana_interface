@@ -1,0 +1,19 @@
+#!/usr/bin/env perl
+
+$x = shift;
+$y = shift;
+if (!defined($x)) { $x = "write"; }
+if (!defined($y)) { $y = "sp"; }
+
+open (F, "<params.hpp");
+
+while (<F>) {
+  if (/\s*(\S+)\s*(\S+)\s*=\s*(\S+);/) {
+    $type = $1;
+    $var = $2;
+    $default = $3;
+    if (!($type =~ /^\//)) {
+        print "    h5_${x}(grp, \"$var\", $y.$var);\n";
+    }
+  }
+}

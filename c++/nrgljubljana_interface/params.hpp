@@ -96,9 +96,6 @@ namespace nrgljubljana_interface {
     /// Model parameters
     std::map<std::string, double> model_parameters;
 
-    /// Perform post processing
-    bool post_process = true;
-
     /// Write constr_params_t to hdf5
     friend void h5_write(triqs::h5::group h5group, std::string subgroup_name, solve_params_t const &sp);
 

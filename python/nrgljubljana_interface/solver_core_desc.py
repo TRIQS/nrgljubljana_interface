@@ -130,8 +130,6 @@ c.add_method("""void solve (**nrgljubljana_interface::solve_params_t)""",
 +------------------+-------------------------------+---------+--------------------------------------------------+
 | model_parameters | std::map<std::string, double> | --      | Model parameters                                 |
 +------------------+-------------------------------+---------+--------------------------------------------------+
-| post_process     | bool                          | true    | Perform post processing                          |
-+------------------+-------------------------------+---------+--------------------------------------------------+
 """)
 
 c.add_method("""void solve_one_z (double z, std::string taskdir)""",
@@ -424,11 +422,6 @@ c.add_member(c_name = "model_parameters",
              c_type = "std::map<std::string, double>",
              initializer = """  """,
              doc = r"""Model parameters""")
-
-c.add_member(c_name = "post_process",
-             c_type = "bool",
-             initializer = """ true """,
-             doc = r"""Perform post processing""")
 
 module.add_converter(c)
 

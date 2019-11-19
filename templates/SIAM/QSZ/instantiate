@@ -26,25 +26,31 @@ my $verbose = 1;
 system "pwd";
 
 system "mv param param.orig";
-prochyb("Gamma_up_00.dat");
-prochyb("Gamma_dn_00.dat");
+prochyb("up_00");
+prochyb("dn_00");
 
 sub prochyb
 {
     my $x = shift;
     my $hybfn = "Gamma_${x}.dat";
-    -e $hybfn or die "Hybridisation function not found.";
+    -e $hybfn or die "Hybridisation function $hybfn not found.";
+    -e "FSOL_${x}.dat" or die "FSOL_${x}.dat not found.";
+    -e "FSOLNEG_${x}.dat" or die "FSOLNEG_{x}.dat not found.";
 
     system "cp param.orig param";
     system "echo dos=Gamma_${x}.dat >>param";
     system "cp FSOL_${x}.dat FSOL.dat";
-    system "cp FSOLNEG_${x}.dat FSOLNET.dat";
+    system "cp FSOLNEG_${x}.dat FSOLNEG.dat";
     system "$nrgchain";
 
-    -e "xi.dat" or die "Wilson chain coefficients not found.";
+    -e "xi.dat" && -e "zeta.dat" && -e "theta.dat" or die "Wilson chain coefficients not found.";
 
-    die "TODO";
+    system "mv xi.dat xi_${x}.dat";
+    system "mv zeta.dat zeta_${x}.dat";
+    system "mv theta.dat theta_${x}.dat";
 }
+
+die "TODO";
 
 # Split param file into sections
 my $fnparam = "param";
