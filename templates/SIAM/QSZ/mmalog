@@ -4,7 +4,7 @@ sneg version: 1.251
 Loading module initialparse.m
 Options: {GENERATE_TEMPLATE}
 Loading module models.m
-"models started"
+models started
 Loading module custommodels.m
 models $Id: custommodels.m,v 1.1 2015/11/09 12:23:47 rokzitko Exp rokzitko $
 custommodels.m done
@@ -31,56 +31,34 @@ Hamiltonian generated. -coefzeta[1, 0]/2 - coefzeta[2, 0]/2 - (B1*nc[d[0, 0], d[
    gammaPolCh[1]*nc[d[0, 1], f[1, 0, 1]] + gammaPolCh[1]*nc[f[0, 0, 0], d[1, 0]] + coefzeta[2, 0]*nc[f[0, 0, 0], f[1, 0, 0]] + gammaPolCh[1]*nc[f[0, 0, 1], d[1, 1]] + coefzeta[1, 0]*nc[f[0, 0, 1], f[1, 0, 1]] - 
    U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]
 H-conj[H]=0
-SCALE[0]=1.
-faktor=1.
-
-                                 1
-Power::infy: Infinite expression -- encountered.
-                                 0.
-
-Infinity::indet: Indeterminate expression 0. ComplexInfinity encountered.
+SCALE[0]=1.0201394465967895
+faktor=1.3862943611198906
 Generating basis
 Basis states generated.
 BASIS NR=16
 Basis: basis.model..QSZ
 PREC=1000
-DISCNMAX=Nmax
-mMAX=Max[80, 2*Nmax]
+DISCNMAX=0
+mMAX=80
 Diagonalisation.
 BAND="flat" thetaCh={"2.", "2."}
 Discretization (channel 1)
-
-Table::iterb: Iterator {i, 0, Nmax} does not have appropriate bounds.
-
-Table::iterb: Iterator {i, 0, Nmax} does not have appropriate bounds.
-
-Table::iterb: Iterator {i, 0, Nmax} does not have appropriate bounds.
-
-General::stop: Further output of Table::iterb will be suppressed during this calculation.
 "xitable" (channel 1)
-i
-
-Table::nliter: Non-list iterator (MyPrint[cstr10[First[#1]]] & )[{i, 0, Nmax}] at position 2 does not evaluate to a real numeric value.
+xi(1.)(0)
 "zetatable" (channel 1)
-i
-
-Table::nliter: Non-list iterator (MyPrint[cstr10[First[#1]]] & )[{i, 0, Nmax}] at position 2 does not evaluate to a real numeric value.
+dzeta(1.)(0)
 Precision last xi:Infinity
 Precision last zeta: Infinity
 Discretization (channel 2)
 "xitable" (channel 2)
-i
-
-Table::nliter: Non-list iterator (MyPrint[cstr10[First[#1]]] & )[{i, 0, Nmax}] at position 2 does not evaluate to a real numeric value.
-
-General::stop: Further output of Table::nliter will be suppressed during this calculation.
+xi(2.)(0)
 "zetatable" (channel 2)
-i
+dzeta(2.)(0)
 Precision last xi:Infinity
 Precision last zeta: Infinity
 Discretization done.
 --EOF--
-           {{# Input file for NRG Ljubljana}, {# symtype , QSZ}, {# Using sneg version , 1.251}, {#!9}, {# Number of channels, chain sites, subspaces: }, {1, Nmax, 9}}
+           {{# Input file for NRG Ljubljana}, {# symtype , QSZ}, {# Using sneg version , 1.251}, {#!9}, {# Number of channels, chain sites, subspaces: }, {1, 0, 9}}
 
 maketable[]
 
@@ -88,7 +66,7 @@ exnames={B1, d, eps1, g, Gamma1, Gamma11, Gamma12, Gamma2, Gamma21, Gamma22, Gam
    JkondoZ, Jspin, U1}
 thetaCh={"2.", "2."}
 theta0Ch={"0.2", "0.2"}
-gammaPolCh={"Indeterminate", "Indeterminate"}
+gammaPolCh={"0.252313252202016", "0.252313252202016"}
 calcgsenergy[]
 diagvc[{-2, 1}]
 Generating matrix: ham.model..QSZ_-2.1
@@ -129,12 +107,12 @@ hamil={{(4*eps1 + 2*U1 + coefzeta[1, 0] + coefzeta[2, 0])/2}}
 dim={1, 1}
 Lowest energies (absolute):{1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 4}
 Lowest energies (GS shifted):{0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 3}
-Scale factor SCALE(Ninit):1.
-Lowest energies (shifted and scaled):{0., 0., 0., 0., 0., 0., 0., 0., 0., 1., 1., 1., 1., 1., 2., 3.}
+Scale factor SCALE(Ninit):1.0201394465967895
+Lowest energies (shifted and scaled):{0., 0., 0., 0., 0., 0., 0., 0., 0., 0.9802581434685472, 0.9802581434685472, 0.9802581434685472, 0.9802581434685472, 0.9802581434685472, 1.9605162869370945, 2.9407744304056416}
 makeireducf GENERAL
 ireducTable: f[0]{}
 Loading module operators.m
-"operators.m started"
+operators.m started
 s: n_d op.model..QSZ.n_d nc[d[0, 0], d[1, 0]] + nc[d[0, 1], d[1, 1]]
 s: n_d^2 op.model..QSZ.n_d^2 nc[d[0, 0], d[1, 0]] + nc[d[0, 1], d[1, 1]] - 2*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]
 s: hop0 op.model..QSZ.hop0 nc[d[0, 0], f[1, 0, 0]] + nc[d[0, 1], f[1, 0, 1]] + nc[f[0, 0, 0], d[1, 0]] + nc[f[0, 0, 1], d[1, 1]]
@@ -151,11 +129,11 @@ Loading module modeloperators.m
 Can't load modeloperators.m. Continuing.
 -- maketable[] done --
 Timing report
-{basis, 0.0082160000000000001`4.366205424085193}
-{ham, 0.1678140000000000001`4.722130673380798}
-{maketable, 1.012531`6.456953322096598}
-{xi, 0.013721`4.588930757829943}
+{basis, 0.007262`4.312601238072845}
+{ham, 0.1614960000000000001`4.705464254070884}
+{maketable, 1.020454`6.4603384258734575}
+{xi, 0.011374`4.50745821741212}
 {_, 0}
 data.in
-gammaPol=Indeterminate
+gammaPol=0.252313252202016
 "Success!"

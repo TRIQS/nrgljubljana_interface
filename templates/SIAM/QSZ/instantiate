@@ -26,12 +26,13 @@ my $verbose = 1;
 system "pwd";
 
 system "mv param param.orig";
-prochyb("up_00");
-prochyb("dn_00");
+prochyb("up_00",1);
+prochyb("dn_00",2);
 
 sub prochyb
 {
     my $x = shift;
+    my $n = shift;
     my $hybfn = "Gamma_${x}.dat";
     -e $hybfn or die "Hybridisation function $hybfn not found.";
     -e "FSOL_${x}.dat" or die "FSOL_${x}.dat not found.";
@@ -45,12 +46,10 @@ sub prochyb
 
     -e "xi.dat" && -e "zeta.dat" && -e "theta.dat" or die "Wilson chain coefficients not found.";
 
-    system "mv xi.dat xi_${x}.dat";
-    system "mv zeta.dat zeta_${x}.dat";
-    system "mv theta.dat theta_${x}.dat";
+    system "mv xi.dat xi${n}.dat";
+    system "mv zeta.dat zeta${n}.dat";
+    system "mv theta.dat theta${n}.dat";
 }
-
-die "TODO";
 
 # Split param file into sections
 my $fnparam = "param";
@@ -69,7 +68,7 @@ close O if $section ne "";
 close F;	
 
 # Length of the Wilson chain
-my $line = `wc xi.dat`;
+my $line = `wc xi1.dat`;
 $line =~ /^\s*(\d+)/;
 my $nr = $1-1;
 
@@ -139,7 +138,7 @@ while (<F>) {
 	    $line1 =~ /DIAG\s+(\S+)$/;
 	    my $fn = $1;
 
-	    system("$matrix param.extra $fn >ham");
+	    system("$matrix -v -c2 param.extra $fn >ham"); # 2 = up & dn
 	    if ($? != 0) {
 		die "matrix call error";
 	    }
@@ -208,13 +207,17 @@ if ($adddisc) {
 
   print OUT "z\n";
 
-  print OUT "$nr\n";
-  my $xi = `cat xi.dat`;
-  print OUT "$xi";
+  for (my $ch = 1; $ch <= 2; $ch++) {
+      print OUT "$nr\n";
+      my $xi = `cat xi${ch}.dat`;
+      print OUT "$xi";
+  }
 
-  print OUT "$nr\n";
-  my $zeta = `cat zeta.dat`;
-  print OUT "$zeta";
+  for (my $ch = 1; $ch <= 2; $ch++) {
+      print OUT "$nr\n";
+      my $zeta = `cat zeta${ch}.dat`;
+      print OUT "$zeta";
+  }
 }
 
 sub subtract
