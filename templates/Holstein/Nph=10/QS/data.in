@@ -8,22 +8,22 @@
 # Energies (GS energy subtracted, multiplied by 1/SCALE):
 -2	1
 11
-DIAG 	ham.model..QS_-2.1
+DIAG 	ham_-2.1
 -1	2
 22
-DIAG 	ham.model..QS_-1.2
+DIAG 	ham_-1.2
 0	1
 33
-DIAG 	ham.model..QS_0.1
+DIAG 	ham_0.1
 0	3
 11
-DIAG 	ham.model..QS_0.3
+DIAG 	ham_0.3
 1	2
 22
-DIAG 	ham.model..QS_1.2
+DIAG 	ham_1.2
 2	1
 11
-DIAG 	ham.model..QS_2.1
+DIAG 	ham_2.1
 # Irreducible matrix elements for Wilson chains:
 f 0 0
 6

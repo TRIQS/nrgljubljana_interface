@@ -26,8 +26,8 @@ my $verbose = 1;
 system "pwd";
 
 system "mv param param.orig";
-prochyb("up_00",1);
-prochyb("dn_00",2);
+prochyb("imp_00",1);
+prochyb("imp_11",2);
 
 sub prochyb
 {
@@ -207,13 +207,13 @@ if ($adddisc) {
 
   print OUT "z\n";
 
-  for (my $ch = 1; $ch <= 2*$channels; $ch++) { # polarized=true
+  for (my $ch = 1; $ch <= $channels; $ch++) {
       print OUT "$nr\n";
       my $xi = `cat xi${ch}.dat`;
       print OUT "$xi";
   }
 
-  for (my $ch = 1; $ch <= 2*$channels; $ch++) { # polarized=true
+  for (my $ch = 1; $ch <= $channels; $ch++) {
       print OUT "$nr\n";
       my $zeta = `cat zeta${ch}.dat`;
       print OUT "$zeta";

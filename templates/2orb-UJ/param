@@ -1,0 +1,15 @@
+[extra]
+U1=1.0
+U2=1.0
+Gamma1=0.1
+Gamma2=0.1
+eps1=-0.4
+eps2=-0.4
+U12=1.0
+J12=0
+
+[param]
+options=GENERATE_TEMPLATE
+model=2orb-UJ.m
+symtype=QS
+ops=n_d n_d^2 n_a n_a^2 SaSd n_an_d A_d A_a self_d self_a sigma_d sigma_a

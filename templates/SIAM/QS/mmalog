@@ -1,0 +1,117 @@
+NRG Ljubljana 2019.11 (c) Rok Zitko, rok.zitko@ijs.si, 2005-2019
+Mathematica version: 11.3.0 for Linux x86 (64-bit) (March 7, 2018)
+sneg version: 1.251
+Loading module initialparse.m
+Options: {GENERATE_TEMPLATE}
+Loading module models.m
+models started
+Loading module custommodels.m
+models $Id: custommodels.m,v 1.1 2015/11/09 12:23:47 rokzitko Exp rokzitko $
+custommodels.m done
+Loading module SIAM.m
+def1ch, NRDOTS=1
+COEFCHANNELS:1
+H0=coefzeta[1, 0]*(-1 + nc[f[0, 0, 0], f[1, 0, 0]] + nc[f[0, 0, 1], f[1, 0, 1]])
+adddots, nrdots=1
+params={gammaPol -> Sqrt[gammaA*theta0]/Sqrt[Pi], gammaPolCh[ch_] :> Sqrt[1/Pi*theta0Ch[ch]*gammaA], hybV[i_, j_] :> Sqrt[1/Pi]*V[i, j], coefzeta[ch_, j__] :> N[bandrescale*zeta[ch][j]], coefxi[ch_, j__] :> N[bandrescale*xi[ch][j]], 
+   coefrung[ch_, j__] :> N[bandrescale*zetaR[ch][j]], coefdelta[ch_, j__] :> N[bandrescale*scdelta[ch][j]], coefkappa[ch_, j__] :> N[bandrescale*sckappa[ch][j]], U -> 0.1, delta -> 0., t -> 0., 
+   gammaPol2 -> Sqrt[extraGamma2*gammaA*thetaCh[1]]/Sqrt[Pi], gammaPol2to2 -> Sqrt[extraGamma2to2*gammaA*thetaCh[2]]/Sqrt[Pi], gammaPolch1 -> Sqrt[extraGamma1*gammaA*thetaCh[1]]/Sqrt[Pi], 
+   gammaPolch2 -> Sqrt[extraGamma2*gammaA*thetaCh[2]]/Sqrt[Pi], gammaPolch3 -> Sqrt[extraGamma3*gammaA*thetaCh[3]]/Sqrt[Pi], Jspin -> extraJspin*gammaA, Jcharge -> extraJcharge*gammaA, Jcharge1 -> extraJcharge1*gammaA, 
+   Jcharge2 -> extraJcharge2*gammaA, Jkondo -> extraJkondo*gammaA, Jkondo1 -> extraJkondo1*gammaA, Jkondo2 -> extraJkondo2*gammaA, Jkondo3 -> extraJkondo3*gammaA, Jkondo1P -> extraJkondo1P*gammaA, Jkondo2P -> extraJkondo2P*gammaA, 
+   Jkondo1Z -> extraJkondo1Z*gammaA, Jkondo2Z -> extraJkondo2Z*gammaA, JkondoP -> extraJkondoP*gammaA, JkondoZ -> extraJkondoZ*gammaA, Jkondo1ch2 -> extraJkondo1ch2*gammaA, Jkondo2ch2 -> extraJkondo2ch2*gammaA, gep -> extrag, dd -> extrad, 
+   hybV11 -> Sqrt[extraGamma11*gammaA*thetaCh[1]]/Sqrt[Pi], hybV12 -> Sqrt[extraGamma12*gammaA*thetaCh[2]]/Sqrt[Pi], hybV21 -> Sqrt[extraGamma21*gammaA*thetaCh[1]]/Sqrt[Pi], hybV22 -> Sqrt[extraGamma22*gammaA*thetaCh[2]]/Sqrt[Pi], U1 -> 1, 
+   eps1 -> 1}
+NRDOTS:1
+CHANNELS:1
+basis:{d[], f[0]}
+lrchain:{}
+lrextrarule:{}
+NROPS:2
+Hamiltonian generated. -coefzeta[1, 0] + eps1*nc[d[0, 0], d[1, 0]] + gammaPolCh[1]*nc[d[0, 0], f[1, 0, 0]] + eps1*nc[d[0, 1], d[1, 1]] + gammaPolCh[1]*nc[d[0, 1], f[1, 0, 1]] + gammaPolCh[1]*nc[f[0, 0, 0], d[1, 0]] + 
+   coefzeta[1, 0]*nc[f[0, 0, 0], f[1, 0, 0]] + gammaPolCh[1]*nc[f[0, 0, 1], d[1, 1]] + coefzeta[1, 0]*nc[f[0, 0, 1], f[1, 0, 1]] - U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]
+H-conj[H]=0
+SCALE[0]=1.0201394465967895
+faktor=1.3862943611198906
+Generating basis
+Basis states generated.
+BASIS NR=16
+Basis: basis
+PREC=1000
+DISCNMAX=0
+mMAX=80
+Diagonalisation.
+BAND="flat" thetaCh={"2."}
+Discretization (channel 1)
+"xitable" (channel 1)
+xi(1.)(0)
+"zetatable" (channel 1)
+dzeta(1.)(0)
+Precision last xi:Infinity
+Precision last zeta: Infinity
+Discretization done.
+--EOF--
+           {{# Input file for NRG Ljubljana}, {# symtype , QS}, {# Using sneg version , 1.251}, {#!9}, {# Number of channels, chain sites, subspaces: }, {1, 0, 6}}
+
+maketable[]
+
+exnames={d, eps1, g, Gamma1, Gamma11, Gamma12, Gamma2, Gamma21, Gamma22, Gamma2to2, Gamma3, Jcharge, Jcharge1, Jcharge2, Jkondo, Jkondo1, Jkondo1ch2, Jkondo1P, Jkondo1Z, Jkondo2, Jkondo2ch2, Jkondo2P, Jkondo2Z, Jkondo3, JkondoP, JkondoZ, 
+   Jspin, U1}
+thetaCh={"2."}
+theta0Ch={"0.2"}
+gammaPolCh={"0.252313252202016"}
+calcgsenergy[]
+diagvc[{-2, 1}]
+Generating matrix: ham_-2.1
+hamil={{-coefzeta[1, 0]}}
+dim={1, 1}
+diagvc[{-1, 2}]
+Generating matrix: ham_-1.2
+hamil={{0, gammaPolCh[1]}, {gammaPolCh[1], eps1 - coefzeta[1, 0]}}
+dim={2, 2}
+diagvc[{0, 1}]
+Generating matrix: ham_0.1
+hamil={{coefzeta[1, 0], Sqrt[2]*gammaPolCh[1], 0}, {Sqrt[2]*gammaPolCh[1], eps1, Sqrt[2]*gammaPolCh[1]}, {0, Sqrt[2]*gammaPolCh[1], 2*eps1 + U1 - coefzeta[1, 0]}}
+dim={3, 3}
+diagvc[{0, 3}]
+Generating matrix: ham_0.3
+hamil={{eps1}}
+dim={1, 1}
+diagvc[{1, 2}]
+Generating matrix: ham_1.2
+hamil={{eps1 + coefzeta[1, 0], -gammaPolCh[1]}, {-gammaPolCh[1], 2*eps1 + U1}}
+dim={2, 2}
+diagvc[{2, 1}]
+Generating matrix: ham_2.1
+hamil={{2*eps1 + U1 + coefzeta[1, 0]}}
+dim={1, 1}
+Lowest energies (absolute):{1, 1, 1, 1, 1, 1, 2, 2, 2, 3}
+Lowest energies (GS shifted):{0, 0, 0, 0, 0, 0, 1, 1, 1, 2}
+Scale factor SCALE(Ninit):1.0201394465967895
+Lowest energies (shifted and scaled):{0., 0., 0., 0., 0., 0., 0.9802581434685472, 0.9802581434685472, 0.9802581434685472, 1.9605162869370945}
+makeireducf GENERAL
+ireducTable: f[0]{}
+Loading module operators.m
+operators.m started
+s: n_d op.n_d nc[d[0, 0], d[1, 0]] + nc[d[0, 1], d[1, 1]]
+s: n_d^2 op.n_d^2 nc[d[0, 0], d[1, 0]] + nc[d[0, 1], d[1, 1]] - 2*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]
+s: hop0 op.hop0 nc[d[0, 0], f[1, 0, 0]] + nc[d[0, 1], f[1, 0, 1]] + nc[f[0, 0, 0], d[1, 0]] + nc[f[0, 0, 1], d[1, 1]]
+d: A_d d
+ireducTable: d{}
+t: sigma_d d[]
+ireducTable: Chop[Expand[komutator[Hint, d[#1, #2]]]] & {}
+operators.m done
+Loading module customoperators.m
+"customoperators $Id: customoperators.m,v 1.1 2015/11/09 12:23:54 rokzitko Exp rokzitko $"
+Customoperators done.
+Loading module modeloperators.m
+Can't load modeloperators.m. Continuing.
+-- maketable[] done --
+Timing report
+{basis, 0.012158`4.536407132544398}
+{ham, 0.070242`4.519990611850325}
+{maketable, 0.539927`6.1838800391702495}
+{xi, 0.005884`4.221217657551463}
+{_, 0}
+data.in
+gammaPol=0.252313252202016
+"Success!"
