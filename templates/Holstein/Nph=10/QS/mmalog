@@ -192,21 +192,20 @@ makeireducf GENERAL
 ireducTable: f[0]{}
 Loading module operators.m
 operators.m started
-s: n_d op.n_d nc[d[0, 0], d[1, 0]] + nc[d[0, 1], d[1, 1]]
-s: n_d^2 op.n_d^2 nc[d[0, 0], d[1, 0]] + nc[d[0, 1], d[1, 1]] - 2*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]
-s: hop0 op.hop0 nc[d[0, 0], f[1, 0, 0]] + nc[d[0, 1], f[1, 0, 1]] + nc[f[0, 0, 0], d[1, 0]] + nc[f[0, 0, 1], d[1, 1]]
+s: n_d nc[d[0, 0], d[1, 0]] + nc[d[0, 1], d[1, 1]]
+s: n_d^2 nc[d[0, 0], d[1, 0]] + nc[d[0, 1], d[1, 1]] - 2*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]
+s: hop0 nc[d[0, 0], f[1, 0, 0]] + nc[d[0, 1], f[1, 0, 1]] + nc[f[0, 0, 0], d[1, 0]] + nc[f[0, 0, 1], d[1, 1]]
 d: A_d d
 ireducTable: d{}
 t: sigma_d d[]
 ireducTable: Chop[Expand[komutator[Hint /. params, d[#1, #2]]]] & {}
-s: aan op.aan nc[ket[0], bra[1]] + Sqrt[2]*nc[ket[1], bra[2]] + Sqrt[3]*nc[ket[2], bra[3]] + 2*nc[ket[3], bra[4]] + Sqrt[5]*nc[ket[4], bra[5]] + Sqrt[6]*nc[ket[5], bra[6]] + Sqrt[7]*nc[ket[6], bra[7]] + 2*Sqrt[2]*nc[ket[7], bra[8]] + 
+s: aan nc[ket[0], bra[1]] + Sqrt[2]*nc[ket[1], bra[2]] + Sqrt[3]*nc[ket[2], bra[3]] + 2*nc[ket[3], bra[4]] + Sqrt[5]*nc[ket[4], bra[5]] + Sqrt[6]*nc[ket[5], bra[6]] + Sqrt[7]*nc[ket[6], bra[7]] + 2*Sqrt[2]*nc[ket[7], bra[8]] + 
    3*nc[ket[8], bra[9]] + Sqrt[10]*nc[ket[9], bra[10]]
-s: nph op.nph nc[ket[1], bra[1]] + 2*nc[ket[2], bra[2]] + 3*nc[ket[3], bra[3]] + 4*nc[ket[4], bra[4]] + 5*nc[ket[5], bra[5]] + 6*nc[ket[6], bra[6]] + 7*nc[ket[7], bra[7]] + 8*nc[ket[8], bra[8]] + 9*nc[ket[9], bra[9]] + 
-   10*nc[ket[10], bra[10]]
-s: displ op.displ nc[ket[0], bra[1]] + nc[ket[1], bra[0]] + Sqrt[2]*nc[ket[1], bra[2]] + Sqrt[2]*nc[ket[2], bra[1]] + Sqrt[3]*nc[ket[2], bra[3]] + Sqrt[3]*nc[ket[3], bra[2]] + 2*nc[ket[3], bra[4]] + 2*nc[ket[4], bra[3]] + 
+s: nph nc[ket[1], bra[1]] + 2*nc[ket[2], bra[2]] + 3*nc[ket[3], bra[3]] + 4*nc[ket[4], bra[4]] + 5*nc[ket[5], bra[5]] + 6*nc[ket[6], bra[6]] + 7*nc[ket[7], bra[7]] + 8*nc[ket[8], bra[8]] + 9*nc[ket[9], bra[9]] + 10*nc[ket[10], bra[10]]
+s: displ nc[ket[0], bra[1]] + nc[ket[1], bra[0]] + Sqrt[2]*nc[ket[1], bra[2]] + Sqrt[2]*nc[ket[2], bra[1]] + Sqrt[3]*nc[ket[2], bra[3]] + Sqrt[3]*nc[ket[3], bra[2]] + 2*nc[ket[3], bra[4]] + 2*nc[ket[4], bra[3]] + 
    Sqrt[5]*nc[ket[4], bra[5]] + Sqrt[5]*nc[ket[5], bra[4]] + Sqrt[6]*nc[ket[5], bra[6]] + Sqrt[6]*nc[ket[6], bra[5]] + Sqrt[7]*nc[ket[6], bra[7]] + Sqrt[7]*nc[ket[7], bra[6]] + 2*Sqrt[2]*nc[ket[7], bra[8]] + 2*Sqrt[2]*nc[ket[8], bra[7]] + 
    3*nc[ket[8], bra[9]] + 3*nc[ket[9], bra[8]] + Sqrt[10]*nc[ket[9], bra[10]] + Sqrt[10]*nc[ket[10], bra[9]]
-s: displ^2 op.displ^2 nc[ket[0], bra[0]] + Sqrt[2]*nc[ket[0], bra[2]] + 3*nc[ket[1], bra[1]] + Sqrt[6]*nc[ket[1], bra[3]] + Sqrt[2]*nc[ket[2], bra[0]] + 5*nc[ket[2], bra[2]] + 2*Sqrt[3]*nc[ket[2], bra[4]] + Sqrt[6]*nc[ket[3], bra[1]] + 
+s: displ^2 nc[ket[0], bra[0]] + Sqrt[2]*nc[ket[0], bra[2]] + 3*nc[ket[1], bra[1]] + Sqrt[6]*nc[ket[1], bra[3]] + Sqrt[2]*nc[ket[2], bra[0]] + 5*nc[ket[2], bra[2]] + 2*Sqrt[3]*nc[ket[2], bra[4]] + Sqrt[6]*nc[ket[3], bra[1]] + 
    7*nc[ket[3], bra[3]] + 2*Sqrt[5]*nc[ket[3], bra[5]] + 2*Sqrt[3]*nc[ket[4], bra[2]] + 9*nc[ket[4], bra[4]] + Sqrt[30]*nc[ket[4], bra[6]] + 2*Sqrt[5]*nc[ket[5], bra[3]] + 11*nc[ket[5], bra[5]] + Sqrt[42]*nc[ket[5], bra[7]] + 
    Sqrt[30]*nc[ket[6], bra[4]] + 13*nc[ket[6], bra[6]] + 2*Sqrt[14]*nc[ket[6], bra[8]] + Sqrt[42]*nc[ket[7], bra[5]] + 15*nc[ket[7], bra[7]] + 6*Sqrt[2]*nc[ket[7], bra[9]] + 2*Sqrt[14]*nc[ket[8], bra[6]] + 17*nc[ket[8], bra[8]] + 
    3*Sqrt[10]*nc[ket[8], bra[10]] + 6*Sqrt[2]*nc[ket[9], bra[7]] + 19*nc[ket[9], bra[9]] + 3*Sqrt[10]*nc[ket[10], bra[8]] + 10*nc[ket[10], bra[10]]
@@ -218,10 +217,10 @@ Loading module modeloperators.m
 Can't load modeloperators.m. Continuing.
 -- maketable[] done --
 Timing report
-{basis, 0.102632`5.462827785622961}
-{ham, 21.8326880000000000001`7.012500951643338}
-{maketable, 31.31714`7.947327087273563}
-{xi, 0.006508`4.2649925377607945}
+{basis, 0.138054`5.591593987975498}
+{ham, 22.056174`7.016923922349953}
+{maketable, 31.61603`7.9514523284995455}
+{xi, 0.008554`4.383714239416768}
 {_, 0}
 data.in
 gammaPol=0.252313252202016

@@ -92,9 +92,9 @@ makeireducf GENERAL
 ireducTable: f[0]{}
 Loading module operators.m
 operators.m started
-s: n_d op.n_d nc[d[0, 0], d[1, 0]] + nc[d[0, 1], d[1, 1]]
-s: n_d^2 op.n_d^2 nc[d[0, 0], d[1, 0]] + nc[d[0, 1], d[1, 1]] - 2*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]
-s: hop0 op.hop0 nc[d[0, 0], f[1, 0, 0]] + nc[d[0, 1], f[1, 0, 1]] + nc[f[0, 0, 0], d[1, 0]] + nc[f[0, 0, 1], d[1, 1]]
+s: n_d nc[d[0, 0], d[1, 0]] + nc[d[0, 1], d[1, 1]]
+s: n_d^2 nc[d[0, 0], d[1, 0]] + nc[d[0, 1], d[1, 1]] - 2*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]
+s: hop0 nc[d[0, 0], f[1, 0, 0]] + nc[d[0, 1], f[1, 0, 1]] + nc[f[0, 0, 0], d[1, 0]] + nc[f[0, 0, 1], d[1, 1]]
 d: A_d d
 ireducTable: d{}
 t: sigma_d d[]
@@ -107,10 +107,10 @@ Loading module modeloperators.m
 Can't load modeloperators.m. Continuing.
 -- maketable[] done --
 Timing report
-{basis, 0.012158`4.536407132544398}
-{ham, 0.070242`4.519990611850325}
-{maketable, 0.539927`6.1838800391702495}
-{xi, 0.005884`4.221217657551463}
+{basis, 0.014687`4.618478088367125}
+{ham, 0.0803990000000000001`4.578644390154527}
+{maketable, 0.660735`6.271572306062229}
+{xi, 0.007616`4.3332719288723895}
 {_, 0}
 data.in
 gammaPol=0.252313252202016

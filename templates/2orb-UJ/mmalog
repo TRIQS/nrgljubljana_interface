@@ -39,7 +39,7 @@ faktor=1.3862943611198906
 Generating basis
 Basis states generated.
 BASIS NR=256
-Basis: basis.model..QS
+Basis: basis
 PREC=1000
 DISCNMAX=0
 mMAX=80
@@ -72,15 +72,15 @@ theta0Ch={"0.2", "0.2"}
 gammaPolCh={"0.252313252202016", "0.252313252202016"}
 calcgsenergy[]
 diagvc[{-4, 1}]
-Generating matrix: ham.model..QS_-4.1
+Generating matrix: ham_-4.1
 hamil={{-coefzeta[1, 0] - coefzeta[2, 0]}}
 dim={1, 1}
 diagvc[{-3, 2}]
-Generating matrix: ham.model..QS_-3.2
+Generating matrix: ham_-3.2
 hamil={{-coefzeta[1, 0], 0, 0, gammaPol2}, {0, -coefzeta[2, 0], gammaPol1, 0}, {0, gammaPol1, eps1 - coefzeta[1, 0] - coefzeta[2, 0], 0}, {gammaPol2, 0, 0, eps2 - coefzeta[1, 0] - coefzeta[2, 0]}}
 dim={4, 4}
 diagvc[{-2, 1}]
-Generating matrix: ham.model..QS_-2.1
+Generating matrix: ham_-2.1
 hamil={{-coefzeta[1, 0] + coefzeta[2, 0], 0, 0, Sqrt[2]*gammaPol2, 0, 0, 0, 0, 0, 0}, {0, 0, gammaPol1, 0, 0, 0, gammaPol2, 0, 0, 0}, {0, gammaPol1, eps1 - coefzeta[1, 0], 0, 0, 0, 0, 0, gammaPol2, 0}, 
    {Sqrt[2]*gammaPol2, 0, 0, eps2 - coefzeta[1, 0], 0, 0, 0, 0, 0, Sqrt[2]*gammaPol2}, {0, 0, 0, 0, coefzeta[1, 0] - coefzeta[2, 0], Sqrt[2]*gammaPol1, 0, 0, 0, 0}, 
    {0, 0, 0, 0, Sqrt[2]*gammaPol1, eps1 - coefzeta[2, 0], 0, Sqrt[2]*gammaPol1, 0, 0}, {0, gammaPol2, 0, 0, 0, 0, eps2 - coefzeta[2, 0], 0, gammaPol1, 0}, 
@@ -88,12 +88,12 @@ hamil={{-coefzeta[1, 0] + coefzeta[2, 0], 0, 0, Sqrt[2]*gammaPol2, 0, 0, 0, 0, 0
    {0, 0, 0, Sqrt[2]*gammaPol2, 0, 0, 0, 0, 0, 2*eps2 + U2 - coefzeta[1, 0] - coefzeta[2, 0]}}
 dim={10, 10}
 diagvc[{-2, 3}]
-Generating matrix: ham.model..QS_-2.3
+Generating matrix: ham_-2.3
 hamil={{0, gammaPol1, 0, 0, -gammaPol2, 0}, {gammaPol1, eps1 - coefzeta[1, 0], 0, 0, 0, -gammaPol2}, {0, 0, eps2 - coefzeta[1, 0], 0, 0, 0}, {0, 0, 0, eps1 - coefzeta[2, 0], 0, 0}, {-gammaPol2, 0, 0, 0, eps2 - coefzeta[2, 0], gammaPol1}, 
    {0, -gammaPol2, 0, 0, gammaPol1, eps1 + eps2 + J12/4 + U12 - coefzeta[1, 0] - coefzeta[2, 0]}}
 dim={6, 6}
 diagvc[{-1, 2}]
-Generating matrix: ham.model..QS_-1.2
+Generating matrix: ham_-1.2
 hamil={{coefzeta[2, 0], gammaPol1, 0, 0, 0, -(gammaPol2/Sqrt[2]), 0, 0, 0, 0, -(Sqrt[3/2]*gammaPol2), 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
    {gammaPol1, eps1 - coefzeta[1, 0] + coefzeta[2, 0], 0, 0, 0, 0, 0, -(gammaPol2/Sqrt[2]), 0, 0, 0, -(Sqrt[3/2]*gammaPol2), 0, 0, 0, 0, 0, 0, 0, 0}, 
    {0, 0, eps2 - coefzeta[1, 0] + coefzeta[2, 0], 0, 0, 0, 0, 0, -gammaPol2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, coefzeta[1, 0], Sqrt[2]*gammaPol1, 0, 0, 0, 0, 0, 0, 0, 0, gammaPol2, 0, 0, 0, 0, 0, 0}, 
@@ -113,11 +113,11 @@ hamil={{coefzeta[2, 0], gammaPol1, 0, 0, 0, -(gammaPol2/Sqrt[2]), 0, 0, 0, 0, -(
    {0, 0, 0, 0, 0, 0, 0, -(gammaPol2/Sqrt[2]), 0, 0, 0, -(Sqrt[3/2]*gammaPol2), 0, 0, 0, 0, gammaPol1, 0, 0, eps1 + 2*eps2 + 2*U12 + U2 - coefzeta[1, 0] - coefzeta[2, 0]}}
 dim={20, 20}
 diagvc[{-1, 4}]
-Generating matrix: ham.model..QS_-1.4
+Generating matrix: ham_-1.4
 hamil={{eps1, 0, 0, gammaPol2}, {0, eps2, gammaPol1, 0}, {0, gammaPol1, eps1 + eps2 + J12/4 + U12 - coefzeta[1, 0], 0}, {gammaPol2, 0, 0, eps1 + eps2 + J12/4 + U12 - coefzeta[2, 0]}}
 dim={4, 4}
 diagvc[{0, 1}]
-Generating matrix: ham.model..QS_0.1
+Generating matrix: ham_0.1
 hamil={{coefzeta[1, 0] + coefzeta[2, 0], Sqrt[2]*gammaPol1, 0, 0, 0, 0, 0, Sqrt[2]*gammaPol2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
    {Sqrt[2]*gammaPol1, eps1 + coefzeta[2, 0], 0, Sqrt[2]*gammaPol1, 0, 0, 0, 0, 0, -(gammaPol2/Sqrt[2]), 0, Sqrt[3/2]*gammaPol2, 0, 0, 0, 0, 0, 0, 0, 0}, 
    {0, 0, eps2 + coefzeta[2, 0], 0, gammaPol1, 0, 0, 0, 0, 0, -gammaPol2, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, Sqrt[2]*gammaPol1, 0, 2*eps1 + U1 - coefzeta[1, 0] + coefzeta[2, 0], 0, 0, 0, 0, 0, 0, 0, 0, Sqrt[2]*gammaPol2, 0, 0, 0, 0, 0, 0, 0}, 
@@ -136,7 +136,7 @@ hamil={{coefzeta[1, 0] + coefzeta[2, 0], Sqrt[2]*gammaPol1, 0, 0, 0, 0, 0, Sqrt[
    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, Sqrt[2]*gammaPol2, 0, 0, 0, 0, 0, Sqrt[2]*gammaPol1, 2*eps1 + 2*eps2 + U1 + 4*U12 + U2 - coefzeta[1, 0] - coefzeta[2, 0]}}
 dim={20, 20}
 diagvc[{0, 3}]
-Generating matrix: ham.model..QS_0.3
+Generating matrix: ham_0.3
 hamil={{eps1 + coefzeta[2, 0], 0, 0, 0, 0, 0, gammaPol2/Sqrt[2], 0, gammaPol2/Sqrt[6], 0, 0, (2*gammaPol2)/Sqrt[3], 0, 0, 0}, {0, eps2 + coefzeta[2, 0], gammaPol1, 0, 0, 0, 0, gammaPol2, 0, 0, 0, 0, 0, 0, 0}, 
    {0, gammaPol1, eps1 + eps2 + J12/4 + U12 - coefzeta[1, 0] + coefzeta[2, 0], 0, 0, 0, 0, 0, 0, 0, gammaPol2, 0, 0, 0, 0}, {0, 0, 0, eps1 + coefzeta[1, 0], 0, -gammaPol1, 0, 0, 0, 0, 0, 0, -gammaPol2, 0, 0}, 
    {0, 0, 0, 0, eps2 + coefzeta[1, 0], 0, -(gammaPol1/Sqrt[2]), 0, Sqrt[3/2]*gammaPol1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, -gammaPol1, 0, 2*eps1 + U1, 0, 0, 0, 0, 0, 0, 0, -gammaPol2, 0}, 
@@ -148,11 +148,11 @@ hamil={{eps1 + coefzeta[2, 0], 0, 0, 0, 0, 0, gammaPol2/Sqrt[2], 0, gammaPol2/Sq
    {0, 0, 0, 0, 0, 0, gammaPol2/Sqrt[2], 0, gammaPol2/Sqrt[6], 0, 0, (2*gammaPol2)/Sqrt[3], 0, 0, eps1 + 2*eps2 + 2*U12 + U2 - coefzeta[2, 0]}}
 dim={15, 15}
 diagvc[{0, 5}]
-Generating matrix: ham.model..QS_0.5
+Generating matrix: ham_0.5
 hamil={{eps1 + eps2 + J12/4 + U12}}
 dim={1, 1}
 diagvc[{1, 2}]
-Generating matrix: ham.model..QS_1.2
+Generating matrix: ham_1.2
 hamil={{eps1 + coefzeta[1, 0] + coefzeta[2, 0], 0, -gammaPol1, 0, 0, 0, 0, 0, 0, -(gammaPol2/Sqrt[2]), 0, 0, 0, 0, -(Sqrt[3/2]*gammaPol2), 0, 0, 0, 0, 0}, 
    {0, eps2 + coefzeta[1, 0] + coefzeta[2, 0], 0, -(gammaPol1/Sqrt[2]), 0, Sqrt[3/2]*gammaPol1, 0, 0, 0, 0, -gammaPol2, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
    {-gammaPol1, 0, 2*eps1 + U1 + coefzeta[2, 0], 0, 0, 0, 0, 0, 0, 0, 0, -(gammaPol2/Sqrt[2]), 0, 0, 0, -(Sqrt[3/2]*gammaPol2), 0, 0, 0, 0}, 
@@ -174,11 +174,11 @@ hamil={{eps1 + coefzeta[1, 0] + coefzeta[2, 0], 0, -gammaPol1, 0, 0, 0, 0, 0, 0,
    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -(gammaPol2/Sqrt[2]), 0, 0, 0, -(Sqrt[3/2]*gammaPol2), 0, 0, -gammaPol1, 2*eps1 + 2*eps2 + U1 + 4*U12 + U2 - coefzeta[2, 0]}}
 dim={20, 20}
 diagvc[{1, 4}]
-Generating matrix: ham.model..QS_1.4
+Generating matrix: ham_1.4
 hamil={{eps1 + eps2 + J12/4 + U12 + coefzeta[2, 0], 0, 0, -gammaPol2}, {0, eps1 + eps2 + J12/4 + U12 + coefzeta[1, 0], -gammaPol1, 0}, {0, -gammaPol1, 2*eps1 + eps2 + U1 + 2*U12, 0}, {-gammaPol2, 0, 0, eps1 + 2*eps2 + 2*U12 + U2}}
 dim={4, 4}
 diagvc[{2, 1}]
-Generating matrix: ham.model..QS_2.1
+Generating matrix: ham_2.1
 hamil={{2*eps1 + U1 + coefzeta[1, 0] + coefzeta[2, 0], 0, 0, 0, 0, 0, Sqrt[2]*gammaPol2, 0, 0, 0}, {0, eps1 + eps2 - (3*J12)/4 + U12 + coefzeta[1, 0] + coefzeta[2, 0], 0, -gammaPol1, 0, 0, 0, -gammaPol2, 0, 0}, 
    {0, 0, 2*eps2 + U2 + coefzeta[1, 0] + coefzeta[2, 0], 0, Sqrt[2]*gammaPol1, 0, 0, 0, 0, 0}, {0, -gammaPol1, 0, 2*eps1 + eps2 + U1 + 2*U12 + coefzeta[2, 0], 0, 0, 0, 0, -gammaPol2, 0}, 
    {0, 0, Sqrt[2]*gammaPol1, 0, eps1 + 2*eps2 + 2*U12 + U2 + coefzeta[2, 0], Sqrt[2]*gammaPol1, 0, 0, 0, 0}, {0, 0, 0, 0, Sqrt[2]*gammaPol1, 2*eps1 + 2*eps2 + U1 + 4*U12 + U2 - coefzeta[1, 0] + coefzeta[2, 0], 0, 0, 0, 0}, 
@@ -186,18 +186,18 @@ hamil={{2*eps1 + U1 + coefzeta[1, 0] + coefzeta[2, 0], 0, 0, 0, 0, 0, Sqrt[2]*ga
    {0, 0, 0, -gammaPol2, 0, 0, 0, -gammaPol1, 2*eps1 + 2*eps2 + U1 + 4*U12 + U2, 0}, {0, 0, 0, 0, 0, 0, Sqrt[2]*gammaPol2, 0, 0, 2*eps1 + 2*eps2 + U1 + 4*U12 + U2 + coefzeta[1, 0] - coefzeta[2, 0]}}
 dim={10, 10}
 diagvc[{2, 3}]
-Generating matrix: ham.model..QS_2.3
+Generating matrix: ham_2.3
 hamil={{eps1 + eps2 + J12/4 + U12 + coefzeta[1, 0] + coefzeta[2, 0], -gammaPol1, 0, 0, gammaPol2, 0}, {-gammaPol1, 2*eps1 + eps2 + U1 + 2*U12 + coefzeta[2, 0], 0, 0, 0, gammaPol2}, 
    {0, 0, eps1 + 2*eps2 + 2*U12 + U2 + coefzeta[2, 0], 0, 0, 0}, {0, 0, 0, 2*eps1 + eps2 + U1 + 2*U12 + coefzeta[1, 0], 0, 0}, {gammaPol2, 0, 0, 0, eps1 + 2*eps2 + 2*U12 + U2 + coefzeta[1, 0], -gammaPol1}, 
    {0, gammaPol2, 0, 0, -gammaPol1, 2*eps1 + 2*eps2 + U1 + 4*U12 + U2}}
 dim={6, 6}
 diagvc[{3, 2}]
-Generating matrix: ham.model..QS_3.2
+Generating matrix: ham_3.2
 hamil={{2*eps1 + eps2 + U1 + 2*U12 + coefzeta[1, 0] + coefzeta[2, 0], 0, 0, -gammaPol2}, {0, eps1 + 2*eps2 + 2*U12 + U2 + coefzeta[1, 0] + coefzeta[2, 0], -gammaPol1, 0}, 
    {0, -gammaPol1, 2*eps1 + 2*eps2 + U1 + 4*U12 + U2 + coefzeta[2, 0], 0}, {-gammaPol2, 0, 0, 2*eps1 + 2*eps2 + U1 + 4*U12 + U2 + coefzeta[1, 0]}}
 dim={4, 4}
 diagvc[{4, 1}]
-Generating matrix: ham.model..QS_4.1
+Generating matrix: ham_4.1
 hamil={{2*eps1 + 2*eps2 + U1 + 4*U12 + U2 + coefzeta[1, 0] + coefzeta[2, 0]}}
 dim={1, 1}
 Lowest energies (absolute):{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2}
@@ -209,18 +209,18 @@ ireducTable: f[0]{}
 ireducTable: f[1]{}
 Loading module operators.m
 operators.m started
-s: n_d op.model..QS.n_d nc[d[0, 0], d[1, 0]] + nc[d[0, 1], d[1, 1]]
-s: n_d^2 op.model..QS.n_d^2 nc[d[0, 0], d[1, 0]] + nc[d[0, 1], d[1, 1]] - 2*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]
+s: n_d nc[d[0, 0], d[1, 0]] + nc[d[0, 1], d[1, 1]]
+s: n_d^2 nc[d[0, 0], d[1, 0]] + nc[d[0, 1], d[1, 1]] - 2*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]
 d: A_d d
 ireducTable: d{}
 t: sigma_d d[]
 ireducTable: Chop[Expand[komutator[Hint /. params, d[#1, #2]]]] & {}
 ireducTable: Chop[Expand[komutator[Hint /. params, a[#1, #2]]]] & {}
-s: n_a op.model..QS.n_a nc[a[0, 0], a[1, 0]] + nc[a[0, 1], a[1, 1]]
-s: n_a^2 op.model..QS.n_a^2 nc[a[0, 0], a[1, 0]] + nc[a[0, 1], a[1, 1]] - 2*nc[a[0, 0], a[0, 1], a[1, 0], a[1, 1]]
-s: SaSd op.model..QS.SaSd (-nc[a[0, 0], d[0, 0], a[1, 0], d[1, 0]] + nc[a[0, 0], d[0, 1], a[1, 0], d[1, 1]] - 2*nc[a[0, 0], d[0, 1], a[1, 1], d[1, 0]] - 2*nc[a[0, 1], d[0, 0], a[1, 0], d[1, 1]] + nc[a[0, 1], d[0, 0], a[1, 1], d[1, 0]] - 
-     nc[a[0, 1], d[0, 1], a[1, 1], d[1, 1]])/4
-s: n_an_d op.model..QS.n_an_d -nc[a[0, 0], d[0, 0], a[1, 0], d[1, 0]] - nc[a[0, 0], d[0, 1], a[1, 0], d[1, 1]] - nc[a[0, 1], d[0, 0], a[1, 1], d[1, 0]] - nc[a[0, 1], d[0, 1], a[1, 1], d[1, 1]]
+s: n_a nc[a[0, 0], a[1, 0]] + nc[a[0, 1], a[1, 1]]
+s: n_a^2 nc[a[0, 0], a[1, 0]] + nc[a[0, 1], a[1, 1]] - 2*nc[a[0, 0], a[0, 1], a[1, 0], a[1, 1]]
+s: SaSd -nc[a[0, 0], d[0, 0], a[1, 0], d[1, 0]]/4 + nc[a[0, 0], d[0, 1], a[1, 0], d[1, 1]]/4 - nc[a[0, 0], d[0, 1], a[1, 1], d[1, 0]]/2 - nc[a[0, 1], d[0, 0], a[1, 0], d[1, 1]]/2 + nc[a[0, 1], d[0, 0], a[1, 1], d[1, 0]]/4 - 
+   nc[a[0, 1], d[0, 1], a[1, 1], d[1, 1]]/4
+s: n_an_d -nc[a[0, 0], d[0, 0], a[1, 0], d[1, 0]] - nc[a[0, 0], d[0, 1], a[1, 0], d[1, 1]] - nc[a[0, 1], d[0, 0], a[1, 1], d[1, 0]] - nc[a[0, 1], d[0, 1], a[1, 1], d[1, 1]]
 ireducTable: a[]{}
 ireducTable: Chop[Expand[komutator[Hint /. params, a[#1, #2]]]] & {}
 operators.m done
@@ -231,10 +231,10 @@ Loading module modeloperators.m
 Can't load modeloperators.m. Continuing.
 -- maketable[] done --
 Timing report
-{basis, 0.526792`6.173184164527108}
-{ham, 7.703582`6.1621464441722384}
-{maketable, 13.578057`7.584382620984552}
-{xi, 0.010341`4.466107531623583}
+{basis, 0.428339`6.08333261193573}
+{ham, 7.7157739999999999999`6.162833232832778}
+{maketable, 13.302038`7.575463177647146}
+{xi, 0.011845`4.525080058554755}
 {_, 0}
 data.in
 gammaPol=0.252313252202016
