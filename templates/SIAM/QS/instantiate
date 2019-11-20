@@ -70,6 +70,8 @@ my %dim; # Dimensions of invariant subspaces
 my $subspaces = -1; # Number of different subspaces
 my $Egs = -999; 
 
+my $channels;
+
 while (<F>) {
     print;
     
@@ -87,7 +89,7 @@ while (<F>) {
 	if (!/(\d+)\s+(\d+)\s+(\d+)/) {
 	    die "Parse error 1: $_";
 	}
-	my $channels = $1;
+	$channels = $1;
 	my $impurities = $2;
 	$subspaces = $3;
 	$impurities = $nr; # override!
@@ -271,4 +273,3 @@ if (defined($target_dir) && -d $target_dir) {
     system "cp param data $target_dir";
 }
 
-system "rm vec.* vec val mat mat.res ham ham.[-0-9]*";

@@ -16,7 +16,7 @@ class test_SIAM(unittest.TestCase):
     cp = {}
     cp["model"] = "2orb-UJ"
     cp["symtype"] = "QS"
-    cp["mesh_max"] = 10.0
+    cp["mesh_max"] = 1.0
     cp["mesh_min"] = 1e-6
     cp["mesh_ratio"] = 1.03
 
@@ -42,9 +42,9 @@ class test_SIAM(unittest.TestCase):
     sp["model_parameters"] = mp
 
     # Low-level NRG Parameters
-    np = {}
-    np["bandrescale"] = 1 # band support is [-1:1]
-    S.set_nrg_params(**np)
+    #np = {}
+    #np["bandrescale"] = 1
+    #S.set_nrg_params(**np)
 
     # # Initialize hybridization function
     S.Delta_w['imp'][0,0] << 0.1 * SemiCircularNew(1.0)

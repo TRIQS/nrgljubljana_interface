@@ -98,7 +98,7 @@ s: hop0 nc[d[0, 0], f[1, 0, 0]] + nc[d[0, 1], f[1, 0, 1]] + nc[f[0, 0, 0], d[1, 
 d: A_d d
 ireducTable: d{}
 t: sigma_d d[]
-ireducTable: Chop[Expand[komutator[Hint, d[#1, #2]]]] & {}
+ireducTable: Chop[Expand[komutator[Hint /. params, d[#1, #2]]]] & {}
 operators.m done
 Loading module customoperators.m
 "customoperators $Id: customoperators.m,v 1.1 2015/11/09 12:23:54 rokzitko Exp rokzitko $"
@@ -107,10 +107,10 @@ Loading module modeloperators.m
 Can't load modeloperators.m. Continuing.
 -- maketable[] done --
 Timing report
-{basis, 0.014687`4.618478088367125}
-{ham, 0.0803990000000000001`4.578644390154527}
-{maketable, 0.660735`6.271572306062229}
-{xi, 0.007616`4.3332719288723895}
+{basis, 0.012424`4.545806436216475}
+{ham, 0.0664870000000000001`4.496130480442733}
+{maketable, 0.529373`6.175306780385672}
+{xi, 0.006352`4.254455482915013}
 {_, 0}
 data.in
 gammaPol=0.252313252202016
