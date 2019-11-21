@@ -56,6 +56,7 @@ if (getparam("polarized") eq "true") {
 }
 my $channels;
 my $coefchannels;
+my $fctr = 0;
 
 while (<F>) {
     print;
@@ -127,10 +128,12 @@ while (<F>) {
 
     if ($mode == 2) {
         if (!/f\s+(\d+)\s+(\d+)/) { die "Parse error 3: $_"; }
-        print;
         print OUT;
         unitary();
-        $mode = 3;
+        $fctr++;
+        if ($fctr == $channels) {
+            $mode = 3;
+        }
         next;
     }
     
@@ -148,7 +151,6 @@ while (<F>) {
             next;
         }
         if (/^[spdvt]/) {
-            print;
             print OUT;
             unitary();
             next;
@@ -184,6 +186,7 @@ sub subtract
 sub unitary
 {
     chomp(my $nr = <F>);
+    print "nr=$nr\n";
     print OUT "$nr\n";
     for (my $i = 1; $i <= $nr; $i++) {
         print "unitary i=$i\n";
@@ -211,7 +214,7 @@ sub unitary
             system("$matrix -c$coefchannels param.extra $fn >mat");
             if ($? != 0) { die "matrix call error for $fn"; }
         }
-        system "cat -e mat";
+#        system "cat -e mat";
         my $cmd = "$unitary -l -q -o mat.res vec.$qn1 mat vec.$qn2";
         system($cmd);
         if ($? != 0) { die "unitary call error: $cmd"; }

@@ -17,7 +17,7 @@ sub prochyb
     system "echo dos=Gamma_${x}.dat >>param";
     system "cp FSOL_${x}.dat FSOL.dat";
     system "cp FSOLNEG_${x}.dat FSOLNEG.dat";
-    system "$nrgchain";
+    system "nrgchain";
 
     -e "xi.dat" && -e "zeta.dat" && -e "theta.dat" or die "Wilson chain coefficients not found.";
 
