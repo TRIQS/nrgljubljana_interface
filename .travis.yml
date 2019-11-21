@@ -9,7 +9,7 @@ compiler:
 
 before_install:
   - sudo apt-get update
-  - sudo apt-get install -y --allow-unauthenticated libblas-dev libboost-all-dev libfftw3-dev libgfortran3 libhdf5-serial-dev libgmp-dev liblapack-dev libopenmpi-dev libclang-dev python-clang-6.0 python-dev python-h5py python-mako python-matplotlib python-mpi4py python-numpy python-scipy python-sphinx libjs-mathjax libnfft3-dev
+  - sudo apt-get install -y --allow-unauthenticated libblas-dev libboost-all-dev libfftw3-dev libgfortran3 libhdf5-serial-dev libgmp-dev liblapack-dev libopenmpi-dev libclang-dev python-clang-6.0 python-dev python-h5py python-mako python-matplotlib python-mpi4py python-numpy python-scipy python-sphinx libjs-mathjax libnfft3-dev libboost-all-dev libgsl-dev libomp-dev
 
 install: true
 
@@ -25,7 +25,7 @@ script:
   # ===== Set up nrgljubljana_interface and test
   - cd $TRAVIS_BUILD_DIR
   - mkdir build && cd build
-  - cmake .. -DASAN=ON -DUBSAN=ON
+  - cmake .. # -DASAN=ON -DUBSAN=ON
   - export UBSAN_SYMBOLIZER_PATH=$(which llvm-symbolizer)
   - export ASAN_SYMBOLIZER_PATH=$(which llvm-symbolizer)
   - export UBSAN_OPTIONS=symbolize=1:print_stacktrace=1
