@@ -195,10 +195,13 @@ sub unitary
                 if ($n != $dim1) { $line = <F>; }
             } # for $n
             close(O);
-            system "cat mat";
         } else {
-            my $fn = chomp($line);
+            chomp(my $fn = $line);
+            -e $fn or die "File not found: $fn";
+            system("$matrix param.extra $fn >mat");
+            if ($? != 0) { die "matrix call error for $fn"; }
         }
+        system "cat -e mat";
         my $cmd = "$unitary -l -q -o mat.res vec.$qn1 mat vec.$qn2";
         system($cmd);
         if ($? != 0) { die "unitary call error: $cmd"; }
