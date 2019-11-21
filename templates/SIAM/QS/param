@@ -1,6 +1,6 @@
 [extra]
-U1=1
-eps1=1
+U1=
+eps1=
 
 [param]
 options=GENERATE_TEMPLATE
@@ -8,3 +8,4 @@ symtype=QS
 model=SIAM.m
 ops=n_d n_d^2 hop0 A_d self_d sigma_d
 
+checkHc=false

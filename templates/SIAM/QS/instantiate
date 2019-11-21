@@ -8,25 +8,12 @@ use warnings;
 use File::Copy;
 use Math::Trig;
 
-my $target_dir = shift;
-
 # Paths to tools used
 my $matrix = "matrix";
 my $diag = "diag -B";
 my $unitary = "unitary -B";
-my $nrgchain = "nrgchain";
 
 my $verbose = 1;
-
-system "pwd";
-
-my $hybfn = "Gamma_imp_00.dat";
--e $hybfn or die "Hybridisation funcrtion not found.";
-
-system "echo dos=Gamma_imp_00.dat >>param";
-system "$nrgchain";
-
--e "xi.dat" or die "Wilson chain coefficients not found.";
 
 # Split param file into sections
 my $fnparam = "param";
@@ -43,6 +30,8 @@ while (<F>) {
 }
 close O if $section ne "";
 close F;	
+
+system "./wilson";
 
 # Length of the Wilson chain
 my $line = `wc xi.dat`;
@@ -188,17 +177,12 @@ sub subtract
 
 sub unitary
 {
-    my $nr;
-    chomp($nr = <F>);
+    chomp(my $nr = <F>);
     print OUT "$nr\n";
-    
-    my $i;
-    for ($i = 1; $i <= $nr; $i++) {
+    for (my $i = 1; $i <= $nr; $i++) {
         print "unitary i=$i\n";
-        my $line;
-        chomp($line = <F>);
+        chomp(my $line = <F>);
         if (!($line =~ /(\S+)\s+(\S+)\s+(\S+)\s+(\S+)/)) { die "Parse error 4: $_"; }
-        
         my $qn1spaces = "$1 $2";
         my $qn1 = "$1.$2";
         my $dim1 = $dim{$qn1};
@@ -206,34 +190,28 @@ sub unitary
         my $qn2 = "$3.$4";
         my $dim2 = $dim{$qn2};
         print "$qn1 $dim1 $qn2 $dim2\n";
-        
-        open(O, ">mat") or die "Can't open mat for writing.";
-        my $n;
-        for ($n = 1; $n <= $dim1; $n++) {
-            if (0) {
-                chomp($line = <F>);
-                $line =~ s/Sqrt\[([^]]+)\]/sqrt($1)/g;
-                my @l = split(' ', $line);
-                @l = map(eval, @l);
-                @l = map { sprintf("%.18g", $_) } @l;
-                if ($verbose) { print "$line\n"; }
-                if (scalar @l == 0) { print "warning: zero length: $line\n"; }
-                print O "@l\n";
-             }
-             $line = <F>;
-             print O $line;
-        } # for $n
-        close(O);
-    
+        $line = <F>;
+        my $c = substr($line, 0, 1);
+        if ($c ne "o") {
+            open(O, ">mat") or die "Can't open mat for writing.";
+            for (my $n = 1; $n <= $dim1; $n++) {
+                print O $line;
+                if ($n != $dim1) { $line = <F>; }
+            } # for $n
+            close(O);
+            system "cat mat";
+        } else {
+            my $fn = chomp($line);
+        }
         my $cmd = "$unitary -l -q -o mat.res vec.$qn1 mat vec.$qn2";
         system($cmd);
         if ($? != 0) { die "unitary call error: $cmd"; }
         my $res = `cat mat.res`;
-    
         print OUT "$qn1spaces $qn2spaces\n$res";
    } # for $i
 }
 
+my $target_dir = shift;
 if (defined($target_dir) && -d $target_dir) {
     system "cp param data $target_dir";
 }
