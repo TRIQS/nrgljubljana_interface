@@ -32,11 +32,7 @@ close O if $section ne "";
 close F;	
 
 system "./wilson";
-
-# Length of the Wilson chain
-my $line = `wc xi.dat`;
-$line =~ /^\s*(\d+)/;
-my $nr = $1-1;
+my $nr = getparam("Nmax");
 
 ### Translate data.in -> data
 my $fnin = "data.in";
@@ -214,4 +210,18 @@ sub unitary
 my $target_dir = shift;
 if (defined($target_dir) && -d $target_dir) {
     system "cp param data $target_dir";
+}
+
+sub getparam
+{
+    my $keyword = shift;
+    my $fn = "param";
+    open (F, "<", $fn) or die "Can't open $fn for reading: $!\n";
+    while (<F>) {
+        if (/^$keyword=(.*)/) {
+            return $1;
+        }
+    }
+    close F;
+    die "Parsing failure: $keyword not found.";
 }
