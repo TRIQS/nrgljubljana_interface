@@ -22,20 +22,20 @@ avg("corr_${pr}_n_d-n_d.bin",    "nn_00");
 avg("corr_${pr}_n_a-n_a.bin",    "nn_11");
 avg("corr_${pr}_n_d-n_a.bin",    "nn_01");
 avg("corr_${pr}_n_a-n_d.bin",    "nn_10");
-avg("corr_${pr}_sigma_d-sigma_d.bin", "ss_00");
-avg("corr_${pr}_sigma_a-sigma_a.bin", "ss_11");
-avg("corr_${pr}_sigma_d-sigma_a.bin", "ss_01");
-avg("corr_${pr}_sigma_a-sigma_d.bin", "ss_10");
+avg("spin_${pr}_sigma_d-sigma_d.bin", "ss_00");
+avg("spin_${pr}_sigma_a-sigma_a.bin", "ss_11");
+avg("spin_${pr}_sigma_d-sigma_a.bin", "ss_01");
+avg("spin_${pr}_sigma_a-sigma_d.bin", "ss_10");
 
-scaley("A_up_00", -$pi, "imG_up_00");
-scaley("A_dn_00", -$pi, "imG_dn_00");
-scaley("B_up_00", -$pi, "imF_up_00");
-scaley("B_dn_00", -$pi, "imF_dn_00");
+scaley("A_imp_00", -$pi, "imG_imp_00");
+scaley("A_imp_00", -$pi, "imG_imp_00");
+scaley("B_imp_00", -$pi, "imF_imp_00");
+scaley("B_imp_00", -$pi, "imF_imp_00");
 
-kk("imG_up_00");
-kk("imG_dn_00");
-kk("imF_up_00");
-kk("imF_dn_00");
+kk("imG_imp_00");
+kk("imG_imp_00");
+kk("imF_imp_00");
+kk("imF_imp_00");
 
 sub kk {
         my $in = shift;

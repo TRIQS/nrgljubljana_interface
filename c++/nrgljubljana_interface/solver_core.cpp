@@ -108,10 +108,12 @@ namespace nrgljubljana_interface {
         auto bl_name = Delta_w.block_names()[bl_idx];
         for (auto [i, j] : product_range(bl_size, bl_size)) {
           std::ofstream F(std::string{} + "Gamma_" + bl_name + "_" + std::to_string(i) + std::to_string(j) + ".dat");
-          double value = -Delta_w[bl_idx][w](i, j).imag();
           const double cutoff = 1e-8; // ensure hybridisation function is positive
-          if (value < cutoff) { value = cutoff; }
-          for (auto const &w : Delta_w[bl_idx].mesh()) F << double(w) << " " << value << std::endl;
+          for (auto const &w : Delta_w[bl_idx].mesh()) {
+            double value = -Delta_w[bl_idx][w](i, j).imag();
+            if (value < cutoff) { value = cutoff; }
+            F << double(w) << " " << value << std::endl;
+          }
         }
       }
 

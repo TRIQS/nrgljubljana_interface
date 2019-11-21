@@ -26,8 +26,8 @@ my $verbose = 1;
 system "pwd";
 
 system "mv param param.orig";
-prochyb("imp_00",1);
-prochyb("imp_11",2);
+prochyb("up_00",1);
+prochyb("dn_00",2);
 
 sub prochyb
 {
@@ -178,30 +178,19 @@ while (<F>) {
 	next;
     }
 
-        if ($mode == 3) { # second f block
-	if (!/f\s+(\d+)\s+(\d+)/) {
-	    die "Parse error 3b: $_";
-	}
-	print;
-	print OUT;
-	unitary();
-	$mode = 4;
-	next;
-    }
-
-    if ($mode == 4) {
+    if ($mode == 3) {
 	if (!/^e/) {
 	    die "Parse error 5: $_";
 	}
 	my $egs = <F>;
 	print OUT "e\n$Egs\n";
-	$mode = 5;
+	$mode = 4;
 	next;
     }
 
-    if ($mode == 5) {
+    if ($mode == 4) {
        if (/^[zZT]/) { # Discretization tables
-	   $mode = 6;
+	   $mode = 5;
 	   next;
        }
        if (/^[spdvt]/) {
@@ -220,13 +209,13 @@ if ($adddisc) {
 
   print OUT "z\n";
 
-  for (my $ch = 1; $ch <= $channels; $ch++) {
+  for (my $ch = 1; $ch <= 2*$channels; $ch++) { # polarized=true
       print OUT "$nr\n";
       my $xi = `cat xi${ch}.dat`;
       print OUT "$xi";
   }
 
-  for (my $ch = 1; $ch <= $channels; $ch++) {
+  for (my $ch = 1; $ch <= 2*$channels; $ch++) { # polarized=true
       print OUT "$nr\n";
       my $zeta = `cat zeta${ch}.dat`;
       print OUT "$zeta";

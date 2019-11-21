@@ -50,6 +50,10 @@ my %dim; # Dimensions of invariant subspaces
 my $subspaces = -1; # Number of different subspaces
 my $Egs = -999; 
 
+my $perch = 1;
+if (getparam("polarized") eq "true") {
+    $perch = 2;
+}
 my $channels;
 
 while (<F>) {
@@ -94,7 +98,7 @@ while (<F>) {
             $line1 =~ /DIAG\s+(\S+)$/;
             my $fn = $1;
             
-            system("$matrix param.extra $fn >ham");
+            system("$matrix -c$channels param.extra $fn >ham");
             if ($? != 0) { die "matrix call error"; }
             copy("ham", "ham.$qn");
 
@@ -155,12 +159,16 @@ my $adddisc = 1;
 
 if ($adddisc) {
     print OUT "z\n";
-    print OUT "$nr\n";
-    my $xi = `cat xi.dat`;
-    print OUT "$xi";
-    print OUT "$nr\n";
-    my $zeta = `cat zeta.dat`;
-    print OUT "$zeta";
+    for (my $ch = 1; $ch <= $perch*$channels; $ch++) {
+        print OUT "$nr\n";
+        my $xi = `cat xi${ch}.dat`;
+        print OUT "$xi";
+    }
+    for (my $ch = 1; $ch <= $perch*$channels; $ch++) {
+        print OUT "$nr\n";
+        my $zeta = `cat zeta${ch}.dat`;
+        print OUT "$zeta";
+    }
 }
 
 sub subtract

@@ -1,0 +1,19 @@
+
+	    system("$matrix -v -c2 param.extra $fn >ham"); # 2 = up & dn
+
+
+  print OUT "z\n";
+
+  for (my $ch = 1; $ch <= 2*$channels; $ch++) { # polarized=true
+      print OUT "$nr\n";
+      my $xi = `cat xi${ch}.dat`;
+      print OUT "$xi";
+  }
+
+  for (my $ch = 1; $ch <= 2*$channels; $ch++) { # polarized=true
+      print OUT "$nr\n";
+      my $zeta = `cat zeta${ch}.dat`;
+      print OUT "$zeta";
+  }
+}
+
