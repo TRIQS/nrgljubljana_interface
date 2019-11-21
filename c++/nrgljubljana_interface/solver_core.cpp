@@ -181,6 +181,9 @@ namespace nrgljubljana_interface {
       }
     }
 
+    // Post Processing
+    Sigma_w = (*F_w) / (*G_w);
+
     // Cleanup
     world.barrier();
     if (world.rank() == 0) {
