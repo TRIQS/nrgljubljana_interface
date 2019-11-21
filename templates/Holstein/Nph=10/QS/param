@@ -1,15 +1,12 @@
 [extra]
-U1=1
-eps1=1
-omega=1
-g1=1
-n1=1
+U1=
+eps1=
+omega=
+g1=
+n1=
 
 [param]
 options=GENERATE_TEMPLATE Nph=10
 symtype=QS
 model=Holstein.m
 ops=n_d n_d^2 hop0 A_d self_d sigma_d nph displ displ^2 aan
-specs=n_d-n_d displ-displ aan-aan q_d-aan
-specd=A_d-A_d self_d-A_d
-spect=sigma_d-sigma_d

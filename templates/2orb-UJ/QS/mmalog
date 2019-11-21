@@ -6,44 +6,23 @@ Options: {GENERATE_TEMPLATE}
 Loading module models.m
 models started
 Loading module custommodels.m
-models $Id: custommodels.m,v 1.1 2015/11/09 12:23:47 rokzitko Exp rokzitko $
-custommodels.m done
+custommodels Rok Zitko
 Loading module 2orb-UJ.m
 def2ch, NRDOTS=2
-COEFCHANNELS:2
 H0=coefzeta[1, 0]*(-1 + nc[f[0, 0, 0], f[1, 0, 0]] + nc[f[0, 0, 1], f[1, 0, 1]]) + coefzeta[2, 0]*(-1 + nc[f[0, 1, 0], f[1, 1, 0]] + nc[f[0, 1, 1], f[1, 1, 1]])
-adddots, nrdots=2
-params={gammaPol -> Sqrt[gammaA*theta0]/Sqrt[Pi], gammaPolCh[ch_] :> Sqrt[1/Pi*theta0Ch[ch]*gammaA], hybV[i_, j_] :> Sqrt[1/Pi]*V[i, j], coefzeta[ch_, j__] :> N[bandrescale*zeta[ch][j]], coefxi[ch_, j__] :> N[bandrescale*xi[ch][j]], 
-   coefrung[ch_, j__] :> N[bandrescale*zetaR[ch][j]], coefdelta[ch_, j__] :> N[bandrescale*scdelta[ch][j]], coefkappa[ch_, j__] :> N[bandrescale*sckappa[ch][j]], U -> 0.1, delta -> 0., t -> 0., 
-   gammaPol2 -> 0.1784124116152771*Sqrt[gammaA*thetaCh[1]], gammaPol2to2 -> Sqrt[extraGamma2to2*gammaA*thetaCh[2]]/Sqrt[Pi], gammaPolch1 -> 0.1784124116152771*Sqrt[gammaA*thetaCh[1]], 
-   gammaPolch2 -> 0.1784124116152771*Sqrt[gammaA*thetaCh[2]], gammaPolch3 -> Sqrt[extraGamma3*gammaA*thetaCh[3]]/Sqrt[Pi], Jspin -> extraJspin*gammaA, Jcharge -> extraJcharge*gammaA, Jcharge1 -> extraJcharge1*gammaA, 
-   Jcharge2 -> extraJcharge2*gammaA, Jkondo -> extraJkondo*gammaA, Jkondo1 -> extraJkondo1*gammaA, Jkondo2 -> extraJkondo2*gammaA, Jkondo3 -> extraJkondo3*gammaA, Jkondo1P -> extraJkondo1P*gammaA, Jkondo2P -> extraJkondo2P*gammaA, 
-   Jkondo1Z -> extraJkondo1Z*gammaA, Jkondo2Z -> extraJkondo2Z*gammaA, JkondoP -> extraJkondoP*gammaA, JkondoZ -> extraJkondoZ*gammaA, Jkondo1ch2 -> extraJkondo1ch2*gammaA, Jkondo2ch2 -> extraJkondo2ch2*gammaA, gep -> extrag, dd -> extrad, 
-   hybV11 -> Sqrt[extraGamma11*gammaA*thetaCh[1]]/Sqrt[Pi], hybV12 -> Sqrt[extraGamma12*gammaA*thetaCh[2]]/Sqrt[Pi], hybV21 -> Sqrt[extraGamma21*gammaA*thetaCh[1]]/Sqrt[Pi], hybV22 -> Sqrt[extraGamma22*gammaA*thetaCh[2]]/Sqrt[Pi], 
-   gammaPol1 -> 0.1784124116152771*Sqrt[gammaA*thetaCh[1]], gammaPol2 -> 0.1784124116152771*Sqrt[gammaA*thetaCh[2]], U1 -> 1., U2 -> 1., Gamma1 -> 0.1, Gamma2 -> 0.1, eps1 -> -0.4, eps2 -> -0.4, U12 -> 1., J12 -> 0}
-NRDOTS:2
-CHANNELS:2
+NRDOTS:2 CHANNELS:2 COEFCHANNELS:2
 basis:{a[], d[], f[0], f[1]}
-lrchain:{}
-lrextrarule:{}
-NROPS:4
 Hamiltonian generated. -coefzeta[1, 0] - coefzeta[2, 0] + eps2*nc[a[0, 0], a[1, 0]] + gammaPol2*nc[a[0, 0], f[1, 1, 0]] + eps2*nc[a[0, 1], a[1, 1]] + gammaPol2*nc[a[0, 1], f[1, 1, 1]] + eps1*nc[d[0, 0], d[1, 0]] + 
    gammaPol1*nc[d[0, 0], f[1, 0, 0]] + eps1*nc[d[0, 1], d[1, 1]] + gammaPol1*nc[d[0, 1], f[1, 0, 1]] + gammaPol1*nc[f[0, 0, 0], d[1, 0]] + coefzeta[1, 0]*nc[f[0, 0, 0], f[1, 0, 0]] + gammaPol1*nc[f[0, 0, 1], d[1, 1]] + 
    coefzeta[1, 0]*nc[f[0, 0, 1], f[1, 0, 1]] + gammaPol2*nc[f[0, 1, 0], a[1, 0]] + coefzeta[2, 0]*nc[f[0, 1, 0], f[1, 1, 0]] + gammaPol2*nc[f[0, 1, 1], a[1, 1]] + coefzeta[2, 0]*nc[f[0, 1, 1], f[1, 1, 1]] - 
    U2*nc[a[0, 0], a[0, 1], a[1, 0], a[1, 1]] - (J12*nc[a[0, 0], d[0, 0], a[1, 0], d[1, 0]])/4 - U12*nc[a[0, 0], d[0, 0], a[1, 0], d[1, 0]] + (J12*nc[a[0, 0], d[0, 1], a[1, 0], d[1, 1]])/4 - U12*nc[a[0, 0], d[0, 1], a[1, 0], d[1, 1]] - 
    (J12*nc[a[0, 0], d[0, 1], a[1, 1], d[1, 0]])/2 - (J12*nc[a[0, 1], d[0, 0], a[1, 0], d[1, 1]])/2 + (J12*nc[a[0, 1], d[0, 0], a[1, 1], d[1, 0]])/4 - U12*nc[a[0, 1], d[0, 0], a[1, 1], d[1, 0]] - 
    (J12*nc[a[0, 1], d[0, 1], a[1, 1], d[1, 1]])/4 - U12*nc[a[0, 1], d[0, 1], a[1, 1], d[1, 1]] - U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]
-H-conj[H]=0
 SCALE[0]=1.0201394465967895
 faktor=1.3862943611198906
 Generating basis
-Basis states generated.
-BASIS NR=256
-Basis: basis
-PREC=1000
+Wilson chain
 DISCNMAX=0
-mMAX=80
-Diagonalisation.
 BAND="flat" thetaCh={"2.", "2."}
 Discretization (channel 1)
 "xitable" (channel 1)
@@ -61,10 +40,7 @@ Precision last xi:Infinity
 Precision last zeta: Infinity
 Discretization done.
 --EOF--
-           {{# Input file for NRG Ljubljana}, {# symtype , QS}, {# Using sneg version , 1.251}, {#!9}, {# Number of channels, chain sites, subspaces: }, {2, 0, 15}}
-
 maketable[]
-
 exnames={d, eps1, eps2, g, Gamma1, Gamma11, Gamma12, Gamma2, Gamma21, Gamma22, Gamma2to2, Gamma3, J12, Jcharge, Jcharge1, Jcharge2, Jkondo, Jkondo1, Jkondo1ch2, Jkondo1P, Jkondo1Z, Jkondo2, Jkondo2ch2, Jkondo2P, Jkondo2Z, Jkondo3, JkondoP, 
    JkondoZ, Jspin, U1, U12, U2}
 thetaCh={"2.", "2."}
@@ -205,37 +181,32 @@ Lowest energies (GS shifted):{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1,
 Scale factor SCALE(Ninit):1.0201394465967895
 Lowest energies (shifted and scaled):{0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.9802581434685472, 0.9802581434685472, 0.9802581434685472, 0.9802581434685472, 0.9802581434685472}
 makeireducf GENERAL
-ireducTable: f[0]{}
-ireducTable: f[1]{}
 Loading module operators.m
 operators.m started
 s: n_d nc[d[0, 0], d[1, 0]] + nc[d[0, 1], d[1, 1]]
 s: n_d^2 nc[d[0, 0], d[1, 0]] + nc[d[0, 1], d[1, 1]] - 2*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]
 d: A_d d
-ireducTable: d{}
 t: sigma_d d[]
-ireducTable: Chop[Expand[komutator[Hint /. params, d[#1, #2]]]] & {}
-ireducTable: Chop[Expand[komutator[Hint /. params, a[#1, #2]]]] & {}
+d: self_d Chop[Expand[komutator[Hint, d[#1, #2]]]] & 
+d: self_a Chop[Expand[komutator[Hint, a[#1, #2]]]] & 
 s: n_a nc[a[0, 0], a[1, 0]] + nc[a[0, 1], a[1, 1]]
 s: n_a^2 nc[a[0, 0], a[1, 0]] + nc[a[0, 1], a[1, 1]] - 2*nc[a[0, 0], a[0, 1], a[1, 0], a[1, 1]]
 s: SaSd -nc[a[0, 0], d[0, 0], a[1, 0], d[1, 0]]/4 + nc[a[0, 0], d[0, 1], a[1, 0], d[1, 1]]/4 - nc[a[0, 0], d[0, 1], a[1, 1], d[1, 0]]/2 - nc[a[0, 1], d[0, 0], a[1, 0], d[1, 1]]/2 + nc[a[0, 1], d[0, 0], a[1, 1], d[1, 0]]/4 - 
    nc[a[0, 1], d[0, 1], a[1, 1], d[1, 1]]/4
 s: n_an_d -nc[a[0, 0], d[0, 0], a[1, 0], d[1, 0]] - nc[a[0, 0], d[0, 1], a[1, 0], d[1, 1]] - nc[a[0, 1], d[0, 0], a[1, 1], d[1, 0]] - nc[a[0, 1], d[0, 1], a[1, 1], d[1, 1]]
-ireducTable: a[]{}
-ireducTable: Chop[Expand[komutator[Hint /. params, a[#1, #2]]]] & {}
+d: A_a a[]
+t: sigma_a a[]
 operators.m done
 Loading module customoperators.m
-"customoperators $Id: customoperators.m,v 1.1 2015/11/09 12:23:54 rokzitko Exp rokzitko $"
+"customoperators Rok Zitko"
 Customoperators done.
 Loading module modeloperators.m
 Can't load modeloperators.m. Continuing.
--- maketable[] done --
 Timing report
-{basis, 0.428339`6.08333261193573}
-{ham, 7.7157739999999999999`6.162833232832778}
-{maketable, 13.302038`7.575463177647146}
-{xi, 0.011845`4.525080058554755}
+{basis, 0.56349`6.202431206720416}
+{ham, 8.709018`6.215422922602443}
+{maketable, 16.957886`7.680916704874319}
+{xi, 0.01506`4.629369965360657}
 {_, 0}
 data.in
-gammaPol=0.252313252202016
 "Success!"

@@ -1,12 +1,12 @@
 [extra]
-U1=1.0
-U2=1.0
-Gamma1=0.1
-Gamma2=0.1
-eps1=-0.4
-eps2=-0.4
-U12=1.0
-J12=0
+U1=
+U2=
+Gamma1=
+Gamma2=
+eps1=
+eps2=
+U12=
+J12=
 
 [param]
 options=GENERATE_TEMPLATE

@@ -55,6 +55,7 @@ if (getparam("polarized") eq "true") {
     $perch = 2;
 }
 my $channels;
+my $coefchannels;
 
 while (<F>) {
     print;
@@ -72,10 +73,11 @@ while (<F>) {
     if ($mode == 0) {
         if (!/(\d+)\s+(\d+)\s+(\d+)/) { die "Parse error 1: $_"; }
         $channels = $1;
+        $coefchannels = $channels * $perch;
         my $impurities = $2;
         $subspaces = $3;
         $impurities = $nr; # override!
-        print "ch=$channels im=$impurities sub=$subspaces\n";
+        print "ch=$channels coefch=$coefchannels im=$impurities sub=$subspaces\n";
         print OUT "$channels $impurities $subspaces\n";
         $mode = 1;
         next;
@@ -98,7 +100,7 @@ while (<F>) {
             $line1 =~ /DIAG\s+(\S+)$/;
             my $fn = $1;
             
-            system("$matrix -c$channels param.extra $fn >ham");
+            system("$matrix -c$coefchannels param.extra $fn >ham");
             if ($? != 0) { die "matrix call error"; }
             copy("ham", "ham.$qn");
 
@@ -206,7 +208,7 @@ sub unitary
         } else {
             chomp(my $fn = $line);
             -e $fn or die "File not found: $fn";
-            system("$matrix param.extra $fn >mat");
+            system("$matrix -c$coefchannels param.extra $fn >mat");
             if ($? != 0) { die "matrix call error for $fn"; }
         }
         system "cat -e mat";
@@ -227,12 +229,12 @@ sub getparam
 {
     my $keyword = shift;
     my $fn = "param";
-    open (F, "<", $fn) or die "Can't open $fn for reading: $!\n";
-    while (<F>) {
+    open (G, "<", $fn) or die "Can't open $fn for reading: $!\n";
+    while (<G>) {
         if (/^$keyword=(.*)/) {
             return $1;
         }
     }
-    close F;
+    close G;
     die "Parsing failure: $keyword not found.";
 }

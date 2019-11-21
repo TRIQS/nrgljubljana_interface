@@ -6,27 +6,12 @@ Options: {GENERATE_TEMPLATE, Nph=10}
 Loading module models.m
 models started
 Loading module custommodels.m
-models $Id: custommodels.m,v 1.1 2015/11/09 12:23:47 rokzitko Exp rokzitko $
-custommodels.m done
+custommodels Rok Zitko
 Loading module Holstein.m
 def1ch, NRDOTS=1
-COEFCHANNELS:1
 H0=coefzeta[1, 0]*(-1 + nc[f[0, 0, 0], f[1, 0, 0]] + nc[f[0, 0, 1], f[1, 0, 1]])
-adddots, nrdots=1
-params={gammaPol -> Sqrt[gammaA*theta0]/Sqrt[Pi], gammaPolCh[ch_] :> Sqrt[1/Pi*theta0Ch[ch]*gammaA], hybV[i_, j_] :> Sqrt[1/Pi]*V[i, j], coefzeta[ch_, j__] :> N[bandrescale*zeta[ch][j]], coefxi[ch_, j__] :> N[bandrescale*xi[ch][j]], 
-   coefrung[ch_, j__] :> N[bandrescale*zetaR[ch][j]], coefdelta[ch_, j__] :> N[bandrescale*scdelta[ch][j]], coefkappa[ch_, j__] :> N[bandrescale*sckappa[ch][j]], U -> 0.1, delta -> 0., t -> 0., 
-   gammaPol2 -> Sqrt[extraGamma2*gammaA*thetaCh[1]]/Sqrt[Pi], gammaPol2to2 -> Sqrt[extraGamma2to2*gammaA*thetaCh[2]]/Sqrt[Pi], gammaPolch1 -> Sqrt[extraGamma1*gammaA*thetaCh[1]]/Sqrt[Pi], 
-   gammaPolch2 -> Sqrt[extraGamma2*gammaA*thetaCh[2]]/Sqrt[Pi], gammaPolch3 -> Sqrt[extraGamma3*gammaA*thetaCh[3]]/Sqrt[Pi], Jspin -> extraJspin*gammaA, Jcharge -> extraJcharge*gammaA, Jcharge1 -> extraJcharge1*gammaA, 
-   Jcharge2 -> extraJcharge2*gammaA, Jkondo -> extraJkondo*gammaA, Jkondo1 -> extraJkondo1*gammaA, Jkondo2 -> extraJkondo2*gammaA, Jkondo3 -> extraJkondo3*gammaA, Jkondo1P -> extraJkondo1P*gammaA, Jkondo2P -> extraJkondo2P*gammaA, 
-   Jkondo1Z -> extraJkondo1Z*gammaA, Jkondo2Z -> extraJkondo2Z*gammaA, JkondoP -> extraJkondoP*gammaA, JkondoZ -> extraJkondoZ*gammaA, Jkondo1ch2 -> extraJkondo1ch2*gammaA, Jkondo2ch2 -> extraJkondo2ch2*gammaA, gep -> extrag, dd -> extrad, 
-   hybV11 -> Sqrt[extraGamma11*gammaA*thetaCh[1]]/Sqrt[Pi], hybV12 -> Sqrt[extraGamma12*gammaA*thetaCh[2]]/Sqrt[Pi], hybV21 -> Sqrt[extraGamma21*gammaA*thetaCh[1]]/Sqrt[Pi], hybV22 -> Sqrt[extraGamma22*gammaA*thetaCh[2]]/Sqrt[Pi], U1 -> 1, 
-   eps1 -> 1, omega -> 1, g1 -> 1, n1 -> 1}
-NRDOTS:1
-CHANNELS:1
+NRDOTS:1 CHANNELS:1 COEFCHANNELS:1
 basis:{d[], f[0]}
-lrchain:{}
-lrextrarule:{}
-NROPS:2
 Hamiltonian generated. -coefzeta[1, 0] + eps1*nc[d[0, 0], d[1, 0]] + gammaPolCh[1]*nc[d[0, 0], f[1, 0, 0]] + eps1*nc[d[0, 1], d[1, 1]] + gammaPolCh[1]*nc[d[0, 1], f[1, 0, 1]] + gammaPolCh[1]*nc[f[0, 0, 0], d[1, 0]] + 
    coefzeta[1, 0]*nc[f[0, 0, 0], f[1, 0, 0]] + gammaPolCh[1]*nc[f[0, 0, 1], d[1, 1]] + coefzeta[1, 0]*nc[f[0, 0, 1], f[1, 0, 1]] - g1*n1*nc[ket[0], bra[1]] - g1*n1*nc[ket[1], bra[0]] + omega*nc[ket[1], bra[1]] - 
    Sqrt[2]*g1*n1*nc[ket[1], bra[2]] - Sqrt[2]*g1*n1*nc[ket[2], bra[1]] + 2*omega*nc[ket[2], bra[2]] - Sqrt[3]*g1*n1*nc[ket[2], bra[3]] - Sqrt[3]*g1*n1*nc[ket[3], bra[2]] + 3*omega*nc[ket[3], bra[3]] - 2*g1*n1*nc[ket[3], bra[4]] - 
@@ -43,18 +28,12 @@ Hamiltonian generated. -coefzeta[1, 0] + eps1*nc[d[0, 0], d[1, 0]] + gammaPolCh[
    Sqrt[6]*g1*nc[d[0, 1], d[1, 1], ket[5], bra[6]] + Sqrt[6]*g1*nc[d[0, 1], d[1, 1], ket[6], bra[5]] + Sqrt[7]*g1*nc[d[0, 1], d[1, 1], ket[6], bra[7]] + Sqrt[7]*g1*nc[d[0, 1], d[1, 1], ket[7], bra[6]] + 
    2*Sqrt[2]*g1*nc[d[0, 1], d[1, 1], ket[7], bra[8]] + 2*Sqrt[2]*g1*nc[d[0, 1], d[1, 1], ket[8], bra[7]] + 3*g1*nc[d[0, 1], d[1, 1], ket[8], bra[9]] + 3*g1*nc[d[0, 1], d[1, 1], ket[9], bra[8]] + 
    Sqrt[10]*g1*nc[d[0, 1], d[1, 1], ket[9], bra[10]] + Sqrt[10]*g1*nc[d[0, 1], d[1, 1], ket[10], bra[9]]
-H-conj[H]=0
 SCALE[0]=1.0201394465967895
 faktor=1.3862943611198906
 Generating basis
-Basis states generated.
-BASIS NR=16
 Adding phonons
-Basis: basis
-PREC=1000
+Wilson chain
 DISCNMAX=0
-mMAX=80
-Diagonalisation.
 BAND="flat" thetaCh={"2."}
 Discretization (channel 1)
 "xitable" (channel 1)
@@ -65,10 +44,7 @@ Precision last xi:Infinity
 Precision last zeta: Infinity
 Discretization done.
 --EOF--
-           {{# Input file for NRG Ljubljana}, {# symtype , QS}, {# Using sneg version , 1.251}, {#!9}, {# Number of channels, chain sites, subspaces: }, {1, 0, 6}}
-
 maketable[]
-
 exnames={d, eps1, g, g1, Gamma1, Gamma11, Gamma12, Gamma2, Gamma21, Gamma22, Gamma2to2, Gamma3, Jcharge, Jcharge1, Jcharge2, Jkondo, Jkondo1, Jkondo1ch2, Jkondo1P, Jkondo1Z, Jkondo2, Jkondo2ch2, Jkondo2P, Jkondo2Z, Jkondo3, JkondoP, 
    JkondoZ, Jspin, n1, omega, U1}
 thetaCh={"2."}
@@ -189,16 +165,14 @@ Scale factor SCALE(Ninit):1.0201394465967895
 Lowest energies (shifted and scaled):{0., 0., 0., 0., 0., 0., 0.9802581434685472, 0.9802581434685472, 0.9802581434685472, 0.9802581434685472, 0.9802581434685472, 0.9802581434685472, 1.9605162869370945, 1.9605162869370945, 
    1.9605162869370945, 1.9605162869370945, 1.9605162869370945, 1.9605162869370945, 2.9407744304056416, 2.9407744304056416}
 makeireducf GENERAL
-ireducTable: f[0]{}
 Loading module operators.m
 operators.m started
 s: n_d nc[d[0, 0], d[1, 0]] + nc[d[0, 1], d[1, 1]]
 s: n_d^2 nc[d[0, 0], d[1, 0]] + nc[d[0, 1], d[1, 1]] - 2*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]
 s: hop0 nc[d[0, 0], f[1, 0, 0]] + nc[d[0, 1], f[1, 0, 1]] + nc[f[0, 0, 0], d[1, 0]] + nc[f[0, 0, 1], d[1, 1]]
 d: A_d d
-ireducTable: d{}
 t: sigma_d d[]
-ireducTable: Chop[Expand[komutator[Hint /. params, d[#1, #2]]]] & {}
+d: self_d Chop[Expand[komutator[Hint, d[#1, #2]]]] & 
 s: aan nc[ket[0], bra[1]] + Sqrt[2]*nc[ket[1], bra[2]] + Sqrt[3]*nc[ket[2], bra[3]] + 2*nc[ket[3], bra[4]] + Sqrt[5]*nc[ket[4], bra[5]] + Sqrt[6]*nc[ket[5], bra[6]] + Sqrt[7]*nc[ket[6], bra[7]] + 2*Sqrt[2]*nc[ket[7], bra[8]] + 
    3*nc[ket[8], bra[9]] + Sqrt[10]*nc[ket[9], bra[10]]
 s: nph nc[ket[1], bra[1]] + 2*nc[ket[2], bra[2]] + 3*nc[ket[3], bra[3]] + 4*nc[ket[4], bra[4]] + 5*nc[ket[5], bra[5]] + 6*nc[ket[6], bra[6]] + 7*nc[ket[7], bra[7]] + 8*nc[ket[8], bra[8]] + 9*nc[ket[9], bra[9]] + 10*nc[ket[10], bra[10]]
@@ -211,17 +185,15 @@ s: displ^2 nc[ket[0], bra[0]] + Sqrt[2]*nc[ket[0], bra[2]] + 3*nc[ket[1], bra[1]
    3*Sqrt[10]*nc[ket[8], bra[10]] + 6*Sqrt[2]*nc[ket[9], bra[7]] + 19*nc[ket[9], bra[9]] + 3*Sqrt[10]*nc[ket[10], bra[8]] + 10*nc[ket[10], bra[10]]
 operators.m done
 Loading module customoperators.m
-"customoperators $Id: customoperators.m,v 1.1 2015/11/09 12:23:54 rokzitko Exp rokzitko $"
+"customoperators Rok Zitko"
 Customoperators done.
 Loading module modeloperators.m
 Can't load modeloperators.m. Continuing.
--- maketable[] done --
 Timing report
-{basis, 0.138054`5.591593987975498}
-{ham, 22.056174`7.016923922349953}
-{maketable, 31.61603`7.9514523284995455}
-{xi, 0.008554`4.383714239416768}
+{basis, 0.129066`5.562356844150254}
+{ham, 21.62774`7.008404883133541}
+{maketable, 32.389073`7.961943511844346}
+{xi, 0.00781`4.344196027373275}
 {_, 0}
 data.in
-gammaPol=0.252313252202016
 "Success!"

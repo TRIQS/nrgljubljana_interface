@@ -22,5 +22,5 @@ params = Join[params, {
   gammaPol2 -> Sqrt[(1/Pi) thetaCh[2] (extraGamma2) gammaA]
 }];
 
-selfopd = ( Chop @ Expand @ komutator[Hint /. params, d[#1, #2]] )&;
-selfopa = ( Chop @ Expand @ komutator[Hint /. params, a[#1, #2]] )&;
+selfopd = ( Chop @ Expand @ komutator[Hint, d[#1, #2]] )&;
+selfopa = ( Chop @ Expand @ komutator[Hint, a[#1, #2]] )&;
