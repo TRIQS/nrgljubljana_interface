@@ -22,7 +22,7 @@ macro(generate_docs header_file)
   )
 endmacro(generate_docs)
 
-generate_docs(${PROJECT_SOURCE_DIR}/c++/nrgljubljana_interface/nrgljubljana_interface.hpp)
+generate_docs(${PROJECT_SOURCE_DIR}/c++/nrgljubljana_interface/solver_core.hpp)
 
 # --------------------------------------------------------
 # Build & Run the C++ doc examples and capture the output
