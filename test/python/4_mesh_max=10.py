@@ -43,18 +43,20 @@ class test_SIAM(unittest.TestCase):
     #S.set_nrg_params(**np)
 
     # # Initialize hybridization function
-    # for w in S.Delta_w.mesh: S.Delta_w[w] = 1 / w
     S.Delta_w['imp'] << 0.01 * SemiCircularNew(1.0)
 
     # Solve the impurity model
     S.solve(**sp)
 
     # # Store the Result
-    with HDFArchive("SIAM.out.h5", 'w') as arch:
-        arch["S"] = S
+    with HDFArchive("4_mesh_max=10.out.h5", 'w') as arch:
+        arch["A_w"] = S.A_w
+        arch["G_w"] = S.G_w
+        arch["F_w"] = S.F_w
+        arch["Sigma_w"] = S.Sigma_w
 
-    # # # Compare against reference result
-    # # h5diff("SIAM.out.h5", "SIAM.ref.h5")
+    # Compare against reference result
+    h5diff("4_mesh_max=10.out.h5", "4_mesh_max=10.ref.h5")
 
 if __name__ == '__main__':
     unittest.main()

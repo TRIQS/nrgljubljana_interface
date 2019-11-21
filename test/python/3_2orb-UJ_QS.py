@@ -55,11 +55,14 @@ class test_SIAM(unittest.TestCase):
     S.solve(**sp)
 
     # # Store the Result
-    with HDFArchive("SIAM.out.h5", 'w') as arch:
-        arch["S"] = S
+    with HDFArchive("3_2orb-UJ_QS.out.h5", 'w') as arch:
+        arch["A_w"] = S.A_w
+        arch["G_w"] = S.G_w
+        arch["F_w"] = S.F_w
+        arch["Sigma_w"] = S.Sigma_w
 
-    # # # Compare against reference result
-    # # h5diff("SIAM.out.h5", "SIAM.ref.h5")
+    # Compare against reference result
+    h5diff("3_2orb-UJ_QS.out.h5", "3_2orb-UJ_QS.ref.h5")
 
 if __name__ == '__main__':
     unittest.main()
