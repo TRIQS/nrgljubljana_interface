@@ -18,9 +18,7 @@ SCALE[0]=1.0201394465967895
 faktor=1.3862943611198906
 Generating basis
 Wilson chain
-PREC=1000
 DISCNMAX=0
-mMAX=80
 BAND="flat" thetaCh={"2."}
 Discretization (channel 1)
 "xitable" (channel 1)
@@ -82,10 +80,10 @@ Customoperators done.
 Loading module modeloperators.m
 Can't load modeloperators.m. Continuing.
 Timing report
-{basis, 0.011854`4.52540991639897}
-{ham, 0.114145`4.730850635548585}
-{maketable, 0.722342`6.310287860796999}
-{xi, 0.006161`4.241196202289385}
+{basis, 0.017119`4.685023385427865}
+{ham, 0.091541`4.63500939549146}
+{maketable, 0.699447`6.296299805276515}
+{xi, 0.008156`4.3630222106020735}
 {_, 0}
 data.in
 "Success!"
