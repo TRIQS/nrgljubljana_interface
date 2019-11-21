@@ -98,15 +98,16 @@ add_subdirectory(templates)
 # Build and install the nrgljubljana_interface library
 add_subdirectory(c++/nrgljubljana_interface)
 
-# Build NRG Ljubljana
-add_subdirectory(nrgljubljana)
-
 # Tests
 option(Build_Tests "Build tests" ON)
 if(Build_Tests)
   enable_testing()
   add_subdirectory(test)
 endif()
+
+# Make NRG Ljubljana Targets available without tests
+set(Build_Tests OFF)
+add_subdirectory(nrgljubljana EXCLUDE_FROM_ALL)
 
 if(TRIQS_WITH_PYTHON_SUPPORT)
   # Python interface
