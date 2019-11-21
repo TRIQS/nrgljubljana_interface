@@ -1,7 +1,7 @@
 [extra]
-U1=1
-eps1=1
-B1=1
+U1=
+eps1=
+B1=
 
 [param]
 options=GENERATE_TEMPLATE
@@ -9,4 +9,3 @@ symtype=QSZ
 polarized=true
 model=SIAM.m
 ops=n_d n_d^2 hop0 A_d self_d sigma_d SZd
-
