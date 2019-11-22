@@ -1,7 +1,7 @@
 from cpp2py.wrap_generator import *
 import re
 
-module = module_(full_name = "nrgljubljana.mesh_refreq_pts", doc = "The refreq_pts mesh", app_name="nrgljubljana_interface")
+module = module_(full_name = "mesh_refreq_pts", doc = "The refreq_pts mesh", app_name="nrgljubljana_interface")
 
 module.add_imports(*['pytriqs.gf']) 
 

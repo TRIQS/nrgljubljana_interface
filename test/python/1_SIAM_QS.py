@@ -2,9 +2,7 @@
 
 import unittest
 
-import nrgljubljana.mesh_refreq_pts # XXX
-
-from nrgljubljana_interface import Solver, FlatNew, SemiCircularNew
+from nrgljubljana_interface import Solver, FlatNew, SemiCircularNew, MeshReFreqPts
 
 from pytriqs.gf import *
 from pytriqs.archive import *
