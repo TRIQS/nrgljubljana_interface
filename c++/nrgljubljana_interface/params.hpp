@@ -53,6 +53,39 @@ namespace nrgljubljana_interface {
       }
     }
 
+    /// Spin-polarized Wilson chain
+    bool polarized = false;
+
+    /// 2x2 spin structure in Wilson chain
+    bool pol2x2 = false;
+
+    /// Channel-mixing terms in Wilson chain
+    bool rungs = false;
+
+    /// Operators to be calculated
+    std::string ops = "";
+
+    /// Spectral functions (singlet ops) to compute
+    std::string specs = "";
+
+    /// Spectral functions (doublet ops) to compute
+    std::string specd = "";
+
+    /// Spectral functions (triplet ops) to compute
+    std::string spect = "";
+
+    /// Spectral functions (quadruplet ops) to compute
+    std::string specq = "";
+
+    /// Spectral functions (orbital triplet ops) to compute
+    std::string specot = "";
+
+    /// Susceptibilities to compute
+    std::string specchit = "";
+
+    /// 3-leg vertex functions to compute?
+    std::string specv3 = "";
+
     /// Write constr_params_t to hdf5
     friend void h5_write(triqs::h5::group h5group, std::string subgroup_name, constr_params_t const &cp);
 
@@ -127,25 +160,7 @@ namespace nrgljubljana_interface {
     /// Number of Matsubara points to collect
     size_t mats = 100;
 
-    /// Operators to be calculated
-    std::string ops = "";
-
-    /// Spectral functions (singlet ops) to compute
-    std::string specs = "";
-
-    /// Spectral functions (doublet ops) to compute
-    std::string specd = "";
-
-    /// Spectral functions (triplet ops) to compute
-    std::string spect = "";
-
-    /// Spectral functions (quadruplet ops) to compute
-    std::string specq = "";
-
-    /// Spectral functions (orbital triplet ops) to compute
-    std::string specot = "";
-
-    /// Conductance curves to compu<te
+    /// Conductance curves to compute
     std::string specgt = "";
 
     /// I_1 curves to compute
@@ -153,12 +168,6 @@ namespace nrgljubljana_interface {
 
     /// I_2 curves to compute
     std::string speci2t = "";
-
-    /// Susceptibilities to compute
-    std::string specchit = "";
-
-    /// 3-leg vertex functions to compute?
-    std::string specv3 = "";
 
     /// Compute 3-leg vertex on matsubara/matsubara axis?
     bool v3mm = false;
@@ -180,15 +189,6 @@ namespace nrgljubljana_interface {
 
     /// Parameter z in the logarithmic discretization
     double z = 1.0;
-
-    /// Spin-polarized Wilson chain
-    bool polarized = false;
-
-    /// 2x2 spin structure in Wilson chain
-    bool pol2x2 = false;
-
-    /// Channel-mixing terms in Wilson chain
-    bool rungs = false;
 
     /// Tridiagonalisation approach
     std::string tri = "old";

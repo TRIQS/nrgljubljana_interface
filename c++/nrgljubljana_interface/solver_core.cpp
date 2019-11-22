@@ -64,13 +64,14 @@ namespace nrgljubljana_interface {
       std::getline(F, s);
       return s;
     };
-    nrg_params.ops = getline("ops");
-    nrg_params.specs = getline("specs");
-    nrg_params.specd = getline("specd");
-    nrg_params.spect = getline("spect");
-    nrg_params.specq = getline("specq");
-    nrg_params.specot = getline("specot");
-    nrg_params.polarized = getline("polarized") == "true";
+    constr_params.ops = getline("ops");
+    constr_params.specs = getline("specs");
+    constr_params.specd = getline("specd");
+    constr_params.spect = getline("spect");
+    constr_params.specq = getline("specq");
+    constr_params.specot = getline("specot");
+    constr_params.polarized = getline("polarized") == "true";
+    // TO DO: single init file!
 
     // Create the hybridization function on a logarithmic mesh
     std::vector<double> mesh_points;
@@ -278,17 +279,17 @@ namespace nrgljubljana_interface {
     F << "keepenergy=" << sp.keepenergy << std::endl;
     F << "keepmin=" << sp.keepmin << std::endl;
     F << "T=" << sp.T << std::endl;
-    F << "ops=" << np.ops << std::endl;
-    F << "specs=" << np.specs << std::endl;
-    F << "specd=" << np.specd << std::endl;
-    F << "spect=" << np.spect << std::endl;
-    F << "specq=" << np.specq << std::endl;
-    F << "specot=" << np.specot << std::endl;
+    F << "ops=" << cp.ops << std::endl;
+    F << "specs=" << cp.specs << std::endl;
+    F << "specd=" << cp.specd << std::endl;
+    F << "spect=" << cp.spect << std::endl;
+    F << "specq=" << cp.specq << std::endl;
+    F << "specot=" << cp.specot << std::endl;
     F << "specgt=" << np.specgt << std::endl;
     F << "speci1t=" << np.speci1t << std::endl;
     F << "speci2t=" << np.speci2t << std::endl;
-    F << "specchit=" << np.specchit << std::endl;
-    F << "specv3=" << np.specv3 << std::endl;
+    F << "specchit=" << cp.specchit << std::endl;
+    F << "specv3=" << cp.specv3 << std::endl;
     F << "v3mm=" << np.v3mm << std::endl;
     F << "dmnrg=" << np.dmnrg << std::endl;
     F << "cfs=" << np.cfs << std::endl;
@@ -302,9 +303,9 @@ namespace nrgljubljana_interface {
     F << "discretization=" << np.discretization << std::endl;
     F << "z=" << np.z << std::endl;
     F << "Nz=" << sp.Nz << std::endl; // !
-    F << "polarized=" << np.polarized << std::endl;
-    F << "pol2x2=" << np.pol2x2 << std::endl;
-    F << "rungs=" << np.rungs << std::endl;
+    F << "polarized=" << cp.polarized << std::endl;
+    F << "pol2x2=" << cp.pol2x2 << std::endl;
+    F << "rungs=" << cp.rungs << std::endl;
     F << "tri=" << np.tri << std::endl;
     F << "preccpp=" << np.preccpp << std::endl;
     F << "diag=" << np.diag << std::endl;

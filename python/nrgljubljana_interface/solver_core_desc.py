@@ -98,6 +98,28 @@ c.add_constructor("""(**nrgljubljana_interface::constr_params_t)""", doc = r"""C
 +----------------+-------------+--------------------+--------------------------------------------------------------+
 | mesh_ratio     | double      | 1.05               | Common ratio of the geometric sequence                       |
 +----------------+-------------+--------------------+--------------------------------------------------------------+
+| polarized      | bool        | false              | Spin-polarized Wilson chain                                  |
++----------------+-------------+--------------------+--------------------------------------------------------------+
+| pol2x2         | bool        | false              | 2x2 spin structure in Wilson chain                           |
++----------------+-------------+--------------------+--------------------------------------------------------------+
+| rungs          | bool        | false              | Channel-mixing terms in Wilson chain                         |
++----------------+-------------+--------------------+--------------------------------------------------------------+
+| ops            | std::string | ""                 | Operators to be calculated                                   |
++----------------+-------------+--------------------+--------------------------------------------------------------+
+| specs          | std::string | ""                 | Spectral functions (singlet ops) to compute                  |
++----------------+-------------+--------------------+--------------------------------------------------------------+
+| specd          | std::string | ""                 | Spectral functions (doublet ops) to compute                  |
++----------------+-------------+--------------------+--------------------------------------------------------------+
+| spect          | std::string | ""                 | Spectral functions (triplet ops) to compute                  |
++----------------+-------------+--------------------+--------------------------------------------------------------+
+| specq          | std::string | ""                 | Spectral functions (quadruplet ops) to compute               |
++----------------+-------------+--------------------+--------------------------------------------------------------+
+| specot         | std::string | ""                 | Spectral functions (orbital triplet ops) to compute          |
++----------------+-------------+--------------------+--------------------------------------------------------------+
+| specchit       | std::string | ""                 | Susceptibilities to compute                                  |
++----------------+-------------+--------------------+--------------------------------------------------------------+
+| specv3         | std::string | ""                 | 3-leg vertex functions to compute?                           |
++----------------+-------------+--------------------+--------------------------------------------------------------+
 """)
 
 c.add_method("""void solve (**nrgljubljana_interface::solve_params_t)""",
@@ -157,27 +179,11 @@ c.add_method("""void set_nrg_params (**nrgljubljana_interface::nrg_params_t)""",
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | mats                | size_t      | 100       | Number of Matsubara points to collect                      |
 +---------------------+-------------+-----------+------------------------------------------------------------+
-| ops                 | std::string | ""        | Operators to be calculated                                 |
-+---------------------+-------------+-----------+------------------------------------------------------------+
-| specs               | std::string | ""        | Spectral functions (singlet ops) to compute                |
-+---------------------+-------------+-----------+------------------------------------------------------------+
-| specd               | std::string | ""        | Spectral functions (doublet ops) to compute                |
-+---------------------+-------------+-----------+------------------------------------------------------------+
-| spect               | std::string | ""        | Spectral functions (triplet ops) to compute                |
-+---------------------+-------------+-----------+------------------------------------------------------------+
-| specq               | std::string | ""        | Spectral functions (quadruplet ops) to compute             |
-+---------------------+-------------+-----------+------------------------------------------------------------+
-| specot              | std::string | ""        | Spectral functions (orbital triplet ops) to compute        |
-+---------------------+-------------+-----------+------------------------------------------------------------+
-| specgt              | std::string | ""        | Conductance curves to compu<te                             |
+| specgt              | std::string | ""        | Conductance curves to compute                              |
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | speci1t             | std::string | ""        | I_1 curves to compute                                      |
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | speci2t             | std::string | ""        | I_2 curves to compute                                      |
-+---------------------+-------------+-----------+------------------------------------------------------------+
-| specchit            | std::string | ""        | Susceptibilities to compute                                |
-+---------------------+-------------+-----------+------------------------------------------------------------+
-| specv3              | std::string | ""        | 3-leg vertex functions to compute?                         |
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | v3mm                | bool        | false     | Compute 3-leg vertex on matsubara/matsubara axis?          |
 +---------------------+-------------+-----------+------------------------------------------------------------+
@@ -192,12 +198,6 @@ c.add_method("""void set_nrg_params (**nrgljubljana_interface::nrg_params_t)""",
 | discretization      | std::string | "Z"       | Discretization scheme                                      |
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | z                   | double      | 1.0       | Parameter z in the logarithmic discretization              |
-+---------------------+-------------+-----------+------------------------------------------------------------+
-| polarized           | bool        | false     | Spin-polarized Wilson chain                                |
-+---------------------+-------------+-----------+------------------------------------------------------------+
-| pol2x2              | bool        | false     | 2x2 spin structure in Wilson chain                         |
-+---------------------+-------------+-----------+------------------------------------------------------------+
-| rungs               | bool        | false     | Channel-mixing terms in Wilson chain                       |
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | tri                 | std::string | "old"     | Tridiagonalisation approach                                |
 +---------------------+-------------+-----------+------------------------------------------------------------+
@@ -465,40 +465,10 @@ c.add_member(c_name = "mats",
              initializer = """ 100 """,
              doc = r"""Number of Matsubara points to collect""")
 
-c.add_member(c_name = "ops",
-             c_type = "std::string",
-             initializer = """ "" """,
-             doc = r"""Operators to be calculated""")
-
-c.add_member(c_name = "specs",
-             c_type = "std::string",
-             initializer = """ "" """,
-             doc = r"""Spectral functions (singlet ops) to compute""")
-
-c.add_member(c_name = "specd",
-             c_type = "std::string",
-             initializer = """ "" """,
-             doc = r"""Spectral functions (doublet ops) to compute""")
-
-c.add_member(c_name = "spect",
-             c_type = "std::string",
-             initializer = """ "" """,
-             doc = r"""Spectral functions (triplet ops) to compute""")
-
-c.add_member(c_name = "specq",
-             c_type = "std::string",
-             initializer = """ "" """,
-             doc = r"""Spectral functions (quadruplet ops) to compute""")
-
-c.add_member(c_name = "specot",
-             c_type = "std::string",
-             initializer = """ "" """,
-             doc = r"""Spectral functions (orbital triplet ops) to compute""")
-
 c.add_member(c_name = "specgt",
              c_type = "std::string",
              initializer = """ "" """,
-             doc = r"""Conductance curves to compu<te""")
+             doc = r"""Conductance curves to compute""")
 
 c.add_member(c_name = "speci1t",
              c_type = "std::string",
@@ -509,16 +479,6 @@ c.add_member(c_name = "speci2t",
              c_type = "std::string",
              initializer = """ "" """,
              doc = r"""I_2 curves to compute""")
-
-c.add_member(c_name = "specchit",
-             c_type = "std::string",
-             initializer = """ "" """,
-             doc = r"""Susceptibilities to compute""")
-
-c.add_member(c_name = "specv3",
-             c_type = "std::string",
-             initializer = """ "" """,
-             doc = r"""3-leg vertex functions to compute?""")
 
 c.add_member(c_name = "v3mm",
              c_type = "bool",
@@ -554,21 +514,6 @@ c.add_member(c_name = "z",
              c_type = "double",
              initializer = """ 1.0 """,
              doc = r"""Parameter z in the logarithmic discretization""")
-
-c.add_member(c_name = "polarized",
-             c_type = "bool",
-             initializer = """ false """,
-             doc = r"""Spin-polarized Wilson chain""")
-
-c.add_member(c_name = "pol2x2",
-             c_type = "bool",
-             initializer = """ false """,
-             doc = r"""2x2 spin structure in Wilson chain""")
-
-c.add_member(c_name = "rungs",
-             c_type = "bool",
-             initializer = """ false """,
-             doc = r"""Channel-mixing terms in Wilson chain""")
 
 c.add_member(c_name = "tri",
              c_type = "std::string",
@@ -976,6 +921,61 @@ c.add_member(c_name = "mesh_ratio",
              c_type = "double",
              initializer = """ 1.05 """,
              doc = r"""Common ratio of the geometric sequence""")
+
+c.add_member(c_name = "polarized",
+             c_type = "bool",
+             initializer = """ false """,
+             doc = r"""Spin-polarized Wilson chain""")
+
+c.add_member(c_name = "pol2x2",
+             c_type = "bool",
+             initializer = """ false """,
+             doc = r"""2x2 spin structure in Wilson chain""")
+
+c.add_member(c_name = "rungs",
+             c_type = "bool",
+             initializer = """ false """,
+             doc = r"""Channel-mixing terms in Wilson chain""")
+
+c.add_member(c_name = "ops",
+             c_type = "std::string",
+             initializer = """ "" """,
+             doc = r"""Operators to be calculated""")
+
+c.add_member(c_name = "specs",
+             c_type = "std::string",
+             initializer = """ "" """,
+             doc = r"""Spectral functions (singlet ops) to compute""")
+
+c.add_member(c_name = "specd",
+             c_type = "std::string",
+             initializer = """ "" """,
+             doc = r"""Spectral functions (doublet ops) to compute""")
+
+c.add_member(c_name = "spect",
+             c_type = "std::string",
+             initializer = """ "" """,
+             doc = r"""Spectral functions (triplet ops) to compute""")
+
+c.add_member(c_name = "specq",
+             c_type = "std::string",
+             initializer = """ "" """,
+             doc = r"""Spectral functions (quadruplet ops) to compute""")
+
+c.add_member(c_name = "specot",
+             c_type = "std::string",
+             initializer = """ "" """,
+             doc = r"""Spectral functions (orbital triplet ops) to compute""")
+
+c.add_member(c_name = "specchit",
+             c_type = "std::string",
+             initializer = """ "" """,
+             doc = r"""Susceptibilities to compute""")
+
+c.add_member(c_name = "specv3",
+             c_type = "std::string",
+             initializer = """ "" """,
+             doc = r"""3-leg vertex functions to compute?""")
 
 module.add_converter(c)
 

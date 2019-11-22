@@ -31,6 +31,17 @@ namespace nrgljubljana_interface {
     h5_write(grp, "mesh_max", cp.mesh_max);
     h5_write(grp, "mesh_min", cp.mesh_min);
     h5_write(grp, "mesh_ratio", cp.mesh_ratio);
+    h5_write(grp, "polarized", cp.polarized);
+    h5_write(grp, "pol2x2", cp.pol2x2);
+    h5_write(grp, "rungs", cp.rungs);
+    h5_write(grp, "ops", cp.ops);
+    h5_write(grp, "specs", cp.specs);
+    h5_write(grp, "specd", cp.specd);
+    h5_write(grp, "spect", cp.spect);
+    h5_write(grp, "specq", cp.specq);
+    h5_write(grp, "specot", cp.specot);
+    h5_write(grp, "specchit", cp.specchit);
+    h5_write(grp, "specv3", cp.specv3);
   }
 
   void h5_read(triqs::h5::group h5group, std::string subgroup_name, constr_params_t &cp) {
@@ -41,6 +52,17 @@ namespace nrgljubljana_interface {
     h5_read(grp, "mesh_max", cp.mesh_max);
     h5_read(grp, "mesh_min", cp.mesh_min);
     h5_read(grp, "mesh_ratio", cp.mesh_ratio);
+    h5_read(grp, "polarized", cp.polarized);
+    h5_read(grp, "pol2x2", cp.pol2x2);
+    h5_read(grp, "rungs", cp.rungs);
+    h5_read(grp, "ops", cp.ops);
+    h5_read(grp, "specs", cp.specs);
+    h5_read(grp, "specd", cp.specd);
+    h5_read(grp, "spect", cp.spect);
+    h5_read(grp, "specq", cp.specq);
+    h5_read(grp, "specot", cp.specot);
+    h5_read(grp, "specchit", cp.specchit);
+    h5_read(grp, "specv3", cp.specv3);
   }
 
   void h5_write(triqs::h5::group h5group, std::string subgroup_name, solve_params_t const &sp) {
@@ -82,17 +104,9 @@ namespace nrgljubljana_interface {
     h5_write(grp, "dmnrgmats", np.dmnrgmats);
     h5_write(grp, "fdmmats", np.fdmmats);
     h5_write(grp, "mats", np.mats);
-    h5_write(grp, "ops", np.ops);
-    h5_write(grp, "specs", np.specs);
-    h5_write(grp, "specd", np.specd);
-    h5_write(grp, "spect", np.spect);
-    h5_write(grp, "specq", np.specq);
-    h5_write(grp, "specot", np.specot);
     h5_write(grp, "specgt", np.specgt);
     h5_write(grp, "speci1t", np.speci1t);
     h5_write(grp, "speci2t", np.speci2t);
-    h5_write(grp, "specchit", np.specchit);
-    h5_write(grp, "specv3", np.specv3);
     h5_write(grp, "v3mm", np.v3mm);
     h5_write(grp, "bandrescale", np.bandrescale);
     h5_write(grp, "mMAX", np.mMAX);
@@ -100,9 +114,6 @@ namespace nrgljubljana_interface {
     h5_write(grp, "xmax", np.xmax);
     h5_write(grp, "discretization", np.discretization);
     h5_write(grp, "z", np.z);
-    h5_write(grp, "polarized", np.polarized);
-    h5_write(grp, "pol2x2", np.pol2x2);
-    h5_write(grp, "rungs", np.rungs);
     h5_write(grp, "tri", np.tri);
     h5_write(grp, "preccpp", np.preccpp);
     h5_write(grp, "diag", np.diag);
@@ -188,17 +199,9 @@ namespace nrgljubljana_interface {
     h5_read(grp, "dmnrgmats", np.dmnrgmats);
     h5_read(grp, "fdmmats", np.fdmmats);
     h5_read(grp, "mats", np.mats);
-    h5_read(grp, "ops", np.ops);
-    h5_read(grp, "specs", np.specs);
-    h5_read(grp, "specd", np.specd);
-    h5_read(grp, "spect", np.spect);
-    h5_read(grp, "specq", np.specq);
-    h5_read(grp, "specot", np.specot);
     h5_read(grp, "specgt", np.specgt);
     h5_read(grp, "speci1t", np.speci1t);
     h5_read(grp, "speci2t", np.speci2t);
-    h5_read(grp, "specchit", np.specchit);
-    h5_read(grp, "specv3", np.specv3);
     h5_read(grp, "v3mm", np.v3mm);
     h5_read(grp, "bandrescale", np.bandrescale);
     h5_read(grp, "mMAX", np.mMAX);
@@ -206,9 +209,6 @@ namespace nrgljubljana_interface {
     h5_read(grp, "xmax", np.xmax);
     h5_read(grp, "discretization", np.discretization);
     h5_read(grp, "z", np.z);
-    h5_read(grp, "polarized", np.polarized);
-    h5_read(grp, "pol2x2", np.pol2x2);
-    h5_read(grp, "rungs", np.rungs);
     h5_read(grp, "tri", np.tri);
     h5_read(grp, "preccpp", np.preccpp);
     h5_read(grp, "diag", np.diag);

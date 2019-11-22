@@ -17,35 +17,35 @@ class test_SIAM(unittest.TestCase):
     cp["model"] = "SIAM"
     cp["symtype"] = "QSZ"
     cp["mesh_max"] = 1.0
-    cp["mesh_min"] = 1e-6
-    cp["mesh_ratio"] = 1.03
+    cp["mesh_min"] = 1e-3
+    cp["mesh_ratio"] = 1.1
 
     # Set up the Solver
     S = Solver(**cp)
 
     # Solve Parameters
     sp = {}
-    sp["Lambda"] = 2.0
+    sp["Lambda"] = 4.0
     sp["Nz"] = 2
-    sp["Tmin"] = 1e-7
-    sp["keep"] = 100
-    sp["keepenergy"] = 8.0
+    sp["Tmin"] = 1e-4
+    sp["keep"] = 50
+    sp["keepenergy"] = 6.0
 
     # Model Parameters
     mp = {}
-    mp["U1"] = 0.2
-    mp["eps1"] = -0.08
-    mp["B1"] = -0.02
+    mp["U1"] = 0.5
+    mp["eps1"] = -0.24
+    mp["B1"] = -0.1
     sp["model_parameters"] = mp
 
     # Low-level NRG Parameters
-    #np = {}
-    #np["bandrescale"] = 1
-    #S.set_nrg_params(**np)
+    np = {}
+    np["bins"] = 50
+    S.set_nrg_params(**np)
 
     # # Initialize hybridization function
-    S.Delta_w['up'] << 0.01 * SemiCircularNew(1.0)
-    S.Delta_w['dn'] << 0.02 * SemiCircularNew(1.0)
+    S.Delta_w['up'] << 0.05 * SemiCircularNew(1.0)
+    S.Delta_w['dn'] << 0.1 * SemiCircularNew(1.0)
 
     # Solve the impurity model
     S.solve(**sp)
