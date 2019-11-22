@@ -111,10 +111,10 @@ while (!(eof($F1) || eof($F2))) {
                 my $n1 = pop(@numbers1);
                 my $n2 = pop(@numbers2);
                 if (isnumeric($n1) && isnumeric($n2)) {
-                    my $diff = $n1-$n2;
+                    my $diff = abs($n1)-abs($n2);
                     if (abs($diff) > $ABSACCURACY) {
                         if ($verbose >= 2) {
-                            print "$cnt : $n1 != $n2\n";
+                            print "$cnt : $n1 != $n2 (even ignoring signs)\n";
                         }
                         $error++;
                     }
