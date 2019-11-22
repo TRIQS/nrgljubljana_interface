@@ -107,7 +107,7 @@ endif()
 
 # Make NRG Ljubljana Targets available without tests
 set(Build_Tests OFF)
-add_subdirectory(nrgljubljana EXCLUDE_FROM_ALL)
+add_subdirectory(nrgljubljana)
 
 if(TRIQS_WITH_PYTHON_SUPPORT)
   # Python interface
