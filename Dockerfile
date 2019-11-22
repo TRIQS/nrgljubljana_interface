@@ -5,6 +5,8 @@ ARG APPNAME
 COPY requirements.txt /src/$APPNAME/requirements.txt
 RUN pip install -r /src/$APPNAME/requirements.txt
 
+RUN apt-get install -y libgsl-dev || yum install -y gsl-devel
+
 COPY . $SRC/$APPNAME
 WORKDIR $BUILD/$APPNAME
 RUN chown -R build $SRC/$APPNAME .
