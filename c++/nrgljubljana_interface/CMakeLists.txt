@@ -1,13 +1,14 @@
 file(GLOB_RECURSE sources *.cpp)
-add_library(nrgljubljana_interface_c ${sources})
+add_library(nrgljubljana_interface_c STATIC ${sources})
 
 # Link against triqs and enable warnings
 target_link_libraries(nrgljubljana_interface_c PUBLIC triqs PRIVATE if_project_warnings)
 
 # Configure compilation
-target_compile_options(nrgljubljana_interface_c PUBLIC -fPIC -DNRGIF_TEMPLATE_DIR="${CMAKE_INSTALL_PREFIX}/templates")
+target_compile_options(nrgljubljana_interface_c PUBLIC -fPIC)
 target_include_directories(nrgljubljana_interface_c PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/c++>)
 target_compile_definitions(nrgljubljana_interface_c PUBLIC
+				NRGIF_TEMPLATE_DIR="${CMAKE_INSTALL_PREFIX}/templates"
 				NRGLJUBLJANA_INTERFACE_GIT_HASH=${PROJECT_GIT_HASH}
 				TRIQS_GIT_HASH=${TRIQS_GIT_HASH}
 				$<$<CONFIG:Debug>:NRGLJUBLJANA_INTERFACE_DEBUG>
@@ -69,12 +70,16 @@ option(ASAN OFF "Compile library and executables with LLVM Address Sanitizer")
 option(UBSAN OFF "Compile library and executables with LLVM Undefined Behavior Sanitizer")
 
 if(ASAN)
-  find_package(sanitizer REQUIRED "asan")
+  if(NOT TARGET asan)
+    find_package(sanitizer REQUIRED "asan")
+  endif()
   target_link_libraries(nrgljubljana_interface_c PUBLIC asan)
   install(TARGETS asan EXPORT nrgljubljana_interface-targets)
 endif()
 if(UBSAN)
-  find_package(sanitizer REQUIRED "ubsan")
+  if(NOT TARGET ubsan)
+    find_package(sanitizer REQUIRED "ubsan")
+  endif()
   target_link_libraries(nrgljubljana_interface_c PUBLIC ubsan)
   install(TARGETS ubsan EXPORT nrgljubljana_interface-targets)
 endif()
