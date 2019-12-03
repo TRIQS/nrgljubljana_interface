@@ -106,7 +106,6 @@ if(Build_Tests AND NOT IS_SUBPROJECT)
 endif()
 
 # Make NRG Ljubljana Targets available without tests
-set(Build_Tests OFF)
 add_subdirectory(nrgljubljana)
 
 if(TRIQS_WITH_PYTHON_SUPPORT)
