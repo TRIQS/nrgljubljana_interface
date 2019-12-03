@@ -25,6 +25,7 @@ class test_SIAM(unittest.TestCase):
 
     # Solve Parameters
     sp = {}
+    sp["T"] = 1e-3
     sp["Lambda"] = 4.0
     sp["Nz"] = 2
     sp["Tmin"] = 1e-4

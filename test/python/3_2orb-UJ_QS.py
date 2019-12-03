@@ -17,7 +17,7 @@ class test_SIAM(unittest.TestCase):
     cp["model"] = "2orb-UJ"
     cp["symtype"] = "QS"
     cp["mesh_max"] = 1.0
-    cp["mesh_min"] = 1e-3
+    cp["mesh_min"] = 1e-1
     cp["mesh_ratio"] = 1.1
 
     # Set up the Solver
@@ -25,20 +25,21 @@ class test_SIAM(unittest.TestCase):
 
     # Solve Parameters
     sp = {}
-    sp["Lambda"] = 8.0
-    sp["Nz"] = 2
-    sp["Tmin"] = 1e-4
-    sp["keep"] = 50
+    sp["T"] = 1e-1
+    sp["Lambda"] = 4.0
+    sp["Nz"] = 1
+    sp["Tmin"] = 1e-1
+    sp["keep"] = 200
     sp["keepenergy"] = 6.0
 
     # Model Parameters
     mp = {}
-    mp["U1"] = 2.0
-    mp["U2"] = 2.0
-    mp["eps1"] = -0.8
-    mp["eps2"] = -0.8
-    mp["U12"] = 1.0
-    mp["J12"] = 0.5
+    mp["U1"] = 1.0
+    mp["U2"] = 0.9
+    mp["eps1"] = -0.5
+    mp["eps2"] = -0.4
+    mp["U12"] = 0.1
+    mp["J12"] = 0.05
     sp["model_parameters"] = mp
 
     # Low-level NRG Parameters
@@ -48,7 +49,7 @@ class test_SIAM(unittest.TestCase):
 
     # # Initialize hybridization function
     S.Delta_w['imp'][0,0] << 0.5 * SemiCircularNew(1.0)
-    S.Delta_w['imp'][1,1] << 0.5 * SemiCircularNew(1.0)
+    S.Delta_w['imp'][1,1] << 0.4 * SemiCircularNew(1.0)
     # Out-of-diagonal Delta is zero
 
     # Solve the impurity model
