@@ -1,8 +1,14 @@
 .. _about:
 
 About nrgljubljana_interface
-===============
+============================
 
-An example application using ``cpp2py`` and TRIQS.
+nrgljubljana_interface provides a C++ and Python
+interfaces between "NRG Ljubljana" numerical
+renormalization group code and TRIQS. It is
+based on problem template files and does not
+require Mathematica during computation (but
+Mathematica is required for generating new template
+files for custom Hamiltonians and symmetry types).
 
-Written and maintained by N. Wentzell with contributions from H. U.R. Strand.
+Written and maintained by R. Žitko and N. Wentzell.
