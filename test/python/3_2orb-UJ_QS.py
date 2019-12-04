@@ -51,9 +51,15 @@ class test_SIAM(unittest.TestCase):
     S.Delta_w['imp'][0,0] << 0.5 * SemiCircularNew(1.0)
     S.Delta_w['imp'][1,1] << 0.4 * SemiCircularNew(1.0)
     # Out-of-diagonal Delta is zero
+    
+    print('hello')
+    w0 = S.Delta_w['imp'][0,0].total_density
+    print('w0=',w0)
 
     # Solve the impurity model
     S.solve(**sp)
+    
+    S.A_w
 
     # # Store the Result
     with HDFArchive("3_2orb-UJ_QS.out.h5", 'w') as arch:
