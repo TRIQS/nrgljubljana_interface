@@ -28,9 +28,9 @@ class test_SIAM(unittest.TestCase):
     sp["T"] = 1e-1
     sp["Lambda"] = 4.0
     sp["Nz"] = 1
-    sp["Tmin"] = 1e-1
-    sp["keep"] = 200
-    sp["keepenergy"] = 6.0
+    sp["Tmin"] = 0.5
+    sp["keep"] = 2000
+    sp["keepenergy"] = 10.0
 
     # Model Parameters
     mp = {}
