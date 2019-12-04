@@ -26,8 +26,6 @@ scaley("B_imp_00", -$pi, "imF_imp_00");
 kk("imG_imp_00");
 kk("imF_imp_00");
 
-for (my $i = 1; $i <= $Nz; $i++) { rmtree($i); } # XXX necessary?
-
 sub kk {
         my $in = shift;
         $in .= ".dat";
