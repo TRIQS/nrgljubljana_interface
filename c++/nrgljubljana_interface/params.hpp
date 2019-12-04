@@ -122,7 +122,7 @@ namespace nrgljubljana_interface {
 
     /// Parameter for Gaussian convolution step
     double gamma = 0.2;
-     
+
     /// Method for calculating the dynamical quantities
     std::string method = "fdm";
 
