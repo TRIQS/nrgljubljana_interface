@@ -7,6 +7,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/conf.py.in ${CMAKE_CURRENT_BINARY_DIR
 add_custom_target(docs_cpp2rst_if)
 include(${PROJECT_SOURCE_DIR}/share/cmake/extract_flags.cmake)
 extract_flags(nrgljubljana_interface_c)
+string(REPLACE \" \\\" nrgljubljana_interface_c_CXXFLAGS ${nrgljubljana_interface_c_CXXFLAGS})
 separate_arguments(nrgljubljana_interface_c_CXXFLAGS)
 macro(generate_docs header_file)
   add_custom_command(
