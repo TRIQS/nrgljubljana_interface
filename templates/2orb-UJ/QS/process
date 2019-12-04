@@ -28,14 +28,14 @@ avg("spin_${pr}_sigma_d-sigma_a.bin", "ss_01");
 avg("spin_${pr}_sigma_a-sigma_d.bin", "ss_10");
 
 scaley("A_imp_00", -$pi, "imG_imp_00");
-scaley("A_imp_00", -$pi, "imG_imp_00");
+scaley("A_imp_11", -$pi, "imG_imp_11");
 scaley("B_imp_00", -$pi, "imF_imp_00");
-scaley("B_imp_00", -$pi, "imF_imp_00");
+scaley("B_imp_11", -$pi, "imF_imp_11");
 
 kk("imG_imp_00");
-kk("imG_imp_00");
+kk("imG_imp_11");
 kk("imF_imp_00");
-kk("imF_imp_00");
+kk("imF_imp_11");
 
 sub kk {
         my $in = shift;

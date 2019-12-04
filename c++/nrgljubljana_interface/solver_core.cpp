@@ -140,38 +140,55 @@ namespace nrgljubljana_interface {
     A_w           = g_w_t{log_mesh, gf_struct};
     G_w           = g_w_t{log_mesh, gf_struct};
     F_w           = g_w_t{log_mesh, gf_struct};
-
+    
     for (int bl_idx : range(gf_struct.size())) {
       long bl_size = Delta_w[bl_idx].target_shape()[0];
 
       for (auto [i, j] : product_range(bl_size, bl_size)) {
         auto bl_name     = Delta_w.block_names()[bl_idx];
         auto file_ending = std::string{"_"} + bl_name + "_" + std::to_string(i) + std::to_string(j) + ".dat";
-
+        
         double w, re, im;
         {
-          std::ifstream A(std::string{"A"} + file_ending);
-          for (auto const &mp : log_mesh) {
-            A >> w >> re;
-            (*A_w)[bl_idx][mp](i, j) = re;
+          std::string Afilename = "A" + file_ending;
+          std::ifstream A(Afilename);
+          if (A) {
+            for (auto const &mp : log_mesh) {
+              A >> w >> re;
+              (*A_w)[bl_idx][mp](i, j) = re;
+            }
+          } else {
+            for (auto const &mp : log_mesh) (*A_w)[bl_idx][mp](i, j) = 0.0;
           }
         }
         {
-          std::ifstream imG(std::string{"imG"} + file_ending);
-          std::ifstream reG(std::string{"reG"} + file_ending);
-          for (auto const &mp : log_mesh) {
-            imG >> w >> im;
-            reG >> w >> re;
-            (*G_w)[bl_idx][mp](i, j) = re + 1i * im;
+          std::string imGfilename = "imG" + file_ending;
+          std::ifstream imG(imGfilename);
+          std::string reGfilename = "reG" + file_ending;
+          std::ifstream reG(reGfilename);
+          if (imG && reG) {
+            for (auto const &mp : log_mesh) {
+              imG >> w >> im;
+              reG >> w >> re;
+              (*G_w)[bl_idx][mp](i, j) = re + 1i * im;
+            }
+          } else {
+            for (auto const &mp : log_mesh) (*G_w)[bl_idx][mp](i, j) = 0.0;
           }
         }
         {
-          std::ifstream imF(std::string{"imF"} + file_ending);
-          std::ifstream reF(std::string{"reF"} + file_ending);
-          for (auto const &mp : log_mesh) {
-            imF >> w >> im;
-            reF >> w >> re;
-            (*F_w)[bl_idx][mp](i, j) = re + 1i * im;
+          std::string imFfilename = "imF" + file_ending;
+          std::ifstream imF(imFfilename);
+          std::string reFfilename = "reF" + file_ending;
+          std::ifstream reF(reFfilename);
+          if (imF && reF) {
+            for (auto const &mp : log_mesh) {
+              imF >> w >> im;
+              reF >> w >> re;
+              (*F_w)[bl_idx][mp](i, j) = re + 1i * im;
+            }
+          } else {
+            for (auto const &mp : log_mesh) (*F_w)[bl_idx][mp](i, j) = 0.0;
           }
         }
       }
