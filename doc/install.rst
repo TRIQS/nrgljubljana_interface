@@ -3,7 +3,7 @@
 .. _install:
 
 Compiling nrgljubljana_interface from source
-===============================
+============================================
 
 
 Prerequisites

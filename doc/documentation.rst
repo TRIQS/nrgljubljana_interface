@@ -3,17 +3,19 @@
 Documentation
 =============
 
+User guide
+----------
 
-.. math::
+.. toctree::
+   :maxdepth: 1
 
-   (a + b)^2  &=  (a + b)(a + b) \\
-              &=  a^2 + 2ab + b^2
+   guide/aim
 
 Table of Contents
 -----------------
 
 .. toctree::
-   :maxdepth: 5
+   :maxdepth: 1
 
    index
    install
@@ -32,7 +34,7 @@ C++ reference manual
 Python reference manual
 -----------------------
 
-.. automodule:: nrgljubljana_interface 
+.. automodule:: nrgljubljana_interface
    :members:
 
 .. autoclass:: nrgljubljana_interface.nrgljubljana_interface_module.Toto

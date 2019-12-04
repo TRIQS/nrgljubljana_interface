@@ -12,3 +12,9 @@ Mathematica is required for generating new template
 files for custom Hamiltonians and symmetry types).
 
 Written and maintained by R. Žitko and N. Wentzell.
+
+License
+=======
+
+The NRG Ljubljana and nrgljubljana_interface are published under the `GNU General Public License, version 3
+<http://www.gnu.org/licenses/gpl.html>`_.
