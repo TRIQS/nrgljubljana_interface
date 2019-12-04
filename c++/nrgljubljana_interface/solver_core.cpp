@@ -32,6 +32,8 @@
 #include <fstream>
 #include <utility>
 
+#include <experimental/filesystem> // remove_all
+
 #include <boost/lexical_cast.hpp>
 
 #include <nrg-lib.h>
@@ -200,8 +202,11 @@ namespace nrgljubljana_interface {
     // Cleanup
     world.barrier();
     if (world.rank() == 0) {
-      if (chdir("..") != 0) TRIQS_RUNTIME_ERROR << "failed to return from the tempdir";
-      remove(tempdir.c_str());
+      if (chdir("..") != 0) TRIQS_RUNTIME_ERROR << "failed to return from tempdir";
+//      remove(tempdir.c_str());
+      std::error_code ec;
+      std::experimental::filesystem::remove_all(tempdir, ec);
+      if (ec) std::cout << "Warning: failed to remove the temporary directory." << std::endl;
     }
   }
 

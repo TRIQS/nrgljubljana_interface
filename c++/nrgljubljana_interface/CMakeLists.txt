@@ -19,6 +19,9 @@ target_compile_definitions(nrgljubljana_interface_c PUBLIC
 # Link against NRG
 target_link_libraries(nrgljubljana_interface_c PRIVATE nrgljubljana_c)
 
+# C++ filesystem library [TO DO: no longer needed in GCC 9]
+target_link_libraries(nrgljubljana_interface_c PRIVATE stdc++fs)
+
 # Install library and headers
 install(TARGETS nrgljubljana_interface_c EXPORT nrgljubljana_interface-targets DESTINATION lib)
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} DESTINATION include FILES_MATCHING PATTERN "*.hpp" PATTERN "*.h")
