@@ -21,8 +21,6 @@
  ******************************************************************************/
 #include "./solver_core.hpp"
 
-//#include <boost/filesystem.hpp> // or C++17 filesystem ?
-
 #include <triqs/utility/exceptions.hpp> // TRIQS_RUNTIME_ERROR
 #include <itertools/itertools.hpp>
 
@@ -30,7 +28,6 @@
 #include <cmath>      // pow, log
 #include <cstdlib>    // system
 #include <sys/stat.h> // mkdir
-#include <cassert>    // assert
 #include <iostream>
 #include <fstream>
 #include <utility>
@@ -128,15 +125,13 @@ namespace nrgljubljana_interface {
 
     // Perform the calculations (this must run in all MPI processes)
     const double dz  = 1.0 / sp.Nz;
-    const double eps = 1e-8;
-    int cnt          = 1;
-    for (double z = dz; z <= 1.0 + eps; z += dz, cnt++) {
+    double z         = dz;
+    for (int cnt = 1; cnt <= sp.Nz; cnt++, z += dz) {
       std::string taskdir = std::to_string(cnt);
       solve_one_z(z, taskdir);
     }
 
     // Post-Processing
-    assert(cnt == sp.Nz + 1);
     if (world.rank() == 0)
       if (system("./process") != 0) TRIQS_RUNTIME_ERROR << "Running post-processing script failed";
 
@@ -274,7 +269,6 @@ namespace nrgljubljana_interface {
     F << "xmax=" << np.xmax << std::endl;
     F << "Nmax=" << np.Nmax << std::endl;
     F << "mMAX=" << np.mMAX << std::endl;
-    //    F << "Tmin=" << sp.Tmin << std::endl;
     F << "keep=" << sp.keep << std::endl;
     F << "keepenergy=" << sp.keepenergy << std::endl;
     F << "keepmin=" << sp.keepmin << std::endl;
