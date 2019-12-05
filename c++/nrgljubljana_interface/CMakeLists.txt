@@ -26,6 +26,9 @@ add_dependencies(nrgljubljana_interface_c adapt nrgchain matrix diag unitary bro
 if($CXX_COMPILER_ID MATCHES "GNU" AND $CXX_COMPILER_VERSION VERSION_LESS 9.0.0)
   target_link_libraries(nrgljubljana_interface_c PRIVATE stdc++fs)
 endif()
+if($CXX_COMPILER_ID MATCHES "Clang")
+  target_link_libraries(nrgljubljana_interface_c PRIVATE c++fs)
+endif()
 
 # Install library and headers
 install(TARGETS nrgljubljana_interface_c EXPORT nrgljubljana_interface-targets DESTINATION lib)
