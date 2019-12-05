@@ -27,7 +27,7 @@ if((CMAKE_CXX_COMPILER_ID STREQUAL "GNU") AND (CMAKE_CXX_COMPILER_VERSION VERSIO
   target_link_libraries(nrgljubljana_interface_c PRIVATE stdc++fs)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   target_link_libraries(nrgljubljana_interface_c PRIVATE c++experimental)
-else
+else()
   message(FATAL_ERROR "Don't know how to handle filesystem dependency.")
 endif()
 
