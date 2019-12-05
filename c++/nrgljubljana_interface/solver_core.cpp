@@ -54,21 +54,21 @@ namespace nrgljubljana_interface {
         gf_struct.emplace_back(bl_name, idx_lst);
       }
     }
-    
+
     // Read model-specific parameter defaults (file may not exist)
     auto getline = [=](std::string fn) -> std::string {
       std::ifstream F(constr_params.get_model_dir() + "/" + fn);
       if (!F) { return ""; }
-      std::string s; 
+      std::string s;
       std::getline(F, s);
       return s;
     };
-    constr_params.ops = getline("ops");
-    constr_params.specs = getline("specs");
-    constr_params.specd = getline("specd");
-    constr_params.spect = getline("spect");
-    constr_params.specq = getline("specq");
-    constr_params.specot = getline("specot");
+    constr_params.ops       = getline("ops");
+    constr_params.specs     = getline("specs");
+    constr_params.specd     = getline("specd");
+    constr_params.spect     = getline("spect");
+    constr_params.specq     = getline("specq");
+    constr_params.specot    = getline("specot");
     constr_params.polarized = getline("polarized") == "true";
     // TO DO: single init file!
 
@@ -126,8 +126,8 @@ namespace nrgljubljana_interface {
     }
 
     // Perform the calculations (this must run in all MPI processes)
-    const double dz  = 1.0 / sp.Nz;
-    double z         = dz;
+    const double dz = 1.0 / sp.Nz;
+    double z        = dz;
     for (int cnt = 1; cnt <= sp.Nz; cnt++, z += dz) {
       std::string taskdir = std::to_string(cnt);
       solve_one_z(z, taskdir);
@@ -203,7 +203,7 @@ namespace nrgljubljana_interface {
     world.barrier();
     if (world.rank() == 0) {
       if (chdir("..") != 0) TRIQS_RUNTIME_ERROR << "failed to return from tempdir";
-//      remove(tempdir.c_str());
+      //      remove(tempdir.c_str());
       std::error_code ec;
       std::experimental::filesystem::remove_all(tempdir, ec);
       if (ec) std::cout << "Warning: failed to remove the temporary directory." << std::endl;
@@ -239,7 +239,7 @@ namespace nrgljubljana_interface {
     if (sp.method == "fdm") { np.fdm = true; }
     if (sp.method == "dmnrg") { np.dmnrg = true; }
     if (sp.method == "cfs") { np.cfs = true; }
-    if (sp.method == "finite") { np.finite = true; }	  
+    if (sp.method == "finite") { np.finite = true; }
   }
 
   void solver_core::set_nrg_params(nrg_params_t const &nrg_params_) { nrg_params = nrg_params_; }

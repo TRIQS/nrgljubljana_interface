@@ -4,13 +4,14 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/conf.py.in ${CMAKE_CURRENT_BINARY_DIR
 # -----------------------------------------------------------------------------
 # Create an optional target that allows us to regenerate the C++ doc with c++2rst
 # -----------------------------------------------------------------------------
-add_custom_target(docs_cpp2rst_if)
+add_custom_target(docs_cpp2rst)
 include(${PROJECT_SOURCE_DIR}/share/cmake/extract_flags.cmake)
 extract_flags(nrgljubljana_interface_c)
+string(REPLACE \" \\\" nrgljubljana_interface_c_CXXFLAGS ${nrgljubljana_interface_c_CXXFLAGS})
 separate_arguments(nrgljubljana_interface_c_CXXFLAGS)
 macro(generate_docs header_file)
   add_custom_command(
-    TARGET docs_cpp2rst_if
+    TARGET docs_cpp2rst
     COMMAND rm -rf ${CMAKE_CURRENT_SOURCE_DIR}/cpp2rst_generated
     COMMAND
       c++2rst
@@ -28,7 +29,7 @@ generate_docs(${PROJECT_SOURCE_DIR}/c++/nrgljubljana_interface/solver_core.hpp)
 # Build & Run the C++ doc examples and capture the output
 # --------------------------------------------------------
 
-add_custom_target(docs_example_output_if)
+add_custom_target(docs_example_output)
 file(GLOB_RECURSE ExampleList RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
 foreach(example ${ExampleList})
   get_filename_component(f ${example} NAME_WE)
@@ -40,16 +41,16 @@ foreach(example ${ExampleList})
    COMMAND doc_${f} > ${CMAKE_CURRENT_SOURCE_DIR}/${d}/${f}.output 2>/dev/null
    WORKING_DIRECTORY ${d}
   )
-  add_dependencies(docs_example_output_if doc_${f})
+  add_dependencies(docs_example_output doc_${f})
 endforeach()
 
 # ---------------------------------
 # Top Sphinx target
 # ---------------------------------
 # Sphinx has internal caching, always run it
-add_custom_target(docs_sphinx_if ALL)
+add_custom_target(docs_sphinx ALL)
 add_custom_command(
-  TARGET docs_sphinx_if
+  TARGET docs_sphinx
   COMMAND PYTHONPATH=${CMAKE_BINARY_DIR}/python:$ENV{PYTHONPATH} ${TRIQS_SPHINXBUILD_EXECUTABLE} -c . -j8 -b html ${CMAKE_CURRENT_SOURCE_DIR} html
 )
 
@@ -58,11 +59,11 @@ if(NOT Sphinx_Only)
   # Autodoc usage requires the python modules to be built first
   get_property(CPP2PY_MODULES_LIST GLOBAL PROPERTY CPP2PY_MODULES_LIST)
   if(CPP2PY_MODULES_LIST)
-    add_dependencies(docs_sphinx_if ${CPP2PY_MODULES_LIST})
+    add_dependencies(docs_sphinx ${CPP2PY_MODULES_LIST})
   endif()
 
   # Generation of C++ Api and Example Outputs
-  add_dependencies(docs_sphinx_if docs_cpp2rst_if docs_example_output_if)
+  add_dependencies(docs_sphinx docs_cpp2rst docs_example_output)
 endif()
 
 # ---------------------------------
