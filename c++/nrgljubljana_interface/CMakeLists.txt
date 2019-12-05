@@ -23,10 +23,10 @@ target_link_libraries(nrgljubljana_interface_c PRIVATE nrgljubljana_c)
 add_dependencies(nrgljubljana_interface_c adapt nrgchain matrix diag unitary broaden kk)
 
 # C++ filesystem library [TO DO: no longer needed in GCC 9]
-if($CXX_COMPILER_ID MATCHES "GNU" AND $CXX_COMPILER_VERSION VERSION_LESS 9.0.0)
+if((CMAKE_CXX_COMPILER_ID STREQUAL "GNU") AND (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "9.0.0"))
   target_link_libraries(nrgljubljana_interface_c PRIVATE stdc++fs)
 endif()
-if($CXX_COMPILER_ID MATCHES "Clang")
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   target_link_libraries(nrgljubljana_interface_c PRIVATE c++fs)
 endif()
 
