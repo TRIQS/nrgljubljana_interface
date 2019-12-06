@@ -52,19 +52,8 @@
 namespace nrgljubljana_interface {
 
   solver_core::solver_core(constr_params_t cp) : constr_params(cp) {
-
-    // Read the Green function structure from file
-    {
-      std::string bl_name;
-      int bl_size;
-      std::ifstream F(constr_params.get_model_dir() + "/gf_struct");
-      if (not F.is_open()) TRIQS_RUNTIME_ERROR << "Failed to open gf_struct file\n";
-      while (F >> bl_name >> bl_size) {
-        indices_t idx_lst;
-        for (int i : range(bl_size)) idx_lst.push_back(i);
-        gf_struct.emplace_back(bl_name, idx_lst);
-      }
-    }
+    gf_struct = read_structure("gf_struct", true); // true=mandatory
+    chi_struct = read_structure("chi_struct", false); // false=optional
 
     // Read model-specific parameter defaults (file may not exist)
     auto getline = [=](std::string fn) -> std::string {
@@ -90,13 +79,28 @@ namespace nrgljubljana_interface {
       mesh_points.push_back(-w);
     }
     std::sort(begin(mesh_points), end(mesh_points));
-    //auto log_mesh = gf_mesh<refreq_pts>{mesh_points};
     log_mesh = gf_mesh<refreq_pts>{mesh_points};
     Delta_w  = g_w_t{log_mesh, gf_struct};
   }
 
   // -------------------------------------------------------------------------------
 
+  gf_struct_t solver_core::read_structure(std::string filename, bool mandatory = true) {
+    std::ifstream F(constr_params.get_model_dir() + "/" + filename);
+    if (mandatory && not F.is_open()) TRIQS_RUNTIME_ERROR << "Failed to open structure file " << filename;
+    gf_struct_t gf_struct;
+    if (F) {
+      std::string bl_name;
+      int bl_size;
+      while (F >> bl_name >> bl_size) {
+        indices_t idx_lst;
+        for (int i : range(bl_size)) idx_lst.push_back(i);
+        gf_struct.emplace_back(bl_name, idx_lst);
+      }
+    }
+    return gf_struct;
+  }
+   
   void solver_core::readGF(std::string name, std::optional<g_w_t> &G_w, gf_struct_t &gf_struct) {
     G_w = g_w_t{log_mesh, gf_struct};
     for (int bl_idx : range(gf_struct.size())) {
@@ -143,63 +147,10 @@ namespace nrgljubljana_interface {
       }
     }
   }
-
-  void solver_core::solve(solve_params_t const &sp) {
-
-    last_solve_params = sp;
-
-    std::string tempdir{};
-
-    // Reset the results
-    container_set::operator=(container_set{});
-
-    // Pre-Processing
-    if (world.rank() == 0) {
-      std::cout << "\nNRGLJUBLJANA_INTERFACE Solver\n";
-
-      // Create a temporary directory
-      tempdir = create_tempdir();
-      if (chdir(tempdir.c_str()) != 0) TRIQS_RUNTIME_ERROR << "chdir to tempdir failed.";
-
-      // Write Gamma=-Im(Delta_w) to a file
-      for (int bl_idx : range(gf_struct.size())) {
-        long bl_size = Delta_w[bl_idx].target_shape()[0];
-        auto bl_name = Delta_w.block_names()[bl_idx];
-        for (auto [i, j] : product_range(bl_size, bl_size)) {
-          std::ofstream F(std::string{} + "Gamma_" + bl_name + "_" + std::to_string(i) + std::to_string(j) + ".dat");
-          const double cutoff = 1e-8; // ensure hybridisation function is positive
-          for (auto const &w : Delta_w[bl_idx].mesh()) {
-            double value = -Delta_w[bl_idx][w](i, j).imag();
-            if (value < cutoff) { value = cutoff; }
-            F << double(w) << " " << value << std::endl;
-          }
-        }
-      }
-
-      // we need a mock param file for 'adapt' tool
-      generate_param_file(1.0);
-
-      std::string script = constr_params.get_model_dir() + "/prepare";
-      if (system(script.c_str()) != 0) TRIQS_RUNTIME_ERROR << "Running prepare script failed: " << script;
-      if (system("./discretize") != 0) TRIQS_RUNTIME_ERROR << "Running discretize script failed";
-    }
-
-    // Perform the calculations (this must run in all MPI processes)
-    const double dz = 1.0 / sp.Nz;
-    double z        = dz;
-    for (int cnt = 1; cnt <= sp.Nz; cnt++, z += dz) {
-      std::string taskdir = std::to_string(cnt);
-      solve_one_z(z, taskdir);
-    }
-
-    // Post-Processing
-    if (world.rank() == 0)
-      if (system("./process") != 0) TRIQS_RUNTIME_ERROR << "Running post-processing script failed";
-
-    // ** Read Results into TRIQS Containers
-
-    // Read expectation values and average over Nz runs
-    for (int cnt = 1; cnt <= sp.Nz; cnt++) {
+   
+  // Read expectation values and average over Nz runs
+  void solver_core::readexpv(int Nz) {
+    for (int cnt = 1; cnt <= Nz; cnt++) {
       std::string expvfilename = std::to_string(cnt) + "/customfdm";
       std::ifstream F(expvfilename);
       if (!F) TRIQS_RUNTIME_ERROR << "Expectation values output file not found.";
@@ -220,14 +171,63 @@ namespace nrgljubljana_interface {
       values.pop_front();
       for (auto [k, v] : zip(keywords, values)) expv[k] += v; // zeroed by default constructor
     }
-    for (auto &i : expv) { i.second /= sp.Nz; }
+    for (auto &i : expv) { i.second /= Nz; }
+  }
+   
+  void solver_core::solve(solve_params_t const &sp) {
+    last_solve_params = sp;
+    std::string tempdir{};
+    // Reset the results
+    container_set::operator=(container_set{});
+    // Pre-Processing
+    if (world.rank() == 0) {
+      std::cout << "\nNRGLJUBLJANA_INTERFACE Solver\n";
+      // Create a temporary directory
+      tempdir = create_tempdir();
+      if (chdir(tempdir.c_str()) != 0) TRIQS_RUNTIME_ERROR << "chdir to tempdir failed.";
+      // Write Gamma=-Im(Delta_w) to a file
+      for (int bl_idx : range(gf_struct.size())) {
+        long bl_size = Delta_w[bl_idx].target_shape()[0];
+        auto bl_name = Delta_w.block_names()[bl_idx];
+        for (auto [i, j] : product_range(bl_size, bl_size)) {
+          std::ofstream F(std::string{} + "Gamma_" + bl_name + "_" + std::to_string(i) + std::to_string(j) + ".dat");
+          const double cutoff = 1e-8; // ensure hybridisation function is positive
+          for (auto const &w : Delta_w[bl_idx].mesh()) {
+            double value = -Delta_w[bl_idx][w](i, j).imag();
+            if (value < cutoff) { value = cutoff; }
+            F << double(w) << " " << value << std::endl;
+          }
+        }
+      }
+      // we need a mock param file for 'adapt' tool
+      generate_param_file(1.0);
+      std::string script = constr_params.get_model_dir() + "/prepare";
+      if (system(script.c_str()) != 0) TRIQS_RUNTIME_ERROR << "Running prepare script failed: " << script;
+      if (system("./discretize") != 0) TRIQS_RUNTIME_ERROR << "Running discretize script failed";
+    }
 
+    // Perform the calculations (this must run in all MPI processes)
+    const double dz = 1.0 / sp.Nz;
+    double z        = dz;
+    for (int cnt = 1; cnt <= sp.Nz; cnt++, z += dz) {
+      std::string taskdir = std::to_string(cnt);
+      solve_one_z(z, taskdir);
+    }
+
+    // Post-Processing in perl script
+    if (world.rank() == 0)
+      if (system("./process") != 0) TRIQS_RUNTIME_ERROR << "Running post-processing script failed";
+
+    // Read Results into TRIQS Containers
+    readexpv(sp.Nz);
     readGF("G", G_w, gf_struct);
     readGF("F", F_w, gf_struct);
     readA("A", A_w, gf_struct);
     readA("B", B_w, gf_struct);
+    readGF("SS", chi_SS_w, chi_struct);
+    readGF("NN", chi_NN_w, chi_struct);
 
-    // Post Processing
+    // Post-Processing in C++ interface
     Sigma_w = (*F_w) / (*G_w);
 
     // Cleanup

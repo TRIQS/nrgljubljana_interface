@@ -64,6 +64,9 @@ namespace nrgljubljana_interface {
     CPP2PY_ARG_AS_DICT
     void solve(solve_params_t const &solve_params);
 
+    // Read the block structure of Green's function objects from file
+    gf_struct_t read_structure(std::string filename, bool);
+
     // Create a temporary directory for a series of NRG runs
     std::string create_tempdir();
 
@@ -83,7 +86,7 @@ namespace nrgljubljana_interface {
     // Struct containing the parameters relevant for the solver construction
     constr_params_t constr_params;
 
-    // Low-level NRG parameters
+    /// Low-level NRG parameters
     nrg_params_t nrg_params;
 
     // Struct containing the parameters relevant for the solve process
@@ -101,6 +104,9 @@ namespace nrgljubljana_interface {
     /// The hybridization function in real frequencies
     g_w_t Delta_w;
 
+    /// Read expectation values
+    void readexpv(int Nz);
+    
     /// Read a block Green's function (im/re)name-block-ij.dat
     void readGF(std::string name, std::optional<g_w_t> &G_w, gf_struct_t &);
 
