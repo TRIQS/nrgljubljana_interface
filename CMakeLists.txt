@@ -107,6 +107,7 @@ endif()
 
 # Make NRG Ljubljana Targets available without tests
 add_subdirectory(nrgljubljana EXCLUDE_FROM_ALL)
+install(TARGETS adapt nrgchain matrix diag unitary broaden kk EXPORT nrgljubljana_interface-targets RUNTIME DESTINATION bin)
 
 if(TRIQS_WITH_PYTHON_SUPPORT)
   # Python interface
