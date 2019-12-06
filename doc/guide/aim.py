@@ -43,3 +43,6 @@ with HDFArchive("aim_solution.h5", 'w') as arch:
     arch["G_w"] = S.G_w
     arch["F_w"] = S.F_w
     arch["Sigma_w"] = S.Sigma_w
+    arch["expv"] = S.expv
+
+print("<n>=", S.expv["n_d"])

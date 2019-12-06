@@ -31,6 +31,7 @@
 #include <iostream>
 #include <fstream>
 #include <utility>
+#include <deque>
 
 //#ifdef __has_include
 //#  if __has_include(<filesystem>)
@@ -95,6 +96,55 @@ namespace nrgljubljana_interface {
 
   // -------------------------------------------------------------------------------
 
+  void solver_core::readGF(std::string name, std::optional<g_w_t> &G_w) {
+    auto log_mesh = Delta_w[0].mesh();
+    G_w           = g_w_t{log_mesh, gf_struct};
+    for (int bl_idx : range(gf_struct.size())) {
+      long bl_size = Delta_w[bl_idx].target_shape()[0];
+      for (auto [i, j] : product_range(bl_size, bl_size)) {
+        auto bl_name     = Delta_w.block_names()[bl_idx];
+        auto file_ending = std::string{"_"} + bl_name + "_" + std::to_string(i) + std::to_string(j) + ".dat";
+        std::string imGfilename = "im" + name + file_ending;
+        std::ifstream imG(imGfilename);
+        std::string reGfilename = "re" + name + file_ending;
+        std::ifstream reG(reGfilename);
+        if (imG && reG) {
+          double w, re, im;
+          for (auto const &mp : log_mesh) {
+            imG >> w >> im;
+            reG >> w >> re;
+            (*G_w)[bl_idx][mp](i, j) = re + 1i * im;
+          }
+        } else {
+          for (auto const &mp : log_mesh) (*G_w)[bl_idx][mp](i, j) = 0.0;
+        }
+      }
+    }
+  }
+
+  void solver_core::readA(std::string name, std::optional<g_w_t> &A_w) {
+    auto log_mesh = Delta_w[0].mesh();
+    A_w           = g_w_t{log_mesh, gf_struct};
+    for (int bl_idx : range(gf_struct.size())) {
+      long bl_size = Delta_w[bl_idx].target_shape()[0];
+      for (auto [i, j] : product_range(bl_size, bl_size)) {
+        auto bl_name     = Delta_w.block_names()[bl_idx];
+        auto file_ending = std::string{"_"} + bl_name + "_" + std::to_string(i) + std::to_string(j) + ".dat";
+        std::string Afilename = name + file_ending;
+        std::ifstream A(Afilename);
+        if (A) {
+          double w, re;
+          for (auto const &mp : log_mesh) {
+            A >> w >> re;
+            (*A_w)[bl_idx][mp](i, j) = re;
+          }
+        } else {
+          for (auto const &mp : log_mesh) (*A_w)[bl_idx][mp](i, j) = 0.0;
+        }
+      }
+    }
+  }
+
   void solver_core::solve(solve_params_t const &sp) {
 
     last_solve_params = sp;
@@ -147,64 +197,36 @@ namespace nrgljubljana_interface {
     if (world.rank() == 0)
       if (system("./process") != 0) TRIQS_RUNTIME_ERROR << "Running post-processing script failed";
 
-    // Read Results into TRIQS Containers
-    auto log_mesh = Delta_w[0].mesh();
-    A_w           = g_w_t{log_mesh, gf_struct};
-    G_w           = g_w_t{log_mesh, gf_struct};
-    F_w           = g_w_t{log_mesh, gf_struct};
-    
-    for (int bl_idx : range(gf_struct.size())) {
-      long bl_size = Delta_w[bl_idx].target_shape()[0];
+    // ** Read Results into TRIQS Containers
 
-      for (auto [i, j] : product_range(bl_size, bl_size)) {
-        auto bl_name     = Delta_w.block_names()[bl_idx];
-        auto file_ending = std::string{"_"} + bl_name + "_" + std::to_string(i) + std::to_string(j) + ".dat";
-        
-        double w, re, im;
-        {
-          std::string Afilename = "A" + file_ending;
-          std::ifstream A(Afilename);
-          if (A) {
-            for (auto const &mp : log_mesh) {
-              A >> w >> re;
-              (*A_w)[bl_idx][mp](i, j) = re;
-            }
-          } else {
-            for (auto const &mp : log_mesh) (*A_w)[bl_idx][mp](i, j) = 0.0;
-          }
-        }
-        {
-          std::string imGfilename = "imG" + file_ending;
-          std::ifstream imG(imGfilename);
-          std::string reGfilename = "reG" + file_ending;
-          std::ifstream reG(reGfilename);
-          if (imG && reG) {
-            for (auto const &mp : log_mesh) {
-              imG >> w >> im;
-              reG >> w >> re;
-              (*G_w)[bl_idx][mp](i, j) = re + 1i * im;
-            }
-          } else {
-            for (auto const &mp : log_mesh) (*G_w)[bl_idx][mp](i, j) = 0.0;
-          }
-        }
-        {
-          std::string imFfilename = "imF" + file_ending;
-          std::ifstream imF(imFfilename);
-          std::string reFfilename = "reF" + file_ending;
-          std::ifstream reF(reFfilename);
-          if (imF && reF) {
-            for (auto const &mp : log_mesh) {
-              imF >> w >> im;
-              reF >> w >> re;
-              (*F_w)[bl_idx][mp](i, j) = re + 1i * im;
-            }
-          } else {
-            for (auto const &mp : log_mesh) (*F_w)[bl_idx][mp](i, j) = 0.0;
-          }
-        }
-      }
+    // Read expectation values and average over Nz runs
+    for (int cnt = 1; cnt <= sp.Nz; cnt++) {
+      std::string expvfilename = std::to_string(cnt) + "/customfdm";
+      std::ifstream F(expvfilename);
+      if (!F) TRIQS_RUNTIME_ERROR << "Expectation values output file not found.";
+      std::string snumber, skeyword, svalue;
+      getline(F, snumber); // snumber not used
+      getline(F, skeyword);
+      getline(F, svalue);
+      F.close();
+      skeyword.erase(0,1); // drop #
+      std::istringstream sskeyword(skeyword);
+      std::deque<std::string> keywords{std::istream_iterator<std::string>{sskeyword},
+        std::istream_iterator<std::string>{}};
+      std::istringstream ssvalue(svalue);
+      std::deque<double> values{std::istream_iterator<double>{ssvalue},
+        std::istream_iterator<double>{}};
+      TRIQS_ASSERT2(keywords.size() == values.size(), "customfdm corrupted");
+      keywords.pop_front(); // ignore first column (temperature)
+      values.pop_front();
+      for (auto [k, v] : zip(keywords, values)) expv[k] += v; // zeroed by default constructor
     }
+    for (auto &i : expv) { i.second /= sp.Nz; }
+
+    readGF("G", G_w);
+    readGF("F", F_w);
+    readA("A", A_w);
+    readA("B", B_w);
 
     // Post Processing
     Sigma_w = (*F_w) / (*G_w);

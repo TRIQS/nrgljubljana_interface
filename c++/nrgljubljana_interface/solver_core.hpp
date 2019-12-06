@@ -95,6 +95,13 @@ namespace nrgljubljana_interface {
     /// The hybridization function in real frequencies
     g_w_t Delta_w;
 
+    /// Read a block Green's function (im/re)name-block-ij.dat
+    void readGF(std::string name, std::optional<g_w_t> &G_w);
+
+    /// Read a block spectral function name-block-ij.dat; here we assume that the
+    /// spectral function is purely real.
+    void readA(std::string name, std::optional<g_w_t> &A_w);
+
     static std::string hdf5_scheme() { return "NRGLJUBLJANA_INTERFACE_SolverCore"; }
 
     // Function that writes a solver object to hdf5 file

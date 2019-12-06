@@ -54,6 +54,11 @@ c.add_member(c_name = "Sigma_w",
              read_only= True,
              doc = r"""The retarded Self energy""")
 
+c.add_member(c_name = "expv",
+             c_type = "std::map<std::string, double>",
+             read_only= True,
+             doc = r"""Expectation values""")
+
 c.add_member(c_name = "constr_params",
              c_type = "nrgljubljana_interface::constr_params_t",
              read_only= True,
