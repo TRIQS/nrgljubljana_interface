@@ -32,17 +32,17 @@
 #include <fstream>
 #include <utility>
 
-#ifdef __has_include
-#  if __has_include(<filesystem>)
-#    include <filesystem>
-namespace fs = std::filesystem;
-#  elif __has_include(<experimental/filesystem>)
-#    include <experimental/filesystem>
-namespace fs = std::experimental::filesystem;
-#  else
-#    error "Missing <filesystem>"
-#  endif
-#endif
+//#ifdef __has_include
+//#  if __has_include(<filesystem>)
+//#    include <filesystem>
+//namespace fs = std::filesystem;
+//#  elif __has_include(<experimental/filesystem>)
+//#    include <experimental/filesystem>
+//namespace fs = std::experimental::filesystem;
+//#  else
+//#    error "Missing <filesystem>"
+//#  endif
+//#endif
 
 #include <boost/lexical_cast.hpp>
 
@@ -213,9 +213,9 @@ namespace nrgljubljana_interface {
     world.barrier();
     if (world.rank() == 0) {
       if (chdir("..") != 0) TRIQS_RUNTIME_ERROR << "failed to return from tempdir";
-      std::error_code ec;
-      fs::remove_all(tempdir, ec);
-      if (ec) std::cout << "Warning: failed to remove the temporary directory." << std::endl;
+//      std::error_code ec;
+//      fs::remove_all(tempdir, ec);
+//      if (ec) std::cout << "Warning: failed to remove the temporary directory." << std::endl;
     }
   }
 
