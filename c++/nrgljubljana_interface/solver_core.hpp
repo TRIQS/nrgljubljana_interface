@@ -92,15 +92,24 @@ namespace nrgljubljana_interface {
     /// The Green function structure object
     gf_struct_t gf_struct;
 
+    /// The susceptibility structure object
+    gf_struct_t chi_struct;
+
+    /// Logarithmic mesh
+    gf_mesh<refreq_pts> log_mesh;
+
     /// The hybridization function in real frequencies
     g_w_t Delta_w;
 
     /// Read a block Green's function (im/re)name-block-ij.dat
-    void readGF(std::string name, std::optional<g_w_t> &G_w);
+    void readGF(std::string name, std::optional<g_w_t> &G_w, gf_struct_t &);
 
     /// Read a block spectral function name-block-ij.dat; here we assume that the
     /// spectral function is purely real.
-    void readA(std::string name, std::optional<g_w_t> &A_w);
+    void readA(std::string name, std::optional<g_w_t> &A_w, gf_struct_t &);
+
+    /// Read a scalar real-valued function name.dat
+    void readc(std::string name, std::optional<s_w_t> &s_w);
 
     static std::string hdf5_scheme() { return "NRGLJUBLJANA_INTERFACE_SolverCore"; }
 

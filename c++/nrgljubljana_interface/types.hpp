@@ -58,6 +58,15 @@ namespace nrgljubljana_interface {
   /// A const_view to a g_w_t
   using g_w_cvt = g_w_t::const_view_type;
 
+  /// Container for scalar real-valued quantities with no block structure
+  using s_w_t = gf<refreq_pts, scalar_real_valued>;
+
+  /// A view to c_w_t
+  using s_w_vt = s_w_t::view_type;
+
+  /// A const_view to c_w_t
+  using s_w_cvt = s_w_t::const_view_type;
+
   // Declare some placeholders for the rest of the code. Use anonymous namespace for proper linkage
   // in this code, all variables with trailing _ are placeholders by convention.
   namespace {

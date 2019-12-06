@@ -29,7 +29,7 @@ namespace nrgljubljana_interface {
 
     /// The spectral function
     std::optional<g_w_t> A_w;
-    
+
     /// The spectral function of the auxiliary correlator F_w
     std::optional<g_w_t> B_w;
 
@@ -41,9 +41,15 @@ namespace nrgljubljana_interface {
 
     /// The retarded Self energy
     std::optional<g_w_t> Sigma_w;
-    
+
     /// Expectation values
     std::map<std::string, double> expv;
+
+    /// Charge susceptibility
+    std::optional<g_w_t> chi_NN_w;
+
+    /// Spin susceptibility
+    std::optional<g_w_t> chi_SS_w;
 
     /// Function that writes all containers to hdf5 file
     friend void h5_write(triqs::h5::group h5group, std::string subgroup_name, container_set const &c) {
@@ -54,6 +60,8 @@ namespace nrgljubljana_interface {
       h5_write(grp, "F_w", c.F_w);
       h5_write(grp, "Sigma_w", c.Sigma_w);
       h5_write(grp, "expv", c.expv);
+      h5_write(grp, "chi_NN_w", c.chi_NN_w);
+      h5_write(grp, "chi_SS_w", c.chi_SS_w);
     }
 
     /// Function that reads all containers from hdf5 file
@@ -65,6 +73,8 @@ namespace nrgljubljana_interface {
       h5_read(grp, "F_w", c.F_w);
       h5_read(grp, "Sigma_w", c.Sigma_w);
       h5_read(grp, "expv", c.expv);
+      h5_read(grp, "chi_NN_w", c.chi_NN_w);
+      h5_read(grp, "chi_SS_w", c.chi_SS_w);
     }
   };
 

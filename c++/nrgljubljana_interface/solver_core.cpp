@@ -90,15 +90,15 @@ namespace nrgljubljana_interface {
       mesh_points.push_back(-w);
     }
     std::sort(begin(mesh_points), end(mesh_points));
-    auto log_mesh = gf_mesh<refreq_pts>{mesh_points};
-    Delta_w       = g_w_t{log_mesh, gf_struct};
+    //auto log_mesh = gf_mesh<refreq_pts>{mesh_points};
+    log_mesh = gf_mesh<refreq_pts>{mesh_points};
+    Delta_w  = g_w_t{log_mesh, gf_struct};
   }
 
   // -------------------------------------------------------------------------------
 
-  void solver_core::readGF(std::string name, std::optional<g_w_t> &G_w) {
-    auto log_mesh = Delta_w[0].mesh();
-    G_w           = g_w_t{log_mesh, gf_struct};
+  void solver_core::readGF(std::string name, std::optional<g_w_t> &G_w, gf_struct_t &gf_struct) {
+    G_w = g_w_t{log_mesh, gf_struct};
     for (int bl_idx : range(gf_struct.size())) {
       long bl_size = Delta_w[bl_idx].target_shape()[0];
       for (auto [i, j] : product_range(bl_size, bl_size)) {
@@ -121,10 +121,9 @@ namespace nrgljubljana_interface {
       }
     }
   }
-
-  void solver_core::readA(std::string name, std::optional<g_w_t> &A_w) {
-    auto log_mesh = Delta_w[0].mesh();
-    A_w           = g_w_t{log_mesh, gf_struct};
+  
+  void solver_core::readA(std::string name, std::optional<g_w_t> &A_w, gf_struct_t &gf_struct) {
+    A_w = g_w_t{log_mesh, gf_struct};
     for (int bl_idx : range(gf_struct.size())) {
       long bl_size = Delta_w[bl_idx].target_shape()[0];
       for (auto [i, j] : product_range(bl_size, bl_size)) {
@@ -223,10 +222,10 @@ namespace nrgljubljana_interface {
     }
     for (auto &i : expv) { i.second /= sp.Nz; }
 
-    readGF("G", G_w);
-    readGF("F", F_w);
-    readA("A", A_w);
-    readA("B", B_w);
+    readGF("G", G_w, gf_struct);
+    readGF("F", F_w, gf_struct);
+    readA("A", A_w, gf_struct);
+    readA("B", B_w, gf_struct);
 
     // Post Processing
     Sigma_w = (*F_w) / (*G_w);
