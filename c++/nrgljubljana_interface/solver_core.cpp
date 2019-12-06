@@ -139,6 +139,7 @@ namespace nrgljubljana_interface {
           double w, re;
           for (auto const &mp : log_mesh) {
             A >> w >> re;
+            TRIQS_ASSERT2(abs(w-double(mp)) < 1e-8*abs(w), "frequency mismatch");
             (*A_w)[bl_idx][mp](i, j) = re;
           }
         } else {

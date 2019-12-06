@@ -1,8 +1,22 @@
+import matplotlib as mpl
+mpl.use('PDF')
+
 from pytriqs.gf import *
 from pytriqs.archive import *
-from pytriqs.plot.mpl_interface import oplot
+from pytriqs.plot.mpl_interface import *
 from nrgljubljana_interface import Solver, FlatNew
 
 with HDFArchive('aim_solution.h5','r') as ar:
-    print(ar['expv']['n_d^2'])
-#    oplot(ar['A_w']['imp'], '-o', x_window = (-10,10))
+    # Expectation values
+    print("<n>=",ar['expv']['n_d'])
+    print("<n^2>=",ar['expv']['n_d^2'])
+
+    a = ar['A_w']['imp']
+    g = GfReFreq(indices=[0], window=(-2,2), n_points=1000, name='imp')
+    for w in g.mesh:
+      g[w] = a[w]
+    print("g_dens=", g.density()) # seems incorrect ??
+
+    oplot(g, '-o', mode = 'R', name = "A")
+    plt.show()
+    plt.savefig("A_w.pdf")
