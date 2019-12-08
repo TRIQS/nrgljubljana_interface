@@ -14,7 +14,7 @@ with HDFArchive('aim_solution.h5','r') as ar:
     a = ar['A_w']['imp']
     g = GfReFreq(indices=[0], window=(-2,2), n_points=1000, name='imp')
     for w in g.mesh:
-      g[w] = a[w]
+      g[w] = a(w.value)
     print("g_dens=", g.density()) # seems incorrect ??
 
     oplot(g, '-o', mode = 'R', name = "A")
