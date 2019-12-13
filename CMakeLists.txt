@@ -105,8 +105,11 @@ if(Build_Tests AND NOT IS_SUBPROJECT)
   add_subdirectory(test)
 endif()
 
-# Make NRG Ljubljana Targets available without tests
+# NRG Ljubljana subproject. Turn off symmetry types that we do not currently require.
+option(SYM_MORE "" OFF)
+option(SYM_ALL "" OFF)
 add_subdirectory(nrgljubljana)
+# Make NRG Ljubljana Targets available without tests (commented out; works only in recent CMake versions)
 #add_subdirectory(nrgljubljana EXCLUDE_FROM_ALL)
 #install(TARGETS adapt nrgchain matrix diag unitary broaden kk EXPORT nrgljubljana_interface-targets RUNTIME DESTINATION bin)
 
