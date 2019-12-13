@@ -52,6 +52,9 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR (NOT IS_ABSOLUTE ${CMAKE_INSTA
 endif()
 message(STATUS "-------- CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX} --------")
 
+# Make additional Find Modules available (we prepend, so that TRIQS bundled modules can be overriden)
+list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/share/cmake/Modules)
+
 # ############
 # Options
 
