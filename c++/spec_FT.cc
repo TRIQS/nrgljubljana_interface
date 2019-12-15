@@ -7,8 +7,6 @@ class SPEC_FT : public SPEC {
   string merge() override { return "NN2"; }
 };
 
-const double WEIGHT_TOL = 1e-8; // where to switch to l'Hospital rule form
-
 // The first matrix element is conjugated!
 // This is <rp|OP1^dag|r1> <r1|OP2|rp> (wp - s*w1)/(z+Ep-E1)
 // s=1 for bosons, s=-1 for fermions
@@ -51,9 +49,9 @@ void SPEC_FTmats::calc(const Eigen &diagIp, const Eigen &diagI1, const Matrix &o
       d.weight = (spinfactor / Zft) * CONJ_ME(op1II(r1, rp)) * op2II(r1, rp) * ((-sign) * exp(-E1 * scT) + exp(-Ep * scT)); // sign!
       d.energy = E1 - Ep;
 #pragma omp parallel for schedule(static)
-      for (size_t n = 1; n < cutoff; n++) csm->add(n, d.weight / (cmpl(0, w(n, bs.mt)) - scale * d.energy));
+      for (size_t n = 1; n < cutoff; n++) csm->add(n, d.weight / (cmpl(0, ww(n, bs.mt)) - scale * d.energy));
       if (abs(d.energy) > WEIGHT_TOL || bs.mt == matstype::fermionic)
-        csm->add(size_t(0), d.weight / (cmpl(0, w(0, bs.mt)) - scale * d.energy));
+        csm->add(size_t(0), d.weight / (cmpl(0, ww(0, bs.mt)) - scale * d.energy));
       else // bosonic w=0 && E1=Ep case
         csm->add(size_t(0), (spinfactor / Zft) * CONJ_ME(op1II(r1, rp)) * op2II(r1, rp) * (-exp(-E1 * scT) / P::T));
     }

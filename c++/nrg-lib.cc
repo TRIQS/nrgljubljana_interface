@@ -40,11 +40,18 @@
 #include "outfield.cc"
 
 // Timing of various parts of the code and memory statistics
-Timing t;
+namespace time_mem {
+Timing tm;
 MemoryStats ms;
-
-void timing_report() { t.report(); }
+void timing_report() { tm.report(); }
 void memory_report() { ms.report(); }
+void memory_time_brief_report() {
+#ifdef HAS_MEMORY_USAGE
+  cout << "Memory used: " << long(ms.used() / 1024) << " MB "; // NOLINT
+#endif
+  cout << "Time elapsed: " << long(tm.total()) << " s" << endl;
+}
+} // namespace time_mem
 
 #ifdef NRG_MPI
 mpi::environment *mpienv;
@@ -63,14 +70,14 @@ class sharedparam {
   public:
   // Parameters which have to be known to the slave processes (which only
   // perform diagonalizations).
-  dr_value diagroutine;
+  dr_value diagroutine{undefined};
   double diagratio{};
   size_t dsyevrlimit{};
   size_t zheevrlimit{};
   bool logall{};
   string log;
   void init();
-
+//  sharedparam() {};
   private:
   friend class boost::serialization::access;
   template <class Archive> void serialize(Archive &ar, const unsigned int version) {
@@ -112,11 +119,11 @@ inline double CONJ_ME(double x) { return x; } // Conjugation of matrix elements:
 #endif
 
 #ifdef NRG_COMPLEX
-typedef cmpl t_matel;
-typedef double t_eigen;
-typedef cmpl t_coef;
-typedef cmpl t_factor;
-typedef cmpl t_expv; // we allow the calculation of expectation values of
+using t_matel = cmpl;
+using t_eigen = double;
+using t_coef = cmpl;
+using t_factor = cmpl;
+using t_expv = cmpl; // we allow the calculation of expectation values of
                      // non-Hermitian operators!
 inline cmpl CONJ_ME(cmpl z) { return conj(z); }
 #endif
@@ -150,17 +157,17 @@ Thus, as always:
  "right index the same as inner loop variable".
 */
 
-typedef matrix<t_matel, ublas::row_major> Matrix;
+using Matrix = matrix<t_matel, ublas::row_major>;
 
 #include "numerics.h"
 
 using InvarVec = std::vector<Invar>; // vector of Invars
 
-typedef pair<Invar, Invar> Twoinvar;
-typedef map<Twoinvar, Matrix> MatrixElements;
-typedef map<Invar, Matrix> DensMatElements;
+using Twoinvar = pair<Invar, Invar>;
+using MatrixElements = map<Twoinvar, Matrix>;
+using DensMatElements = map<Invar, Matrix>;
 
-typedef tuple<Invar, Invar, Invar> Threeinvar; // For 3-leg vertex functions
+using ThreeInvar = tuple<Invar, Invar, Invar>; // For 3-leg vertex functions
 
 // Dump irreducible matrix elements between two subspaces
 void dump_matrix_elements(const MatrixElements &m, ostream &fout = cout) {
@@ -182,7 +189,7 @@ DensMatElements rhoFDM;
 template <typename T> inline pair<T, T> reverse_pair(const pair<T, T> &i) { return make_pair(i.second, i.first); }
 
 // Map of operators matrices
-typedef map<string, MatrixElements> CustomOp;
+using CustomOp = map<string, MatrixElements>;
 
 // Name of the operator corresponding to a CustomOp map element
 string NAME(const CustomOp::value_type &i) { return i.first; }
@@ -192,8 +199,8 @@ using OpchChannel = std::vector<MatrixElements>;
 // Each channel contains P::perchannel OpchChannel matrices.
 using Opch = std::vector<OpchChannel>;
 
-// Object of class IterInfo cotains full information when entering
-// stage N of the NRG iteration.
+// Object of class IterInfo cotains full information about matrix representations 
+// when entering stage N of the NRG iteration.
 class IterInfo {
   public:
   Opch opch;     // f operators (channels)
@@ -226,7 +233,7 @@ class IterInfo {
   }
 };
 
-IterInfo a; // NOTE: global object!
+IterInfo iterinfo; // NOTE: global object! (directly used in matrix.cc, recalc.cc, nrg-recalc-*
 
 // We need to store the dimensions of the invariant subspaces |r,1>,
 // |r,2>, |r,3>, etc. The name "rmax" comes from the maximal value of
@@ -236,23 +243,34 @@ class Rmaxvals {
   private:
   IVEC values;
   friend ostream &operator<<(ostream &os, const Rmaxvals &rmax);
-  void store(IVEC &rmx);
+  void store(IVEC &rmx) {
+    my_assert(rmx.size() == P::combs);
+    values = rmx;
+  }
   friend class boost::serialization::access;
   template <class Archive> void serialize(Archive &ar, const unsigned int version) { ar &values; }
-
   public:
-  Rmaxvals()= default;
-  Rmaxvals(const Rmaxvals &v);
+  Rmaxvals() = default;
+  Rmaxvals(const Rmaxvals &) = default;
+  Rmaxvals(Rmaxvals &&) = default;
   Rmaxvals &operator=(const Rmaxvals &) = default;
-  size_t rmax(size_t i) const;
-  size_t offset(size_t i) const;
+  Rmaxvals &operator=(Rmaxvals &&) = default;
+  ~Rmaxvals() = default;
+  size_t rmax(size_t i) const {
+    allowed_block_index(i);
+    return values[i - 1]; // FOR COMPATIBILITY OFFSET 1!
+  } 
+  size_t offset(size_t i) const {
+    allowed_block_index(i);
+    return accumulate(begin(values), begin(values) + (i - 1), 0);
+  }
   size_t operator[](size_t i) const { return rmax(i); }
   // The only way to set up the values in Rmaxvals is by calling
   // determine_ranges(), or by using the copy constructor.
   void determine_ranges(const Invar &I, const InvarVec &In);
   // total() returns the total number of states. There is therefore
   // no need to store this value separately.
-  size_t total() { return accumulate(begin(values), end(values), 0); }
+  size_t total() const { return accumulate(begin(values), end(values), 0); }
 };
 
 // Information about the number of states, kept and discarded, rmax,
@@ -265,22 +283,22 @@ class DimSub {
   Rmaxvals rmax;   // substructure of vectors omega
   EVEC eigenvalue; // all eigenvalues
   EVEC absenergy;  // absolute energies (for FDM)
-  DimSub()= default;
-  DimSub(size_t _kept, size_t _total) : kept(_kept), total(_total) {
+  DimSub() = default;
+  DimSub(size_t _kept, size_t _total, const Rmaxvals &_rmax, const EVEC &_eigenvalue, const EVEC &_absenergy) : // NOLINT
+     kept(_kept), total(_total), rmax(_rmax), eigenvalue(_eigenvalue), absenergy(_absenergy) {
     my_assert(kept <= total);
     discarded = total - kept;
   }
-  DimSub(const DimSub &ds) {
-    kept      = ds.kept;
-    discarded = ds.discarded;
-    total     = ds.total;
-  }
+  DimSub(const DimSub &) = default;
+  DimSub(DimSub &&) = default;
   DimSub &operator=(const DimSub &) = default;
+  DimSub &operator=(DimSub &&) = default;
+  ~DimSub() = default;
 };
 
 // Full information about the number of states and matrix dimensions
 // Example: dm[N].rmax[I] etc.
-typedef map<Invar, DimSub> Subs;
+using Subs = map<Invar, DimSub>;
 using AllSteps = std::vector<Subs>;
 AllSteps dm;
 
@@ -300,14 +318,9 @@ class Eigen {
   // using the efficient BLAS routines when performing recalculations of
   // the matrix elements.
   std::vector<Matrix> blocks;
-  // Various assertion checks; to be called after the
-  // diagonalisation routine or reading Eigen objects through MPI or
-  // from disk.
-  void perform_checks() const;
-  // Copy constructor
-  Eigen(const Eigen &t) : nr(t.nr), rmax(t.rmax), nrpost(t.nrpost), shift(t.shift), value(t.value), absenergy(t.absenergy), matrix0(t.matrix0) {
-    perform_checks();
-  }
+  Eigen() = default;
+  Eigen(const Eigen &t) = default;
+  Eigen(Eigen &&t) = default;
   // nr - number of eigenpairs, rmax - dimensionality of the matrix space
   Eigen(size_t _nr, size_t _rmax) : nr(_nr), rmax(_rmax) {
     my_assert(rmax >= nr);
@@ -316,11 +329,11 @@ class Eigen {
     matrix0.resize(nr, rmax);
     perform_checks();
   }
-  Eigen() {
-    value.resize(nr);
-    matrix0.resize(nr, nr);
-  };
   Eigen &operator=(const Eigen &) = default;
+  Eigen &operator=(Eigen &&) = default;
+  ~Eigen() = default;
+  // Various assertion checks; to be called after the diagonalisation routine or reading Eigen objects through MPI or from disk.
+  void perform_checks() const;
   // Accessor routine for j-th element of i-th eigenvector.
   inline t_matel &vektor(size_t i, size_t j) { return matrix0(i, j); }
   // Returns the number of eigenpairs CURRENTLY STORED.
@@ -346,7 +359,6 @@ class Eigen {
     shift     = 0.0;
     matrix0   = identity_matrix<t_eigen>(nr);
   }
-
   private:
   friend class boost::serialization::access;
   template <class Archive> void serialize(Archive &ar, const unsigned int version) {
@@ -377,13 +389,13 @@ void Eigen::perform_checks() const {
 }
 
 // Full information after diagonalizations.
-typedef map<Invar, Eigen> DiagInfo;
+using DiagInfo = map<Invar, Eigen>;
 
 #define LOOP(diag, var) for (auto &var : diag)
 #define LOOP_const(diag, var) for (const auto &var : diag)
 
 Invar INVAR(const DiagInfo::value_type &i) { return i.first; }
-Eigen &EIGEN(DiagInfo::value_type &i) { return i.second; }
+Eigen &EIGEN(DiagInfo::value_type &i) { return i.second; } // XXX can i be const?
 Eigen const &EIGEN(const DiagInfo::value_type &i) { return i.second; }
 
 // Number of calculated states
@@ -399,13 +411,14 @@ template <typename T> ostream &operator<<(ostream &os, const ublas::vector<T> &v
   return os;
 }
 
-typedef map<Invar, Rmaxvals> QSrmax;
+using QSrmax = map<Invar, Rmaxvals>;
 
 class ChainSpectrum;
 class BaseSpectrum;
 
 class SPEC {
   public:
+  virtual ~SPEC() = default;
   virtual ChainSpectrum *make_cs(const BaseSpectrum &) = 0;
   virtual void calc(const Eigen &, const Eigen &, const Matrix &, const Matrix &, const BaseSpectrum &, t_factor, ChainSpectrum *cs, const Invar &,
                     const Invar &){};
@@ -417,7 +430,7 @@ class SPEC {
   virtual string merge() { return ""; } // what merging rule to use
 };
 
-using SPECTYPE = SPEC *;
+using SPECTYPE = shared_ptr<SPEC>;
 
 // In namespace NRG we store run-time information about the calculation.
 namespace NRG {
@@ -450,14 +463,14 @@ double SCALE(int N) // int is correct here, this N may be negative
   double scale = 0.0;
   if (string(P::discretization) == "Y")
     // Yoshida,Whitaker,Oliveira PRB 41 9403 Eq. (39)
-    scale = 0.5 * (1. + 1. / P::Lambda);
+    scale = 0.5 * (1. + 1. / P::Lambda); // NOLINT
   if (string(P::discretization) == "C" || string(P::discretization) == "Z")
     // Campo, Oliveira PRB 72 104432, Eq. (46) [+ Lanczos]
-    scale = (1.0 - 1. / P::Lambda) / log(P::Lambda);
+    scale = (1.0 - 1. / P::Lambda) / log(P::Lambda); // NOLINT
   if (!P::substeps)
-    scale *= pow(P::Lambda, -(N - 1) / 2. + 1 - P::z);
+    scale *= pow(P::Lambda, -(N - 1) / 2. + 1 - P::z); // NOLINT
   else
-    scale *= pow(P::Lambda, -N / (2. * P::channels) + 3 / 2. - P::z);
+    scale *= pow(P::Lambda, -N / (2. * P::channels) + 3 / 2. - P::z); // NOLINT
   my_assert(scale != 0.0);        // yes, != is intentional here.
   scale = scale * P::bandrescale; // RESCALE
   return scale;
@@ -476,8 +489,8 @@ double scale_fix(size_t N) {
   tie(Ntrue, M) = get_Ntrue_M(N);
   my_assert(N == Ntrue * P::channels + M);
   size_t N_at_end_of_full_step     = Ntrue * P::channels + P::channels - 1; // M=0,...,channels-1
-  double scale_now                 = SCALE(N + 1);
-  double scale_at_end_of_full_step = SCALE(N_at_end_of_full_step + 1);
+  double scale_now                 = SCALE(N + 1); // NOLINT
+  double scale_at_end_of_full_step = SCALE(N_at_end_of_full_step + 1); // NOLINT
   return scale_now / scale_at_end_of_full_step;
 }
 
@@ -486,11 +499,11 @@ enum class RUNTYPE { NRG, DMNRG };
 // Map from double to double. This is used for the "fixeps" trick as a data
 // structure which holds the transformation rules from original eigenvalues
 // to fixed eigenvalues.
-typedef unordered_map<t_eigen, t_eigen> mapdd;
+using mapdd = unordered_map<t_eigen, t_eigen>;
 
 // Pair of energy and multiplicity. This is used to compute the true
 // grand-canonical partition function STAT::ZZ.
-typedef pair<t_eigen, int> energy_mult_type;
+using energy_mult_type = pair<t_eigen, int>;
 using excitation_list = list<energy_mult_type>;
 
 // Namespace for storing various statistical quantities calculated
@@ -531,7 +544,7 @@ namespace STAT {
   double F;     // free energy times beta
   double S;     // entropy: (beta E)-(beta F)
   // Expectation values
-  typedef map<string, t_expv> t_mapexpv;
+  using t_mapexpv = map<string, t_expv>;
   t_mapexpv expv;    // expectation values of custom operators
   t_mapexpv fdmexpv; // Expectation values computed using the FDM algorithm
                      // Total energy of the ground state. This is the sum of all the zero state
@@ -574,24 +587,6 @@ class runtypedmnrg {
   public:
   operator bool() { return STAT::runtype == RUNTYPE::DMNRG; }
 } dmnrgrun;
-
-Rmaxvals::Rmaxvals(const Rmaxvals &v) { values = v.values; }
-
-void Rmaxvals::store(IVEC &rmx) {
-  my_assert(rmx.size() == P::combs);
-  values = rmx;
-}
-
-// Returns 0 if no values are stored!
-size_t Rmaxvals::rmax(size_t i) const {
-  allowed_block_index(i);
-  return values[i - 1]; // FOR COMPATIBILITY OFFSET 1!
-}
-
-size_t Rmaxvals::offset(size_t i) const {
-  allowed_block_index(i);
-  return accumulate(begin(values), begin(values) + (i - 1), 0);
-}
 
 ostream &operator<<(ostream &os, const Rmaxvals &rmax) {
   for (const auto &x : rmax.values) os << x << ' ';
@@ -649,11 +644,12 @@ void remove_workdir() { remove(P::workdir.c_str()); }
 
 const string default_workdir = ".";
 
-void create_workdir(string workdir) {
+void create_workdir(const string &workdir) {
   string workdir_template = workdir + "/XXXXXX";
-  char x[workdir_template.length() + 1];
-  strncpy(x, workdir_template.c_str(), workdir_template.length() + 1);
-  if (char *w = mkdtemp(x)) // create a unique directory
+  size_t len = workdir_template.length()+1;
+  char x[len]; // NOLINT
+  strncpy((char*)x, workdir_template.c_str(), len);
+  if (char *w = mkdtemp((char*)x)) // create a unique directory
     P::workdir = w;
   else
     P::workdir = default_workdir;
@@ -661,17 +657,18 @@ void create_workdir(string workdir) {
   atexit(remove_workdir);
 }
 
-void set_workdir(string workdir_) {
+void set_workdir(string &workdir_) {
   string workdir = default_workdir;
   if (const char *env_w = std::getenv("NRG_WORKDIR")) workdir = env_w;
   if (!workdir_.empty()) workdir = workdir_;
   create_workdir(workdir);
 }
 
-void set_workdir(int argc, char *argv[]) {
+void set_workdir(int argc, char **argv) {
+  std::vector<string> args(argv+1, argv+argc); // NOLINT
   string workdir = default_workdir;
   if (const char *env_w = std::getenv("NRG_WORKDIR")) workdir = env_w;
-  if (argc == 3 && strcmp(argv[1], "-w") == 0) workdir = argv[2];
+  if (args.size() == 2 && args[0] == "-w") workdir = args[1];
   create_workdir(workdir);
 }
 
@@ -902,10 +899,9 @@ CONSTFNC t_expv calc_trace_fdm_kept(const DiagInfo &diag, const MatrixElements &
     my_assert(n.count(II) == 1);
     const Matrix &nI  = n.find(II)->second;
     const size_t ret  = dm[STAT::N][I].kept;
-    const Matrix &rho = rhoFDM[I];
     matel_bucket sum;
     for (size_t i = 0; i < ret; i++) // over kept states ONLY
-      for (size_t j = 0; j < ret; j++) sum += rho(i, j) * nI(j, i);
+      for (size_t j = 0; j < ret; j++) sum += rhoFDM[I](i, j) * nI(j, i);
     tr += t_matel(mult(INVAR(is))) * t_matel(sum);
   }
   return tr;
@@ -963,10 +959,9 @@ class ChainSpectrumTemp : public ChainSpectrum {
 class ChainSpectrumMatsubara : public ChainSpectrum {
   private:
   Matsubara m;
-
   public:
   ChainSpectrumMatsubara() = delete;
-  ChainSpectrumMatsubara(matstype _mt) : m(P::mats, _mt){};
+  explicit ChainSpectrumMatsubara(matstype _mt) : m(P::mats, _mt){};
   ~ChainSpectrumMatsubara() override = default;
   void add(size_t n, t_weight w) { m.add(n, w); }
   void add(double energy, t_weight w) override { my_assert_not_reached(); }
@@ -977,10 +972,9 @@ class ChainSpectrumMatsubara : public ChainSpectrum {
 class ChainSpectrumMatsubara2 : public ChainSpectrum {
   private:
   Matsubara2 m;
-
   public:
   ChainSpectrumMatsubara2() = delete;
-  ChainSpectrumMatsubara2(matstype _mt) : m(P::mats, _mt){};
+  explicit ChainSpectrumMatsubara2(matstype _mt) : m(P::mats, _mt){};
   ~ChainSpectrumMatsubara2() override = default;
   void add(size_t i, size_t j, t_weight w) { m.add(i, j, w); }
   void add(double energy, t_weight w) override { my_assert_not_reached(); }
@@ -1021,8 +1015,8 @@ void SpectrumTemp::merge(ChainSpectrum *cs) {
 SpectrumTemp::~SpectrumTemp() {
   string fn = filename + ".dat";
   cout << "Spectrum: " << opname << " " << spectype->name() << " -> " << fn << endl;
-  Spikes d;
-  for (const auto &i : results) d.push_back(i);
+  Spikes d(results);
+//  for (const auto &i : results) d.push_back(i); XXX
   sort(begin(d), end(d), sortfirst());
   ofstream Fd = safeopen(fn);
   save_densfunc(Fd, d, P::reim);
@@ -1108,16 +1102,13 @@ ostream &operator<<(ostream &os, const axis a) { return os << axisstring(a); }
  spectrum: pointers to the operator data and miscelaneous data, such
  as the spectrum type. Functions calc_specdens() et al. receive an
  object of this type as input. */
-
-using SpectrumPtr = shared_ptr<Spectrum>;
-
 class BaseSpectrum {
   public:
   string name;
   string prefix; // "dens", "corr", etc.
   size_t nr;     // number of operators
   const MatrixElements &op1, &op2, &op3;
-  SpectrumPtr spec;
+  shared_ptr<Spectrum> spec;
   SPECTYPE spectype{}; // SPEC_FT, ...
   axis a;            // axis::RealFreq, axis::Temp, axis::Matsubara, etc.
   matstype mt;       // matstype::bosonic, matstype::fermionic, etc.
@@ -1128,8 +1119,10 @@ class BaseSpectrum {
     return s;
   }
   void about() { cout << "Spectrum: " << fullname() << endl; }
-  BaseSpectrum(const MatrixElements &_op1, const MatrixElements &_op2) : op1(_op1), op2(_op2), op3(_op2) { nr = 2; } // op3 initialization is a hack
-  BaseSpectrum(const MatrixElements &_op1, const MatrixElements &_op2, const MatrixElements &_op3) : op1(_op1), op2(_op2), op3(_op3) { nr = 3; }
+  BaseSpectrum(const MatrixElements &_op1, const MatrixElements &_op2) : 
+     op1(_op1), op2(_op2), op3(_op2), a(axis::RealFreq), mt(matstype::fermionic) { nr = 2; } // op3 initialization is a hack
+  BaseSpectrum(const MatrixElements &_op1, const MatrixElements &_op2, const MatrixElements &_op3) : 
+     op1(_op1), op2(_op2), op3(_op3), a(axis::RealFreq), mt(matstype::fermionic) { nr = 3; }
 };
 
 class speclist;
@@ -1187,17 +1180,18 @@ auto OrbSuscFactorFnc = [](const Invar &Ip, const Invar &I1) {
   return assert_isfinite(factor);
 };
 
-void doublet_check_norm(CustomOp::value_type &op, const DiagInfo &diag, int SPIN) {
+void doublet_check_norm(const CustomOp::value_type &op, const DiagInfo &diag, int SPIN) {
   weight_bucket sum;
   LOOP_const(diag, isp) {
     const Invar Ip = INVAR(isp);
     LOOP_const(diag, is1) {
       const Invar I1    = INVAR(is1);
       const Twoinvar II = make_pair(I1, Ip);
-      if (op.second.count(II)) {
+      auto it = op.second.find(II);
+      if (it != op.second.end()) {
         if (!Sym->check_SPIN(I1, Ip, SPIN)) continue;
         t_factor spinfactor = Sym->specdens_factor(Ip, I1);
-        const Matrix &mat   = op.second[II];
+        auto mat = it->second;
         for (size_t r1 = 0; r1 < mat.size1(); r1++)
           for (size_t rp = 0; rp < mat.size2(); rp++) sum += spinfactor * sqr(abs(mat(r1, rp)));
       }
@@ -1208,17 +1202,18 @@ void doublet_check_norm(CustomOp::value_type &op, const DiagInfo &diag, int SPIN
   cout << "check_norm[" << NAME(op) << "]=" << result << endl;
 }
 
-void quadruplet_check_norm(CustomOp::value_type &op, const DiagInfo &diag, int SPIN) {
+void quadruplet_check_norm(const CustomOp::value_type &op, const DiagInfo &diag, int SPIN) {
   weight_bucket sum;
   LOOP_const(diag, isp) {
     const Invar Ip = INVAR(isp);
     LOOP_const(diag, is1) {
       const Invar I1    = INVAR(is1);
       const Twoinvar II = make_pair(I1, Ip);
-      if (op.second.count(II)) {
+      auto it = op.second.find(II);
+      if (it != op.second.end()) {
         if (!Sym->check_SPIN(I1, Ip, SPIN)) continue;
         t_factor spinfactor = Sym->specdensquad_factor(Ip, I1);
-        const Matrix &mat   = op.second[II];
+        auto mat = it->second;
         for (size_t r1 = 0; r1 < mat.size1(); r1++)
           for (size_t rp = 0; rp < mat.size2(); rp++) sum += spinfactor * sqr(abs(mat(r1, rp)));
       }
@@ -1250,12 +1245,12 @@ size_t size_subspace_prev(const Invar &I) { return diagprev[I].getnr(); }
 
 // Generate an info string for headers
 void infostring() {
-  string info = " ***** [" + (string)(nrgrun ? "NRG" : "DM") + "] " + "Iteration " + tostring(STAT::N + 1) + "/" + tostring(P::Nmax) + " (scale "
-     + tostring(STAT::scale) + ")" + " ***** ";
+  string info = " ***** [" + (string)(nrgrun ? "NRG" : "DM") + "] " + "Iteration " + to_string(STAT::N + 1) + "/" + to_string(P::Nmax) + " (scale "
+     + to_string(STAT::scale) + ")" + " ***** ";
   if (P::substeps) {
     size_t Ntrue, M;
     tie(Ntrue, M) = get_Ntrue_M(STAT::N);
-    info += " step " + tostring(Ntrue + 1) + " substep " + tostring(M + 1);
+    info += " step " + to_string(Ntrue + 1) + " substep " + to_string(M + 1);
   }
   cout << endl << info << endl;
 }
@@ -1336,10 +1331,9 @@ double calc_Z(const DiagInfo &diag) {
   return Z;
 }
 
-/* Function newcombination_allowed() checks if states |q,ss,i>_{N+1} can be
- formed for a given spin. Some combinations might be forbidden even when
- the corresponding |q',ss'> subspaces exist at iteration step N (Invar In).
- */
+// Function newcombination_allowed() checks if states |q,ss,i>_{N+1} can be
+// formed for a given spin. Some combinations might be forbidden even when
+// the corresponding |q',ss'> subspaces exist at iteration step N (Invar In).
 bool newcombination_allowed(size_t i, const Invar &I, const Invar &In) { return Sym->triangle_inequality(I, In, QN[i]); }
 
 // Determine the ranges of index r
@@ -1353,26 +1347,23 @@ void Rmaxvals::determine_ranges(const Invar &I, const InvarVec &In) {
 
 // *********************************** NRG RUN **********************************
 
-ofstream F;          // all energies (different file for NRG and for DMNRG)
+ofstream Fenergies;  // all energies (different file for NRG and for DMNRG)
 ofstream Ftd;        // magnetic and charge susceptibility
-ofstream Fcustom;    // expectation values
-ofstream Fcustomfdm; // expectation values at T (FDM algorithm)
 ofstream Fannotated; // annotated eigenvalue spectrum
 
 // Construct the suffix of the filename for spectral density files: 'A_?-A_?'.
 // If SPIN == 1 or SPIN == -1, '-u' or '-d' is appended to the string.
-string SDNAME(string a, string b, int SPIN = 0) {
-  string name = a + "-" + b;
-  if (SPIN == 1) name += "-u";
-  if (SPIN == -1) name += "-d";
-  return name;
+string SDNAME(const string &a, const string &b, int SPIN = 0) {
+  string sdname = a + "-" + b;
+  if (SPIN == 1) sdname += "-u";
+  if (SPIN == -1) sdname += "-d";
+  return sdname;
 }
 
 // Formatted output of the computed expectation values
 class ExpvOutput {
   private:
-//  string filename;        // input file
-  ostream &F;             // output stream
+  ofstream F;             // output stream
   map<string, t_expv> &m; // reference to the name->value mapping
   list<string> fields;    // list of fields to be output (may be a subset
                           // of the fields actually present in m)
@@ -1391,7 +1382,6 @@ class ExpvOutput {
     for (const auto &op : fields) formatted_output(F, op);
     F << endl;
   }
-
   public:
   // Output the current values for the label and for all the fields
   void field_values(double labelvalue = STAT::Teff) {
@@ -1400,13 +1390,14 @@ class ExpvOutput {
     for (const auto &op : fields) formatted_output(F, m[op]);
     F << endl;
   }
-  ExpvOutput(ostream &_F, map<string, t_expv> &_m, list<string> &_fields) : F(_F), m(_m), fields(_fields) {
+   ExpvOutput(const string &fn, map<string, t_expv> &_m, list<string> _fields) : m(_m), fields(std::move(_fields)) {
+    F.open(fn);
     field_numbers();
     field_names();
   }
 };
 
-ExpvOutput *custom, *customfdm;
+unique_ptr<ExpvOutput> custom, customfdm;
 
 // Prepare "td" for output: write header with parameters and
 // a line with field names.
@@ -1419,15 +1410,13 @@ void open_Ftd(ofstream &Ftd) {
 
 void open_files(speclist &sl, BaseSpectrum &spec, SPECTYPE spectype, axis a) {
   const string fn = spec.prefix + "_" + spectype->name() + "_dens_" + spec.name; // no suffix (.dat vs. .bin)
-  SpectrumPtr sp;
   switch (a) {
-    case axis::RealFreq: sp = SpectrumPtr(new SpectrumRealFreq(spec.name, fn, spectype)); break;
-    case axis::Temp: sp = SpectrumPtr(new SpectrumTemp(spec.name, fn, spectype)); break;
-    case axis::Matsubara: sp = SpectrumPtr(new SpectrumMatsubara(spec.name, fn, spectype, spec.mt)); break;
-    case axis::Matsubara2: sp = SpectrumPtr(new SpectrumMatsubara2(spec.name, fn, spectype, spec.mt)); break;
+    case axis::RealFreq: spec.spec = make_shared<SpectrumRealFreq>(spec.name, fn, spectype); break;
+    case axis::Temp: spec.spec = make_shared<SpectrumTemp>(spec.name, fn, spectype); break;
+    case axis::Matsubara: spec.spec = make_shared<SpectrumMatsubara>(spec.name, fn, spectype, spec.mt); break;
+    case axis::Matsubara2: spec.spec = make_shared<SpectrumMatsubara2>(spec.name, fn, spectype, spec.mt); break;
     default: my_assert_not_reached();
   }
-  spec.spec     = sp;
   spec.spectype = spectype;
   spec.a        = a;
   nrglog('c', "Spectrum " << spec.fullname() << " -> " << fn);
@@ -1438,41 +1427,41 @@ void open_files(speclist &sl, BaseSpectrum &spec, SPECTYPE spectype, axis a) {
 // for storing spectral information.
 void open_files_spec(speclist &sl, BaseSpectrum &spec) {
   if (spec.prefix == "gt") {
-    if (nrgrun) open_files(sl, spec, new SPEC_GT(), axis::Temp);
+    if (nrgrun) open_files(sl, spec, make_shared<SPEC_GT>(), axis::Temp);
     return;
   }
   if (spec.prefix == "i1t") {
-    if (nrgrun) open_files(sl, spec, new SPEC_I1T(), axis::Temp);
+    if (nrgrun) open_files(sl, spec, make_shared<SPEC_I1T>(), axis::Temp);
     return;
   }
   if (spec.prefix == "i2t") {
-    if (nrgrun) open_files(sl, spec, new SPEC_I2T(), axis::Temp);
+    if (nrgrun) open_files(sl, spec, make_shared<SPEC_I2T>(), axis::Temp);
     return;
   }
   if (spec.prefix == "chit") {
-    if (nrgrun) open_files(sl, spec, new SPEC_CHIT(), axis::Temp);
+    if (nrgrun) open_files(sl, spec, make_shared<SPEC_CHIT>(), axis::Temp);
     return;
   }
   // If we did not return from this funciton by this point, what we
   // are computing is the spectral function. There are several
   // possibilities in this case, all of which may be enabled at the
   // same time.
-  if (nrgrun && P::finite) open_files(sl, spec, new SPEC_FT(), axis::RealFreq);
-  if (nrgrun && P::finitemats) open_files(sl, spec, new SPEC_FTmats(), axis::Matsubara);
-  if (dmnrgrun && P::dmnrg) open_files(sl, spec, new SPEC_DMNRG(), axis::RealFreq);
-  if (dmnrgrun && P::dmnrgmats) open_files(sl, spec, new SPEC_DMNRGmats(), axis::Matsubara);
-  if (dmnrgrun && P::cfs) open_files(sl, spec, new SPEC_CFS(), axis::RealFreq);
-  if (dmnrgrun && P::cfsgt) open_files(sl, spec, new SPEC_CFSgt(), axis::RealFreq);
-  if (dmnrgrun && P::cfsls) open_files(sl, spec, new SPEC_CFSls(), axis::RealFreq);
-  if (dmnrgrun && P::fdm) open_files(sl, spec, new SPEC_FDM(), axis::RealFreq);
-  if (dmnrgrun && P::fdmgt) open_files(sl, spec, new SPEC_FDMgt(), axis::RealFreq);
-  if (dmnrgrun && P::fdmls) open_files(sl, spec, new SPEC_FDMls(), axis::RealFreq);
-  if (dmnrgrun && P::fdmmats) open_files(sl, spec, new SPEC_FDMmats(), axis::Matsubara);
+  if (nrgrun && P::finite) open_files(sl, spec, make_shared<SPEC_FT>(), axis::RealFreq);
+  if (nrgrun && P::finitemats) open_files(sl, spec, make_shared<SPEC_FTmats>(), axis::Matsubara);
+  if (dmnrgrun && P::dmnrg) open_files(sl, spec, make_shared<SPEC_DMNRG>(), axis::RealFreq);
+  if (dmnrgrun && P::dmnrgmats) open_files(sl, spec, make_shared<SPEC_DMNRGmats>(), axis::Matsubara);
+  if (dmnrgrun && P::cfs) open_files(sl, spec, make_shared<SPEC_CFS>(), axis::RealFreq);
+  if (dmnrgrun && P::cfsgt) open_files(sl, spec, make_shared<SPEC_CFSgt>(), axis::RealFreq);
+  if (dmnrgrun && P::cfsls) open_files(sl, spec, make_shared<SPEC_CFSls>(), axis::RealFreq);
+  if (dmnrgrun && P::fdm) open_files(sl, spec, make_shared<SPEC_FDM>(), axis::RealFreq);
+  if (dmnrgrun && P::fdmgt) open_files(sl, spec, make_shared<SPEC_FDMgt>(), axis::RealFreq);
+  if (dmnrgrun && P::fdmls) open_files(sl, spec, make_shared<SPEC_FDMls>(), axis::RealFreq);
+  if (dmnrgrun && P::fdmmats) open_files(sl, spec, make_shared<SPEC_FDMmats>(), axis::Matsubara);
 }
 
 void open_files_spec3(speclist &sl, BaseSpectrum &spec) {
   if (dmnrgrun && P::fdm && P::v3mm) // both options, fdm and v3mm
-    open_files(sl, spec, new SPEC_FDM_v3mm(), axis::Matsubara2);
+    open_files(sl, spec, make_shared<SPEC_FDM_v3mm>(), axis::Matsubara2);
 }
 
 namespace oprecalc {
@@ -1496,7 +1485,7 @@ namespace oprecalc {
     ot.clear();
   }
 
-  void report(ostream &F, string name, const set<string> &x) {
+  void report(ostream &F, const string &name, const set<string> &x) {
     F << name << "=[";
     for (const auto &i : x) F << i << ' ';
     F << "]" << endl;
@@ -1541,12 +1530,12 @@ namespace oprecalc {
     for (const auto &op2 : set2)                                                                                                                     \
       for (const auto &op3 : set3) { job; }
 
-  void OPENSPEC(const CustomOp::value_type &op1, const CustomOp::value_type &op2, const string_token &stringtoken, speclist &spectra, string prefix,
+  void OPENSPEC(const CustomOp::value_type &op1, const CustomOp::value_type &op2, const string_token &stringtoken, speclist &spectra, const string &prefix,
                 set<string> &rec1, set<string> &rec2, matstype mt, int Spin = 0) {
-    const string name = SDNAME(NAME(op1), NAME(op2), Spin);
-    if (stringtoken.find(name)) {
+    const string spname = SDNAME(NAME(op1), NAME(op2), Spin);
+    if (stringtoken.find(spname)) {
       BaseSpectrum spec(op1.second, op2.second);
-      spec.name   = name;
+      spec.name   = spname;
       spec.prefix = prefix;
       spec.mt     = mt;
       spec.spin   = Spin;
@@ -1557,11 +1546,11 @@ namespace oprecalc {
   }
 
   void OPENSPEC3(const CustomOp::value_type &op1, const CustomOp::value_type &op2, const CustomOp::value_type &op3, const string_token &stringtoken,
-                 speclist &spectra, string prefix, set<string> &rec1, set<string> &rec2, set<string> &rec3, matstype mt) {
-    const string name = NAME(op1) + "-" + NAME(op2) + "-" + NAME(op3);
-    if (stringtoken.find(name)) {
+                 speclist &spectra, const string &prefix, set<string> &rec1, set<string> &rec2, set<string> &rec3, matstype mt) {
+    const string spname = NAME(op1) + "-" + NAME(op2) + "-" + NAME(op3);
+    if (stringtoken.find(spname)) {
       BaseSpectrum spec(op1.second, op2.second, op3.second);
-      spec.name   = name;
+      spec.name   = spname;
       spec.prefix = prefix;
       spec.mt     = mt;
       open_files_spec3(spectra, spec);
@@ -1572,7 +1561,7 @@ namespace oprecalc {
   }
 
   // Reset lists of operators which need to be iterated.
-  void reset_operator_lists_and_open_spectrum_files() {
+  void reset_operator_lists_and_open_spectrum_files(const IterInfo &a) {
     oprecalc::clear();
     // Correlators (singlet operators of all kinds).
     string_token sts(P::specs);
@@ -1620,30 +1609,24 @@ namespace oprecalc {
 } // namespace oprecalc
 
 // Open output files and write headers
-void open_output_files() {
+void open_output_files(const IterInfo &iterinfo) {
   nrglog('@', "@ open_output_files()");
   // We dump all energies to separate files for NRG and DM-NRG runs.
   // This is a very convenient way to check if both runs produce the
   // same results.
-  if (P::dumpenergies) F.open((nrgrun ? FN_ENERGIES_NRG : FN_ENERGIES_DMNRG));
+  if (P::dumpenergies) Fenergies.open((nrgrun ? FN_ENERGIES_NRG : FN_ENERGIES_DMNRG));
   if (nrgrun) {
     open_Ftd(Ftd);
     if (P::dumpannotated) Fannotated.open(FN_ANNOTATED);
   }
   list<string> ops;
-  for (const auto &op : a.ops) ops.push_back(NAME(op));
-  for (const auto &op : a.opsg) ops.push_back(NAME(op));
-  if (nrgrun) {
-    // Singlet operator expectation values. Generate header with names
-    // of operators.
-    Fcustom.open(FN_CUSTOM);
-    custom = new ExpvOutput(Fcustom, STAT::expv, ops);
-  }
-  if (dmnrgrun && P::fdmexpv) {
-    Fcustomfdm.open(FN_CUSTOMFDM);
-    customfdm = new ExpvOutput(Fcustomfdm, STAT::fdmexpv, ops);
-  }
-  oprecalc::reset_operator_lists_and_open_spectrum_files();
+  for (const auto &op : iterinfo.ops) ops.push_back(NAME(op));
+  for (const auto &op : iterinfo.opsg) ops.push_back(NAME(op));
+  if (nrgrun)
+    custom = make_unique<ExpvOutput>(FN_CUSTOM, STAT::expv, ops);
+  else if (dmnrgrun && P::fdmexpv) 
+    customfdm = make_unique<ExpvOutput>(FN_CUSTOMFDM, STAT::fdmexpv, ops);
+  oprecalc::reset_operator_lists_and_open_spectrum_files(iterinfo);
 }
 
 // Close files. This has to be called explicitly, because there can be two
@@ -1651,16 +1634,12 @@ void open_output_files() {
 // if the files are actually open.
 void close_output_files() {
   if (nrgrun) {
-    F.close();
+    Fenergies.close();
     Ftd.close();
     Fannotated.close();
-    delete custom;
-    Fcustom.close();
+    custom.reset();
   }
-  if (dmnrgrun && P::fdmexpv) {
-    delete customfdm;
-    Fcustomfdm.close();
-  }
+  if (dmnrgrun && P::fdmexpv) customfdm.reset();
 }
 
 // DM-NRG: initialization of the density matrix -----------------------------
@@ -1700,21 +1679,21 @@ void init_rho(const DiagInfo &diag, DensMatElements &rho) {
     for (size_t i = 0; i < dim; i++) rho[I](i, i) = exp(-EIGEN(is).value(i) * STAT::scale / P::T) / ZZ;
   }
   const double Tr = trace(rho);
-  my_assert(num_equal(Tr, 1.0, 1e-8));
+  my_assert(num_equal(Tr, 1.0, 1e-8)); // NOLINT
 }
 
 // Calculate the shell-N statistical sum as used in the FDM algorithm.
 double calc_ZnD_one(size_t N, double T) {
-  long double ZZ = 0;
+  double ZZ = 0;
   for (const auto &j : dm[N]) {
     // Determine which states count as discarded in the FDM sense
     const size_t min = (LAST_ITERATION(N) ? 0 : j.second.kept);
     const size_t max = j.second.total;
     for (size_t i = min; i < max; i++) {
-      const long double Eabs = j.second.absenergy[i] - STAT::GSenergy;
+      const double Eabs = j.second.absenergy[i] - STAT::GSenergy;
       my_assert(Eabs >= 0.0);
-      const long double betaE = Eabs / T;
-      ZZ += mult(j.first) * expl(-betaE);
+      const double betaE = Eabs / T;
+      ZZ += mult(j.first) * exp(-betaE);
     }
   }
   nrglog('w', "ZnD[" << N << "]=" << HIGHPREC(ZZ));
@@ -1874,7 +1853,7 @@ void dump_annotated(const DiagInfo &diag, bool scaled = true, bool absolute = fa
       size_t total_degeneracy = 0; // Total number of levels (incl multiplicity)
       const size_t i0         = i;
       while (i < len && my_fcmp(seznam[i].first, seznam[i0].first, P::grouptol) == 0) {
-        QNstrings.push_back(tostring(seznam[i].second));
+        QNstrings.push_back(to_string(seznam[i].second));
         total_degeneracy += mult(seznam[i].second);
         i++;
       }
@@ -1894,7 +1873,7 @@ void dump_annotated(const DiagInfo &diag, bool scaled = true, bool absolute = fa
  This implementation is generic for all the symmetry types! */
 void recalc_singlet(const DiagInfo &diag, const MatrixElements &nold, MatrixElements &nnew, int parity) {
   std::vector<Recalc> recalc_table(P::combs);
-  const InvarVec In = input_subspaces();
+  const InvarVec input = input_subspaces();
   if (Sym->islr())
     my_assert(parity == 1 || parity == -1);
   else
@@ -1908,7 +1887,7 @@ void recalc_singlet(const DiagInfo &diag, const MatrixElements &nold, MatrixElem
       r.i1 = r.ip = i;
       r.factor    = 1.0;
       Invar ancI  = I1;
-      ancI.combine(In[i]);
+      ancI.combine(input[i]);
       r.IN1 = r.INp = ancI;
       if (parity == -1) r.INp.InvertParity();
       recalc_table[i - 1] = r; // mind the -1 shift!
@@ -1961,7 +1940,7 @@ void nrg_trim_op(DiagInfo &dg, CustomOp &allops) {
   for (auto &op : allops) nrg_trim_matel(dg, op.second);
 }
 
-void nrg_trim_matrices(DiagInfo &dg) {
+void nrg_trim_matrices(DiagInfo &dg, IterInfo &a) {
   nrg_trim_op(dg, a.ops);
   nrg_trim_op(dg, a.opsp);
   nrg_trim_op(dg, a.opsg);
@@ -1978,22 +1957,22 @@ void nrg_clear_eigenvectors(DiagInfo &diag) {
 
 // Z_S is the appropriate statistical sum
 void nrg_measure_singlet1(const DiagInfo &dg, const CustomOp::value_type &op, double Z_S) {
-  const string name = NAME(op);
+  const string opname = NAME(op);
   const t_expv expv = calc_trace_singlet(dg, op.second) / Z_S;
-  STAT::expv[name] = expv;
-  cout << "<" << name << ">=" << output_val(expv) << endl;
+  STAT::expv[opname] = expv;
+  cout << "<" << opname << ">=" << output_val(expv) << endl;
 }
 
 // Expectation values using FDM algorithm
 void nrg_measure_singlet1_fdm(const DiagInfo &dg, const CustomOp::value_type &op) {
-  const string name   = NAME(op);
+  const string opname   = NAME(op);
   const t_expv expv   = calc_trace_fdm_kept(dg, op.second);
-  STAT::fdmexpv[name] = expv;
-  cout << "<" << name << ">_fdm=" << output_val(expv) << endl;
+  STAT::fdmexpv[opname] = expv;
+  cout << "<" << opname << ">_fdm=" << output_val(expv) << endl;
 }
 
 // Measure thermodynamic expectation values of singlet operators
-void nrg_measure_singlet(const DiagInfo &dg) {
+void nrg_measure_singlet(const DiagInfo &dg, const IterInfo &a) {
   nrglog('@', "@ nrg_measure_singlet()");
   const double Z_S = calc_Z(dg);
   for (const auto &op : a.ops) nrg_measure_singlet1(dg, op, Z_S);
@@ -2001,7 +1980,7 @@ void nrg_measure_singlet(const DiagInfo &dg) {
   custom->field_values();
 }
 
-void nrg_measure_singlet_fdm(const DiagInfo &dg) {
+void nrg_measure_singlet_fdm(const DiagInfo &dg, const IterInfo &a) {
   if (STAT::N != P::fdmexpvn) return;
   nrglog('@', "@ nrg_measure_singlet_fdm()");
   for (const auto &op : a.ops) nrg_measure_singlet1_fdm(dg, op);
@@ -2009,18 +1988,18 @@ void nrg_measure_singlet_fdm(const DiagInfo &dg) {
   customfdm->field_values(P::T);
 }
 
-void check_operator_sumrules(DiagInfo &diag) {
+void check_operator_sumrules(const DiagInfo &diag, const IterInfo &a) {
   nrglog('@', "@ check_operator_sumrules()");
   // We check sum rules wrt some given spin (+1/2, by convention).
   // For non-spin-polarized calculations, this is irrelevant (0).
   const int SPIN = (Sym->isfield() ? 1 : 0);
-  for (auto &op : a.opd) doublet_check_norm(op, diag, SPIN);
-  for (auto &op : a.opq) quadruplet_check_norm(op, diag, 0);
+  for (const auto &op : a.opd) doublet_check_norm(op, diag, SPIN);
+  for (const auto &op : a.opq) quadruplet_check_norm(op, diag, 0);
 }
 
 // Recalculate operator matrix representations
 ATTRIBUTE_NO_SANITIZE_DIV_BY_ZERO // avoid false positives
-void nrg_recalculate_operators(DiagInfo &dg) {
+void nrg_recalculate_operators(DiagInfo &dg, IterInfo &a) { // XXX: DiagInfo should be const, but all recalc* files would need to be fixed first
   nrglog('@', "@ nrg_recalculate_operators()");
   for (auto &op : a.ops) recalc_common([](const auto &a, const auto &b, auto &c) { recalc_singlet(a, b, c, 1); }, dg, op, "s", oprecalc::do_s);
   for (auto &op : a.opsp) recalc_common([](const auto &a, const auto &b, auto &c) { recalc_singlet(a, b, c, -1); }, dg, op, "p", oprecalc::do_p);
@@ -2032,7 +2011,7 @@ void nrg_recalculate_operators(DiagInfo &dg) {
 }
 
 // Calculate spectral densities
-void nrg_spectral_densities(DiagInfo &diag) {
+void nrg_spectral_densities(const DiagInfo &diag) {
   nrglog('@', "@ nrg_spectral_densities()");
   TIME("spec");
   for (auto &i : spectraS) calc_generic(i, diag, CorrelatorFactorFnc, trivialCheckSpinFnc);
@@ -2088,7 +2067,7 @@ void nrg_calculate_TD(DiagInfo &diag, double additional_factor = 1.0) {
   if (nrgrun) TD::save_TD_quantities(Ftd);
 }
 
-void nrg_calculate_spectral_and_expv(DiagInfo &diag) {
+void nrg_calculate_spectral_and_expv(const DiagInfo &diag, const IterInfo &iterinfo) {
   nrglog('@', "@ nrg_calculate_spectral_and_expv()");
   // Zft is used in the spectral function calculations using the
   // conventional approach. We calculate it here, in order to avoid
@@ -2108,8 +2087,8 @@ void nrg_calculate_spectral_and_expv(DiagInfo &diag) {
     if (P::fdm) loadRho(STAT::N, FN_RHOFDM, rhoFDM);
   }
   nrg_spectral_densities(diag);
-  if (nrgrun) nrg_measure_singlet(diag);
-  if (dmnrgrun && P::fdmexpv) nrg_measure_singlet_fdm(diag);
+  if (nrgrun) nrg_measure_singlet(diag, iterinfo);
+  if (dmnrgrun && P::fdmexpv) nrg_measure_singlet_fdm(diag, iterinfo);
 }
 
 // Perform calculations of physical quantities. Called prior to NRG
@@ -2128,11 +2107,11 @@ void nrg_make_subspaces_list(list<Invar> &subspaces) {
   for (const auto &ii : diagprev)
     if (NRSTATES(ii)) {
       const Invar I = INVAR(ii);
-      InvarVec In   = input_subspaces(); // make a new copy of subspaces list
+      InvarVec input = input_subspaces(); // make a new copy of subspaces list
       for (size_t i = 1; i <= P::combs; i++) {
-        In[i].inverse(); // IMPORTANT!
-        In[i].combine(I);
-        if (Sym->Invar_allowed(In[i])) subspaces.push_back(In[i]);
+        input[i].inverse(); // IMPORTANT!
+        input[i].combine(I);
+        if (Sym->Invar_allowed(input[i])) subspaces.push_back(input[i]);
       }
     }
   subspaces.sort();
@@ -2153,21 +2132,21 @@ t_eigen EigenvaluePrev(const Invar &I, size_t r) { return diagprev[I].value(r); 
 
 Matrix nrg_prepare_task_for_diag(const Invar &I) {
   nrglog('@', "@ nrg_prepare_task_for_diag()");
-  InvarVec &In     = a.ancestors[I];
-  Rmaxvals &qq     = qsrmax[I];
-  const size_t dim = qq.total();
+  const InvarVec &anc = iterinfo.ancestors[I];
+  const Rmaxvals &qq  = qsrmax[I];
+  const size_t dim    = qq.total();
   nrglog('i', endl << "Subspace (" << I << ") dim=" << dim); // skip a line
-  logancestors(I, In, qsrmax[I]);
+  logancestors(I, anc, qq);
   Matrix h(dim, dim);
   h.clear();
-  double scalefactor = (!P::substeps ? sqrt(P::Lambda) : pow(P::Lambda, 1. / (2. * P::channels)));
+  double scalefactor = (!P::substeps ? sqrt(P::Lambda) : pow(P::Lambda, 1. / (2. * P::channels))); // NOLINT
   // H_{N+1}=\lambda^{1/2} H_N+\xi_N (hopping terms)
   for (size_t i = 1; i <= P::combs; i++) {
     const size_t offset = qq.offset(i);
-    for (size_t r = 0; r < qq.rmax(i); r++) h(offset + r, offset + r) = scalefactor * EigenvaluePrev(In[i], r);
+    for (size_t r = 0; r < qq.rmax(i); r++) h(offset + r, offset + r) = scalefactor * EigenvaluePrev(anc[i], r);
   }
   // Symmetry-type-specific matrix initialization steps.
-  Sym->makematrix(h, qq, I, In);
+  Sym->makematrix(h, qq, I, anc);
   if (logletter('m')) dump_matrix(h);
   return h;
 }
@@ -2177,7 +2156,7 @@ void nrg_diagonalisations_OpenMP() {
   nrglog('(', "OpenMP diag");
   size_t nr    = NRG::tasks.size();
   size_t itask = 0;
-  int nth      = P::diagth;
+  int nth      = P::diagth; // NOLINT
 #pragma omp parallel for schedule(dynamic) num_threads(nth)
   for (itask = 0; itask < nr; itask++) {
     Invar I  = NRG::tasks[itask];
@@ -2249,9 +2228,7 @@ void mpi_send_matrix_linebyline(int dest, const Matrix &m) {
   mpiw->send(dest, TAG_MATRIX_SIZE, size2);
   nrglog('M', "Sending matrix of size " << size1 << " x " << size2 << " line by line to " << dest);
   for (size_t i = 0; i < size1; i++) {
-    ublas::vector<t_matel> vec  = ublas::vector<t_matel>(size2);
-    matrix_row<const Matrix> mr = matrix_row<const Matrix>(m, i);
-    vec                         = mr;
+    ublas::vector<t_matel> vec  = matrix_row<const Matrix>(m, i);
     mpiw->send(dest, TAG_MATRIX_LINE, vec);
   }
 }
@@ -2335,19 +2312,14 @@ Invar read_from(int source) {
 
 void nrg_diagonalisations_MPI() {
   nrglog('@', "@ nrg_diagonalisations_MPI()");
-  // Synchronise parameters
-  mpi_sync_params();
-  // List of all the remaining tasks
-  size_t nrtasks = NRG::tasks.size();
-  list<Invar> todo;
-  for (const auto &i : NRG::tasks) todo.push_back(i);
-  my_assert(todo.size() == nrtasks);
-  // List of finished tasks.
-  list<Invar> done;
+  mpi_sync_params(); // Synchronise parameters
+  list<Invar> todo(NRG::tasks); // List of all the remaining tasks
+  list<Invar> done; // List of finished tasks.
   // List of the available computation nodes (including the master,
   // which is always at the very beginnig of the deque).
   deque<int> nodes;
   for (size_t i = 0; i < mpiw->size(); i++) nodes.push_back(i);
+  size_t nrtasks = NRG::tasks.size();
   nrglog('M', "nrtasks=" << nrtasks << " nrnodes=" << mpiw->size());
   while (!todo.empty()) {
     my_assert(!nodes.empty());
@@ -2428,24 +2400,24 @@ void nrg_diagonalisations() {
 
 // Determine the list of invariant subspaces in which diagonalisations need
 // to be performed.
-void nrg_determine_tasks() {
+void nrg_determine_tasks(map<Invar, InvarVec> &ancestors) {
   nrglog('@', "@ nrg_determine_tasks()");
   // Make a list of all subspaces to consider.
   list<Invar> subspaces;
   nrg_make_subspaces_list(subspaces);
   // Auxiliary information: ancestor subspaces and their dimensions.
   qsrmax.clear();
-  a.ancestors.clear();
+  ancestors.clear();
   // Container holding all the subspaces that appear in the new
   // iteration.
   NRG::tasks.clear();
   for (const auto &I : subspaces) {
     // Determine which subspaces contribute to the Hamiltonian being built
-    InvarVec In = input_subspaces();
-    for (size_t i = 1; i <= P::combs; i++) In[i].combine(I); // In is the list of differences wrt I
-    a.ancestors[I] = In;
+    InvarVec input = input_subspaces();
+    for (size_t i = 1; i <= P::combs; i++) input[i].combine(I); // In is the list of differences wrt I
+    ancestors[I] = input;
     // Determine the range(s) of index r
-    qsrmax[I].determine_ranges(I, In);
+    qsrmax[I].determine_ranges(I, input);
     // nr is actually the size of the Hamiltonian submatrix!
     const size_t nr = qsrmax[I].total();
     // Note that NRG::tasks is not the same list as 'subspaces',
@@ -2470,32 +2442,32 @@ void sort_task_list() {
   if (logletter('S'))
     for (const auto &i : tasks_with_sizes) cout << "size(" << i.second << ")=" << i.first << endl;
   // Update the task list NRG::tasks with the sorted list of subspaces
-  transform(begin(tasks_with_sizes), end(tasks_with_sizes), begin(NRG::tasks), [](auto &p) { return p.second; });
+  transform(begin(tasks_with_sizes), end(tasks_with_sizes), begin(NRG::tasks), [](const auto &p) { return p.second; });
 }
 
 // Recalculate irreducible matrix elements for Wilson chains.
 // Called from nrg_after_diag().
-void nrg_recalc_f(DiagInfo &diag) {
+void nrg_recalc_f(DiagInfo &diag, Opch &opch) {
   nrglog('@', "@ nrg_recalc_f()");
   TIME("recalc f");
   if (!P::substeps) {
     for (size_t i = 0; i < P::channels; i++)
-      for (size_t j = 0; j < P::perchannel; j++) a.opch[i][j].clear(); // Clear all channels
+      for (size_t j = 0; j < P::perchannel; j++) opch[i][j].clear(); // Clear all channels
     // In principle, one could also use recalc_doublet() function
     // to simplify the code. OTOH, recalc_irreduc() is probably
     // better because it does not accumulate floating point
     // round-off errors.
-    Sym->recalc_irreduc(diag);
+    Sym->recalc_irreduc(diag, opch);
   } else {
     size_t Ntrue, M;
     tie(Ntrue, M) = get_Ntrue_M(STAT::N);
     for (size_t i = 0; i < P::channels; i++) {
       if (i == M) {
-        for (size_t j = 0; j < P::perchannel; j++) a.opch[M][j].clear(); // Clear channel M
-        Sym->recalc_irreduc_substeps(diag, M);
+        for (size_t j = 0; j < P::perchannel; j++) opch[M][j].clear(); // Clear channel M
+        Sym->recalc_irreduc_substeps(diag, opch, M);
       } else {
         for (size_t j = 0; j < P::perchannel; j++) {
-          MatrixElements &f = a.opch[i][j];
+          MatrixElements &f = opch[i][j];
           MatrixElements opstore;
           opstore.swap(f);
           f.clear();
@@ -2506,12 +2478,12 @@ void nrg_recalc_f(DiagInfo &diag) {
   }
 }
 
-void nrg_dump_f() {
+void nrg_dump_f(const Opch &opch) {
   cout << endl;
   for (size_t i = 0; i < P::channels; i++)
     for (size_t j = 0; j < P::perchannel; j++) {
       cout << "<f> dump, i=" << i << " j=" << j << endl;
-      dump_matrix_elements(a.opch[i][j]);
+      dump_matrix_elements(opch[i][j]);
     }
   cout << endl;
 }
@@ -2545,7 +2517,7 @@ void nrg_do_diag() {
   nrglog('@', "@ nrg_do_diag()");
   infostring();
   show_coefficients();
-  nrg_determine_tasks();
+  nrg_determine_tasks(iterinfo.ancestors);
   sort_task_list();
   NRG::diagratio = P::diagratio;
   do {
@@ -2565,7 +2537,7 @@ void nrg_do_diag() {
       calc_boltzmann_factors(diag);
       if (P::removefiles) remove_transformation_files(STAT::N);
     }
-    ms.check("after diag");
+    time_mem::ms.check("diag");
     find_groundstate(diag);
     subtract_groundstate_energy(diag);
     copy_sort_energies(diag, STAT::energies);
@@ -2578,7 +2550,7 @@ void nrg_do_diag() {
       find_clusters(STAT::energies, P::fixeps, STAT::cluster_mapping);
     }
     nrg_truncate_prepare(diag);
-    ms.check("after trunc");
+    time_mem::ms.check("trunc");
     if (NRG::notenough) {
       cout << "Insufficient number of states computed." << endl;
       if (P::restart) {
@@ -2592,7 +2564,7 @@ void nrg_do_diag() {
   } while (nrgrun && P::restart && NRG::notenough);
 }
 
-typedef map<string, double> mapSD;
+using mapSD = map<string, double>;
 std::vector<mapSD> td_data;
 
 // Store all the results from the TD calculation in the form of a map
@@ -2621,7 +2593,7 @@ void calc_abs_energies(DiagInfo &diag) {
 // - diag contains all information about the eigenstates.
 // - STAT::Egs had been computed
 // Also called from doZBW() as a final step.
-void nrg_after_diag() {
+void nrg_after_diag(IterInfo &iterinfo) {
   nrglog('@', "@ nrg_after_diag()");
   // Contribution to the total energy.
   STAT::totalenergy += STAT::Egs * STAT::scale;
@@ -2633,7 +2605,7 @@ void nrg_after_diag() {
     if (!(P::resume && int(STAT::N) <= P::laststored)) store_transformations(STAT::N, diag);
   }
   // Logging of ALL states (not only those that remain after truncation)
-  if (P::dumpenergies) dumptofile(diag, F);
+  if (P::dumpenergies) dumptofile(diag, Fenergies);
   // Measurements are performed before the truncation!
   nrg_perform_measurements(diag);
   // Consistency checks
@@ -2643,11 +2615,11 @@ void nrg_after_diag() {
   }
   if (!P::ZBW) {
     split_in_blocks(diag);
-    ms.check("after split");
+    time_mem::ms.check("split");
   }
   if (do_recalc_all()) { // Either ...
-    nrg_recalculate_operators(diag);
-    nrg_calculate_spectral_and_expv(diag);
+    nrg_recalculate_operators(diag, iterinfo);
+    nrg_calculate_spectral_and_expv(diag, iterinfo);
   }
   // Actual truncation occurs at this point
   if (!P::ZBW) nrg_truncate_perform(diag);
@@ -2656,34 +2628,31 @@ void nrg_after_diag() {
   size_t nrkept = 0;
   LOOP_const(diag, i) {
     const Invar I  = INVAR(i);
-    dm[STAT::N][I] = DimSub(NRSTATES(i), RMAX(i));
+    dm[STAT::N][I] = DimSub(NRSTATES(i), RMAX(i), qsrmax[I], EIGEN(i).value, EIGEN(i).absenergy);
     nrall += RMAX(i);
     nrkept += NRSTATES(i);
-    dm[STAT::N][I].rmax       = qsrmax[I];
-    dm[STAT::N][I].eigenvalue = EIGEN(i).value;
-    dm[STAT::N][I].absenergy  = EIGEN(i).absenergy;
   }
   double ratio = double(nrkept) / nrall;
   cout << "Kept: " << nrkept << " out of " << nrall << ", ratio=" << setprecision(3) << ratio << endl;
   cout << setprecision(COUT_PRECISION);
   if (!LAST_ITERATION()) {
-    nrg_recalc_f(diag);
-    if (P::dump_f) nrg_dump_f();
+    nrg_recalc_f(diag, iterinfo.opch);
+    if (P::dump_f) nrg_dump_f(iterinfo.opch);
   }
   if (do_recalc_kept()) { // ... or ...
-    nrg_recalculate_operators(diag);
-    nrg_calculate_spectral_and_expv(diag);
+    nrg_recalculate_operators(diag, iterinfo);
+    nrg_calculate_spectral_and_expv(diag, iterinfo);
   }
   if (do_no_recalc()) { // ... or this
-    nrg_calculate_spectral_and_expv(diag);
+    nrg_calculate_spectral_and_expv(diag, iterinfo);
   }
-  if (P::checksumrules) check_operator_sumrules(diag);
-  ms.check("after recalc");
+  if (P::checksumrules) check_operator_sumrules(diag, iterinfo);
+  time_mem::ms.check("recalc");
   if (!P::ZBW) {
     // Free up memory that contains information we no longer need
-    nrg_trim_matrices(diag);
+    nrg_trim_matrices(diag, iterinfo);
     nrg_clear_eigenvectors(diag);
-    ms.check("after trim");
+    time_mem::ms.check("trim");
     diagprev.swap(diag); // IMPORTANT: we need to retain the eigenenergies!
   }
   // Store TD data (all outfields)
@@ -2691,41 +2660,37 @@ void nrg_after_diag() {
 }
 
 // Perform one iteration step
-void nrg_iterate() {
+void nrg_iterate(IterInfo &iterinfo) {
   nrg_do_diag();
-  nrg_after_diag();
-#ifdef HAS_MEMORY_USAGE
-  cout << "Memory used: " << long(ms.used() / 1024) << " MB"
-       << "  ";
-#endif
-  cout << "Time elapsed: " << long(t.total()) << " s" << endl;
+  nrg_after_diag(iterinfo);
+  time_mem::memory_time_brief_report();
 }
 
 void docalc0ht(unsigned int extra_steps) {
   for (int i = -extra_steps; i <= -1; i++) {
     STAT::set_N(P::Ninit - 1 + i);
-    double E_rescale_factor = pow(P::Lambda, i / 2.0);
+    double E_rescale_factor = pow(P::Lambda, i / 2.0); // NOLINT
     nrg_calculate_TD(diagprev, E_rescale_factor);
   }
 }
 
 // Perform calculations with quantities from 'data' file
-void docalc0() {
+void docalc0(const IterInfo &iterinfo) {
   nrglog('@', "@ docalc0()");
   STAT::set_N(P::Ninit - 1); // in the usual case with Ninit=0, this will result in N=-1
   cout << endl << "Before NRG iteration";
   cout << " (N=" << STAT::N << ")" << endl;
   nrg_perform_measurements(diagprev);
-  nrg_calculate_spectral_and_expv(diagprev);
+  nrg_calculate_spectral_and_expv(diagprev, iterinfo);
   // Logging of ALL states (prior to truncation!)
-  if (P::dumpenergies) dumptofile(diagprev, F);
-  if (P::checksumrules) check_operator_sumrules(diagprev);
+  if (P::dumpenergies) dumptofile(diagprev, Fenergies);
+  if (P::checksumrules) check_operator_sumrules(diagprev, iterinfo);
 }
 
 // doZBW() takes the place of nrg_iterate() called from
 // nrg_main_loop() in the case of zero-bandwidth calculation.
 // Thus it replaces nrg_do_diag() + nrg_after_diag().
-void doZBW() {
+void doZBW(IterInfo &iterinfo) {
   cout << endl << "Zero bandwidth calculation" << endl;
   // TRICK: scale will be that for N=Ninit-1, but STAT::N=Ninit.
   STAT::set_N(P::Ninit - 1);
@@ -2743,12 +2708,12 @@ void doZBW() {
   copy_sort_energies(diag, STAT::energies); // required in nrg_truncate_prepare()
   nrg_truncate_prepare(diag);               // determine # of kept and discarded states
   // end nrg_do_diag() equivalent
-  nrg_after_diag();
+  nrg_after_diag(iterinfo);
 }
 
 // ****************************  Main NRG loop ****************************
 
-void nrg_main_loop() {
+void nrg_main_loop(IterInfo &iterinfo) {
   nrglog('@', "@ nrg_main_loop()");
 
   // N denotes the order of the Hamiltonian. N=0 corresponds to H_0, i.e.
@@ -2756,7 +2721,7 @@ void nrg_main_loop() {
   for (size_t N = P::Ninit; N < P::Nmax; N++) { // here size_t, because Ninit>=0. Note that N is int.
     if (nrgrun && P::forcestop == int(N)) exit1("*** Stop request at iteration " << P::forcestop);
     STAT::set_N(N);
-    nrg_iterate();
+    nrg_iterate(iterinfo);
   }
 }
 
@@ -2804,18 +2769,18 @@ void states_report(const DiagInfo &dg, ostream &fout = cout) {
   fout << "Number of states (multiplicity taken into account): " << count_states(dg) << endl << endl;
 }
 
-void start_run() {
+void start_run(IterInfo &iterinfo) {
   nrglog('@', "@ start_run()");
   states_report(diagprev);
-  open_output_files();
+  open_output_files(iterinfo);
   // If setting calc0 is set to true, a calculation of TD quantities
   // is performed before starting the NRG iteration.
   if (nrgrun && P::calc0 && !P::ZBW) {
     docalc0ht(P::tdht);
-    docalc0();
+    docalc0(iterinfo);
   }
-  if (P::ZBW) doZBW(); // in both NRG and DMNRG runs
-  nrg_main_loop();
+  if (P::ZBW) doZBW(iterinfo); // in both NRG and DMNRG runs
+  nrg_main_loop(iterinfo);
   close_output_files();
   cout << endl << "** Iteration completed." << endl << endl;
 }
@@ -2925,20 +2890,17 @@ void set_symmetry(const string &sym_string) {
   Sym->report();
 }
 
-void read_data(); // read-input.cc
-
 void prep_run(RUNTYPE t)
 {
   STAT::runtype = t;
-  a.cleanup();
-  read_data();
+  read_data(iterinfo);
 }
 
-void start_calculation() {
+void start_calculation(IterInfo &iterinfo) {
   nrglog('@', "@ start_calculation()");
   prep_run(RUNTYPE::NRG);
   dm = AllSteps(P::Nlen);
-  start_run();
+  start_run(iterinfo);
   finalize_nrg();
   if (string(P::stopafter) == "nrg") exit1("*** Stopped after the first sweep.");
   if (!P::dm) return;
@@ -2950,7 +2912,7 @@ void start_calculation() {
   }
   if (string(P::stopafter) == "rho") exit1("*** Stopped after the DM calculation.");
   prep_run(RUNTYPE::DMNRG);
-  start_run();
+  start_run(iterinfo);
   finalize_dmnrg();
 }
 
@@ -2970,7 +2932,7 @@ void sharedparam::init() {
 #ifdef NRG_MPI
 int mpidebuglevel = 0;
 
-void mpidebug(string str) {
+void mpidebug(const string &str) {
   if (mpidebuglevel > 0) cout << "MPI process " << mpiw->rank() << " " << str << endl;
 }
 
@@ -3014,7 +2976,8 @@ void run_nrg_master() {
 #ifdef NRG_MPI
   for (int i = 1; i < mpiw->size(); i++) mpiw->send(i, TAG_HELLO, 0);
 #endif
-  start_calculation();
+  // IterInfo iterinfo; // TO DO: remove global variable
+  start_calculation(iterinfo);
 #ifdef NRG_MPI
   cout << "Master done. Terminating slave processes." << endl;
   for (int i = 1; i < mpiw->size(); i++) mpiw->send(i, TAG_EXIT, 0);
