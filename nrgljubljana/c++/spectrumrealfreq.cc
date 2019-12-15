@@ -2,8 +2,8 @@
 class SpectrumRealFreq : public Spectrum {
   private:
   Bins fspos, fsneg; // Full spectral information
-  void mergeNN2(ChainSpectrumBinning &cs);
-  void mergeCFS(ChainSpectrumBinning &cs);
+  void mergeNN2(const ChainSpectrumBinning &cs);
+  void mergeCFS(const ChainSpectrumBinning &cs);
   void weight_report();
   void trim();
   void savebins();
@@ -34,7 +34,7 @@ void SpectrumRealFreq::merge(ChainSpectrum *cs) {
 }
 
 // Spectrum merging for complete Fock space calculation.
-void SpectrumRealFreq::mergeCFS(ChainSpectrumBinning &cs) {
+void SpectrumRealFreq::mergeCFS(const ChainSpectrumBinning &cs) {
   nrglog('*', "weight=" << cs.total_weight());
   fspos.merge(cs.spos);
   fsneg.merge(cs.sneg);
@@ -138,7 +138,7 @@ bool N_for_merging(int N) {
 // current choice seems to be working quite all right.
 // See R. Bulla, T. A. Costi, D. Vollhardt, Phys. Rev. B 64, 045103 (2001).
 
-void SpectrumRealFreq::mergeNN2(ChainSpectrumBinning &cs) {
+void SpectrumRealFreq::mergeNN2(const ChainSpectrumBinning &cs) {
   nrglog('*', "weight=" << cs.total_weight());
   if (!N_for_merging(STAT::N)) return;
   mergeNN2half(fspos, cs.spos);
@@ -150,9 +150,9 @@ const double IMAG_TOLERANCE = 1e-10;
 void SpectrumRealFreq::weight_report() {
   auto fmt = [](t_weight x) -> string {
     if (abs(x.imag()) < IMAG_TOLERANCE)
-      return tostring(x.real());
+      return to_string(x.real());
     else
-      return tostring(x);
+      return to_string(x);
   };
   const t_weight twneg = fsneg.total_weight();
   const t_weight twpos = fspos.total_weight();
@@ -222,8 +222,8 @@ void SpectrumRealFreq::trim() {
 
 void SpectrumRealFreq::continuous() {
   if (!P::broaden) return;
-  alpha  = P::alpha;
-  omega0 = (P::omega0 < 0.0 ? P::omega0_ratio * P::T : P::omega0);
+  const double alpha  = P::alpha;
+  const double omega0 = (P::omega0 < 0.0 ? P::omega0_ratio * P::T : P::omega0);
   Spikes densitypos, densityneg;
   std::vector<double> vecE = make_mesh(); // Energies on the mesh
   for (double E : vecE) {
@@ -232,15 +232,15 @@ void SpectrumRealFreq::continuous() {
       const t_weight w = WEIGHT(i);
       const double e   = ENERGY(i);
       my_assert(e > 0.0);
-      valpos += w * BR_NEW(E, e);
-      valneg += w * BR_NEW(-E, e);
+      valpos += w * BR_NEW(E, e, alpha, omega0);
+      valneg += w * BR_NEW(-E, e, alpha, omega0);
     }
     for (const auto &i : fsneg.bins) {
       const t_weight w = WEIGHT(i);
       const double e   = ENERGY(i);
       my_assert(e > 0.0); // attention!
-      valneg += w * BR_NEW(-E, -e);
-      valpos += w * BR_NEW(E, -e);
+      valneg += w * BR_NEW(-E, -e, alpha, omega0);
+      valpos += w * BR_NEW(E, -e, alpha, omega0);
     }
     densitypos.push_back(make_pair(E, valpos));
     densityneg.push_back(make_pair(-E, valneg));
