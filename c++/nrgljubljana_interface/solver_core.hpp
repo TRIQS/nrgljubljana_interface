@@ -48,7 +48,7 @@ namespace nrgljubljana_interface {
      * @param construct_parameters Set of parameters specific to the NRGLJUBLJANA_INTERFACE solver
      */
     CPP2PY_ARG_AS_DICT
-    solver_core(constr_params_t cp);
+    explicit solver_core(constr_params_t cp);
 
     // Delete assignement operator because of const members
     solver_core(solver_core const &s) = default;
@@ -65,13 +65,13 @@ namespace nrgljubljana_interface {
     void solve(solve_params_t const &solve_params);
 
     // Read the block structure of Green's function objects from file
-    gf_struct_t read_structure(std::string filename, bool);
+    gf_struct_t read_structure(const std::string &filename, bool);
 
     // Create a temporary directory for a series of NRG runs
     std::string create_tempdir();
 
     // Perform an individual NRG calculation. Called from solve()
-    void solve_one_z(double z, std::string taskdir);
+    void solve_one_z(double z, const std::string &taskdir);
 
     // Adjust the advanced NRG parameters
     CPP2PY_ARG_AS_DICT
@@ -108,14 +108,14 @@ namespace nrgljubljana_interface {
     void readexpv(int Nz);
     
     /// Read a block Green's function (im/re)name-block-ij.dat
-    void readGF(std::string name, std::optional<g_w_t> &G_w, gf_struct_t &);
+    void readGF(const std::string &name, std::optional<g_w_t> &G_w, gf_struct_t &);
 
     /// Read a block spectral function name-block-ij.dat; here we assume that the
     /// spectral function is purely real.
-    void readA(std::string name, std::optional<g_w_t> &A_w, gf_struct_t &);
+    void readA(const std::string &name, std::optional<g_w_t> &A_w, gf_struct_t &);
 
     /// Read a scalar real-valued function name.dat
-    void readc(std::string name, std::optional<s_w_t> &s_w);
+    void readc(const std::string &name, std::optional<s_w_t> &s_w);
 
     static std::string hdf5_scheme() { return "NRGLJUBLJANA_INTERFACE_SolverCore"; }
 

@@ -85,7 +85,7 @@ namespace nrgljubljana_interface {
 
   // -------------------------------------------------------------------------------
 
-  gf_struct_t solver_core::read_structure(std::string filename, bool mandatory = true) {
+  gf_struct_t solver_core::read_structure(const std::string &filename, bool mandatory = true) {
     std::ifstream F(constr_params.get_model_dir() + "/" + filename);
     if (mandatory && not F.is_open()) TRIQS_RUNTIME_ERROR << "Failed to open structure file " << filename;
     gf_struct_t gf_struct;
@@ -101,7 +101,7 @@ namespace nrgljubljana_interface {
     return gf_struct;
   }
    
-  void solver_core::readGF(std::string name, std::optional<g_w_t> &G_w, gf_struct_t &gf_struct) {
+  void solver_core::readGF(const std::string &name, std::optional<g_w_t> &G_w, gf_struct_t &gf_struct) {
     G_w = g_w_t{log_mesh, gf_struct};
     for (int bl_idx : range(gf_struct.size())) {
       long bl_size = Delta_w[bl_idx].target_shape()[0];
@@ -126,7 +126,7 @@ namespace nrgljubljana_interface {
     }
   }
   
-  void solver_core::readA(std::string name, std::optional<g_w_t> &A_w, gf_struct_t &gf_struct) {
+  void solver_core::readA(const std::string &name, std::optional<g_w_t> &A_w, gf_struct_t &gf_struct) {
     A_w = g_w_t{log_mesh, gf_struct};
     for (int bl_idx : range(gf_struct.size())) {
       long bl_size = Delta_w[bl_idx].target_shape()[0];
@@ -152,7 +152,7 @@ namespace nrgljubljana_interface {
   // Read expectation values and average over Nz runs
   void solver_core::readexpv(int Nz) {
     for (int cnt = 1; cnt <= Nz; cnt++) {
-      std::string expvfilename = std::to_string(cnt) + "/customfdm";
+      const std::string expvfilename = std::to_string(cnt) + "/customfdm";
       std::ifstream F(expvfilename);
       if (!F) TRIQS_RUNTIME_ERROR << "Expectation values output file not found.";
       std::string snumber, skeyword, svalue;
@@ -191,7 +191,7 @@ namespace nrgljubljana_interface {
         long bl_size = Delta_w[bl_idx].target_shape()[0];
         auto bl_name = Delta_w.block_names()[bl_idx];
         for (auto [i, j] : product_range(bl_size, bl_size)) {
-          std::ofstream F(std::string{} + "Gamma_" + bl_name + "_" + std::to_string(i) + std::to_string(j) + ".dat");
+          std::ofstream F("Gamma_" + bl_name + "_" + std::to_string(i) + std::to_string(j) + ".dat");
           const double cutoff = 1e-8; // ensure hybridisation function is positive
           for (auto const &w : Delta_w[bl_idx].mesh()) {
             double value = -Delta_w[bl_idx][w](i, j).imag();
@@ -202,7 +202,7 @@ namespace nrgljubljana_interface {
       }
       // we need a mock param file for 'adapt' tool
       generate_param_file(1.0);
-      std::string script = constr_params.get_model_dir() + "/prepare";
+      const std::string script = constr_params.get_model_dir() + "/prepare";
       if (system(script.c_str()) != 0) TRIQS_RUNTIME_ERROR << "Running prepare script failed: " << script;
       if (system("./discretize") != 0) TRIQS_RUNTIME_ERROR << "Running discretize script failed";
     }
@@ -211,7 +211,7 @@ namespace nrgljubljana_interface {
     const double dz = 1.0 / sp.Nz;
     double z        = dz;
     for (int cnt = 1; cnt <= sp.Nz; cnt++, z += dz) {
-      std::string taskdir = std::to_string(cnt);
+      const std::string taskdir = std::to_string(cnt);
       solve_one_z(z, taskdir);
     }
 
@@ -278,11 +278,11 @@ namespace nrgljubljana_interface {
   void solver_core::set_nrg_params(nrg_params_t const &nrg_params_) { nrg_params = nrg_params_; }
 
   // Solve the problem for a given value of the twist parameter z
-  void solver_core::solve_one_z(double z, std::string taskdir) {
+  void solver_core::solve_one_z(double z, const std::string &taskdir) {
     if (world.rank() == 0) {
       generate_param_file(z);
       if (mkdir(taskdir.c_str(), 0755) != 0) TRIQS_RUNTIME_ERROR << "failed to mkdir taskdir " << taskdir;
-      std::string cmd = "./instantiate " + taskdir;
+      const std::string cmd = "./instantiate " + taskdir;
       if (system(cmd.c_str()) != 0) TRIQS_RUNTIME_ERROR << "Running " << cmd << " failed";
       if (chdir(taskdir.c_str()) != 0) TRIQS_RUNTIME_ERROR << "failed to chdir to taskdir " << taskdir;
       // Solve the impurity model
@@ -295,10 +295,11 @@ namespace nrgljubljana_interface {
   }
 
   std::string solver_core::create_tempdir() {
-    std::string tempdir_template = "nrg_tempdir_XXXXXX";
-    char x[tempdir_template.length() + 1];
-    strncpy(x, tempdir_template.c_str(), tempdir_template.length() + 1);
-    if (char *w = mkdtemp(x)) // create a unique directory
+    const std::string tempdir_template = "nrg_tempdir_XXXXXX";
+    size_t len = tempdir_template.length()+1;
+    auto x = std::make_unique<char[]>(len);
+    strncpy(x.get(), tempdir_template.c_str(), len);
+    if (auto w = mkdtemp(x.get())) // create a unique directory
       return w;
     else
       TRIQS_RUNTIME_ERROR << "Failed to create a directory for temporary files.";
