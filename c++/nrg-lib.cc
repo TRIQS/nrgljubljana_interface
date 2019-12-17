@@ -130,13 +130,9 @@ inline cmpl CONJ_ME(cmpl z) { return conj(z); }
 
 using t_weight = cmpl; // spectral weight accumulators (complex in general)
 
-// Type for arrays of eigenvalues
-using EVEC = ublas::vector<t_eigen>;
+using EVEC = ublas::vector<t_eigen>; // Type for arrays of eigenvalues
 using STDEVEC = std::vector<t_eigen>;
-
-// Type for arrays of coefficients for Wilson chains
-using CVEC = ublas::vector<t_coef>;
-
+using CVEC = ublas::vector<t_coef>; // Type for arrays of coefficients for Wilson chains
 using DVEC = ublas::vector<double>;
 using IVEC = ublas::vector<size_t>;
 
@@ -391,11 +387,12 @@ void Eigen::perform_checks() const {
 // Full information after diagonalizations.
 using DiagInfo = map<Invar, Eigen>;
 
-#define LOOP(diag, var) for (auto &var : diag)
-#define LOOP_const(diag, var) for (const auto &var : diag)
+#define LOOP(diag, var) for (auto &var : diag) // NOLINT
+#define LOOP_const(diag, var) for (const auto &var : diag) // NOLINT
 
 Invar INVAR(const DiagInfo::value_type &i) { return i.first; }
-Eigen &EIGEN(DiagInfo::value_type &i) { return i.second; } // XXX can i be const?
+// cppcheck-suppress constParameter symbolName=i
+Eigen &EIGEN(DiagInfo::value_type &i) { return i.second; } // NOLINT
 Eigen const &EIGEN(const DiagInfo::value_type &i) { return i.second; }
 
 // Number of calculated states
@@ -416,16 +413,23 @@ using QSrmax = map<Invar, Rmaxvals>;
 class ChainSpectrum;
 class BaseSpectrum;
 
+using spCS_t = shared_ptr<ChainSpectrum>;
+
 class SPEC {
   public:
+  SPEC() = default;
+  SPEC(const SPEC &) = default;
+  SPEC(SPEC &&) = default;
+  SPEC &operator=(const SPEC &) = default;
+  SPEC &operator=(SPEC &&) = default;
   virtual ~SPEC() = default;
-  virtual ChainSpectrum *make_cs(const BaseSpectrum &) = 0;
-  virtual void calc(const Eigen &, const Eigen &, const Matrix &, const Matrix &, const BaseSpectrum &, t_factor, ChainSpectrum *cs, const Invar &,
+  virtual spCS_t make_cs(const BaseSpectrum &) = 0;
+  virtual void calc(const Eigen &, const Eigen &, const Matrix &, const Matrix &, const BaseSpectrum &, t_factor, spCS_t, const Invar &,
                     const Invar &){};
   virtual void calc_A(const Eigen &, const Eigen &, const Eigen &, const Matrix &, const Matrix &, const Matrix &, const BaseSpectrum &, t_factor,
-                      ChainSpectrum *, const Invar &, const Invar &, const Invar &){};
+                      spCS_t, const Invar &, const Invar &, const Invar &){};
   virtual void calc_B(const Eigen &, const Eigen &, const Eigen &, const Matrix &, const Matrix &, const Matrix &, const BaseSpectrum &, t_factor,
-                      ChainSpectrum *, const Invar &, const Invar &, const Invar &){};
+                      spCS_t, const Invar &, const Invar &, const Invar &){};
   virtual string name() = 0;
   virtual string merge() { return ""; } // what merging rule to use
 };
@@ -647,7 +651,7 @@ const string default_workdir = ".";
 void create_workdir(const string &workdir) {
   const string workdir_template = workdir + "/XXXXXX";
   size_t len = workdir_template.length()+1;
-  auto x = make_unique<char[]>(len);
+  auto x = make_unique<char[]>(len); // NOLINT
   strncpy(x.get(), workdir_template.c_str(), len);
   if (char *w = mkdtemp(x.get())) // create a unique directory
     P::workdir = w;
@@ -736,20 +740,20 @@ set_of_tables zeta; // f^dag_N f_N terms
 // while P::channels...2*P::channels-1 correspond to spin down.
 // Compare P::channels and P::coefchannels (which reflects the same
 // convention in initial.m, i.e. CHANNELS vs. COEFCHANNELS).
-#define xiUP(N, ch) xi((N), (ch))
-#define xiDOWN(N, ch) xi((N), (ch) + P::channels)
-#define zetaUP(N, ch) zeta((N), (ch))
-#define zetaDOWN(N, ch) zeta((N), (ch) + P::channels)
+t_coef xiUP(size_t N, size_t ch) { return xi(N, ch); }
+t_coef xiDOWN(size_t N, size_t ch) { return xi(N, ch + P::channels); }
+t_coef zetaUP(size_t N, size_t ch) { return zeta(N, ch); }
+t_coef zetaDOWN(size_t N, size_t ch) { return zeta(N, ch + P::channels); }
 
 // Support for conduction bands with full 2x2 matrix structure, a
 // generalization of P::polarized. The total number of "channels" is
 // here multiplied by 4, i.e., the index runs from 0 to
 // 4*P::channels-1. Numbers 2*P::channels...3*P::channels-1 correspond
 // to UP/DO, 3*P::channels...4*P::channels-1 correspond to DO/UP.
-#define xiUPDO(N, ch) xi((N), (ch) + 2 * P::channels)
-#define xiDOUP(N, ch) xi((N), (ch) + 3 * P::channels)
-#define zetaUPDO(N, ch) zeta((N), (ch) + 2 * P::channels)
-#define zetaDOUP(N, ch) zeta((N), (ch) + 3 * P::channels)
+t_coef xiUPDO(size_t N, size_t ch) { return xi(N, ch + 2 * P::channels); }
+t_coef xiDOUP(size_t N, size_t ch) { return xi(N, ch + 3 * P::channels); }
+t_coef zetaUPDO(size_t N, size_t ch) { return zeta(N, ch + 2 * P::channels); }
+t_coef zetaDOUP(size_t N, size_t ch) { return zeta(N, ch + 3 * P::channels); }
 
 // Support for channel-mixing Wilson chains
 set_of_tables xiR;
@@ -917,21 +921,19 @@ CONSTFNC t_expv calc_trace_fdm_kept(const DiagInfo &diag, const MatrixElements &
 
 class ChainSpectrum {
   public:
-  ChainSpectrum()= default;
-  virtual ~ChainSpectrum()= default;
-  virtual void add(double energy, t_weight weight) = 0; // XXX
+  virtual void add(double energy, t_weight weight) = 0;
+  ChainSpectrum() = default;
+  ChainSpectrum(const ChainSpectrum &) = default;
+  ChainSpectrum(ChainSpectrum &&) = default;
+  ChainSpectrum &operator=(const ChainSpectrum &) = default;
+  ChainSpectrum &operator=(ChainSpectrum &&) = default;
+  virtual ~ChainSpectrum() = default; // required, because there are virtual members
 };
 
 class ChainSpectrumBinning : public ChainSpectrum {
   private:
   Bins spos, sneg;
-
   public:
-  ChainSpectrumBinning()= default;
-  ~ChainSpectrumBinning() override {
-    assert_isfinite(spos.total_weight()); // Bug trap
-    assert_isfinite(sneg.total_weight());
-  }
   void add(double energy, t_weight weight) override {
     if (energy >= 0.0)
       spos.add(energy, weight);
@@ -945,10 +947,7 @@ class ChainSpectrumBinning : public ChainSpectrum {
 class ChainSpectrumTemp : public ChainSpectrum {
   private:
   Temp v;
-
   public:
-  ChainSpectrumTemp()= default;
-  ~ChainSpectrumTemp() override = default;
   void add(double T, t_weight value) override { v.add_value(T, value); }
   friend class SpectrumTemp;
 };
@@ -962,7 +961,6 @@ class ChainSpectrumMatsubara : public ChainSpectrum {
   public:
   ChainSpectrumMatsubara() = delete;
   explicit ChainSpectrumMatsubara(matstype _mt) : m(P::mats, _mt){};
-  ~ChainSpectrumMatsubara() override = default;
   void add(size_t n, t_weight w) { m.add(n, w); }
   void add(double energy, t_weight w) override { my_assert_not_reached(); }
   t_weight total_weight() const { return m.total_weight(); }
@@ -975,7 +973,6 @@ class ChainSpectrumMatsubara2 : public ChainSpectrum {
   public:
   ChainSpectrumMatsubara2() = delete;
   explicit ChainSpectrumMatsubara2(matstype _mt) : m(P::mats, _mt){};
-  ~ChainSpectrumMatsubara2() override = default;
   void add(size_t i, size_t j, t_weight w) { m.add(i, j, w); }
   void add(double energy, t_weight w) override { my_assert_not_reached(); }
   t_weight total_weight() const { return m.total_weight(); }
@@ -988,9 +985,13 @@ class Spectrum {
   public:
   string opname, filename;
   SPECTYPE spectype;
-  Spectrum(const string &_opname, const string &_filename, SPECTYPE _spectype) : opname(_opname), filename(_filename), spectype(_spectype){};
-  virtual ~Spectrum()= default;
-  virtual void merge(ChainSpectrum *cs) = 0; // called from spec.cc as the very last step
+  Spectrum(const string &_opname, const string &_filename, SPECTYPE _spectype) : opname(_opname), filename(_filename), spectype(_spectype){}; // NOLINT
+  Spectrum(const Spectrum &) = default;
+  Spectrum(Spectrum &&) = default;
+  Spectrum &operator=(const Spectrum &) = default;
+  Spectrum &operator=(Spectrum &&) = default;
+  virtual ~Spectrum()= default; // required (the destructor saves the results to a file)
+  virtual void merge(spCS_t) = 0; // called from spec.cc as the very last step
   string name() { return opname; }
 };
 
@@ -1000,23 +1001,25 @@ class Spectrum {
 class SpectrumTemp : public Spectrum {
   private:
   std::vector<pair<double, t_weight>> results;
-
   public:
   SpectrumTemp(const string &_opname, const string &_filename, SPECTYPE _spectype) : Spectrum(_opname, _filename, _spectype) {}
-  void merge(ChainSpectrum *cs) override;
+  void merge(spCS_t) override;
+  SpectrumTemp(const SpectrumTemp &) = default;
+  SpectrumTemp(SpectrumTemp &&) = default;
+  SpectrumTemp &operator=(const SpectrumTemp &) = default;
+  SpectrumTemp &operator=(SpectrumTemp &&) = default;
   ~SpectrumTemp() override;
 };
 
-void SpectrumTemp::merge(ChainSpectrum *cs) {
-  auto &t = dynamic_cast<ChainSpectrumTemp &>(*cs);
-  copy(begin(t.v), end(t.v), back_inserter(results));
+void SpectrumTemp::merge(spCS_t cs) {
+  auto t = dynamic_pointer_cast<ChainSpectrumTemp>(cs);
+  copy(begin(t->v), end(t->v), back_inserter(results));
 }
 
 SpectrumTemp::~SpectrumTemp() {
   string fn = filename + ".dat";
   cout << "Spectrum: " << opname << " " << spectype->name() << " -> " << fn << endl;
   Spikes d(results);
-//  for (const auto &i : results) d.push_back(i); XXX
   sort(begin(d), end(d), sortfirst());
   ofstream Fd = safeopen(fn);
   save_densfunc(Fd, d, P::reim);
@@ -1027,18 +1030,21 @@ SpectrumTemp::~SpectrumTemp() {
 class SpectrumMatsubara : public Spectrum {
   private:
   Matsubara results;
-
   public:
   SpectrumMatsubara(const string &_opname, const string &_filename, SPECTYPE _spectype, matstype _mt)
      : Spectrum(_opname, _filename, _spectype), results(P::mats, _mt) {}
-  void merge(ChainSpectrum *cs) override;
+  void merge(spCS_t) override;
+  SpectrumMatsubara(const SpectrumMatsubara &) = default;
+  SpectrumMatsubara(SpectrumMatsubara &&) = default;
+  SpectrumMatsubara &operator=(const SpectrumMatsubara &) = default;
+  SpectrumMatsubara &operator=(SpectrumMatsubara &&) = default;
   ~SpectrumMatsubara() override;
 };
 
-void SpectrumMatsubara::merge(ChainSpectrum *cs) {
-  auto &t = dynamic_cast<ChainSpectrumMatsubara &>(*cs);
-  nrglog('*', "weight=" << t.total_weight()); // useful for debugging
-  for (size_t n = 0; n < P::mats; n++) results.v[n].second += t.m.v[n].second;
+void SpectrumMatsubara::merge(spCS_t cs) {
+  auto t = dynamic_pointer_cast<ChainSpectrumMatsubara>(cs);
+  nrglog('*', "weight=" << t->total_weight()); // useful for debugging
+  for (size_t n = 0; n < P::mats; n++) results.v[n].second += t->m.v[n].second;
 }
 
 SpectrumMatsubara::~SpectrumMatsubara() {
@@ -1050,19 +1056,22 @@ SpectrumMatsubara::~SpectrumMatsubara() {
 class SpectrumMatsubara2 : public Spectrum {
   private:
   Matsubara2 results;
-
   public:
   SpectrumMatsubara2(const string &_opname, const string &_filename, SPECTYPE _spectype, matstype _mt)
      : Spectrum(_opname, _filename, _spectype), results(P::mats, _mt) {}
-  void merge(ChainSpectrum *cs) override;
+  void merge(spCS_t) override;
+  SpectrumMatsubara2(const SpectrumMatsubara2 &) = default;
+  SpectrumMatsubara2(SpectrumMatsubara2 &&) = default;
+  SpectrumMatsubara2 &operator=(const SpectrumMatsubara2 &) = default;
+  SpectrumMatsubara2 &operator=(SpectrumMatsubara2 &&) = default;
   ~SpectrumMatsubara2() override;
 };
 
-void SpectrumMatsubara2::merge(ChainSpectrum *cs) {
-  auto &t = dynamic_cast<ChainSpectrumMatsubara2 &>(*cs);
-  nrglog('*', "weight=" << t.total_weight());
+void SpectrumMatsubara2::merge(spCS_t cs) {
+  auto t = dynamic_pointer_cast<ChainSpectrumMatsubara2>(cs);
+  nrglog('*', "weight=" << t->total_weight());
   for (size_t m = 0; m < P::mats; m++)
-    for (size_t n = 0; n < P::mats; n++) results.v(m, n) += t.m.v(m, n);
+    for (size_t n = 0; n < P::mats; n++) results.v(m, n) += t->m.v(m, n);
 }
 
 SpectrumMatsubara2::~SpectrumMatsubara2() {
@@ -1149,36 +1158,13 @@ speclist spectraD, spectraS, spectraT, spectraQ, spectraGT, spectraI1T, spectraI
 
 /**** CALCULATION OF SPECTRAL FUNCTIONS ****/
 
-auto CorrelatorFactorFnc = [](const Invar &Ip, const Invar &I1) {
-  // For odd-parity operators, the quantum numbers may change, but
-  // the multiplicity should be the same for bra and ket subspaces.
-  my_assert(mult(I1) == mult(Ip));
-  return mult(I1); // S_z unchanged by singlet operators
-};
-
-auto trivialCheckSpinFnc = [](const Invar &, const Invar &, int) { return true; };
-
+auto CorrelatorFactorFnc = [](const Invar &Ip, const Invar &I1) { return mult(I1); };
+auto SpecdensFactorFnc = [](const Invar &Ip, const Invar &I1) { return Sym->specdens_factor(Ip, I1); };
+auto SpecdensquadFactorFnc = [](const Invar &Ip, const Invar &I1) { return Sym->specdensquad_factor(Ip, I1); };
+auto SpinSuscFactorFnc = [](const Invar &Ip, const Invar &I1) { return Sym->dynamicsusceptibility_factor(Ip, I1); };
+auto OrbSuscFactorFnc = [](const Invar &Ip, const Invar &I1) { return Sym->dynamic_orb_susceptibility_factor(Ip, I1); };
+auto TrivialCheckSpinFnc = [](const Invar &, const Invar &, int) { return true; };
 auto SpecdensCheckSpinFnc = [](const Invar &I1, const Invar &Ip, int SPIN) { return Sym->check_SPIN(I1, Ip, SPIN); };
-
-auto SpecdensFactorFnc = [](const Invar &Ip, const Invar &I1) {
-  t_factor factor = Sym->specdens_factor(Ip, I1);
-  return assert_isfinite(factor);
-};
-
-auto SpecdensquadFactorFnc = [](const Invar &Ip, const Invar &I1) {
-  t_factor factor = Sym->specdensquad_factor(Ip, I1);
-  return assert_isfinite(factor);
-};
-
-auto SpinSuscFactorFnc = [](const Invar &Ip, const Invar &I1) {
-  t_factor factor = Sym->dynamicsusceptibility_factor(Ip, I1);
-  return assert_isfinite(factor);
-};
-
-auto OrbSuscFactorFnc = [](const Invar &Ip, const Invar &I1) {
-  t_factor factor = Sym->dynamic_orb_susceptibility_factor(Ip, I1);
-  return assert_isfinite(factor);
-};
 
 void doublet_check_norm(const CustomOp::value_type &op, const DiagInfo &diag, int SPIN) {
   weight_bucket sum;
@@ -1262,8 +1248,9 @@ void show_coefficients() {
   if (!P::substeps) {
     using namespace STAT;
     for (size_t i = 0; i < P::coefchannels; i++) {
+      double scale = SCALE(static_cast<int>(N)+1);
       cout << "[" << i + 1 << "]"
-           << " xi(" << N << ")=" << xi(N, i) << " xi_scaled(" << N << ")=" << xi(N, i) / SCALE(N + 1) << " zeta(" << N + 1 << ")=" << zeta(N + 1, i)
+           << " xi(" << N << ")=" << xi(N, i) << " xi_scaled(" << N << ")=" << xi(N, i)/scale << " zeta(" << N + 1 << ")=" << zeta(N + 1, i)
            << endl;
     }
   } else {
@@ -1522,13 +1509,8 @@ namespace oprecalc {
   bool do_q(const string &name) { return q.count(name); }
   bool do_ot(const string &name) { return ot.count(name); }
 
-#define LOOPOVER(set1, set2, job)                                                                                                                    \
-  for (const auto &op1 : set1)                                                                                                                       \
-    for (const auto &op2 : set2) { job; }
-#define LOOPOVER3(set1, set2, set3, job)                                                                                                             \
-  for (const auto &op1 : set1)                                                                                                                       \
-    for (const auto &op2 : set2)                                                                                                                     \
-      for (const auto &op3 : set3) { job; }
+#define LOOPOVER(set1, set2, job) for (const auto &op1 : set1) for (const auto &op2 : set2) { job; } // NOLINT
+#define LOOPOVER3(set1, set2, set3, job) for (const auto &op1 : set1) for (const auto &op2 : set2) for (const auto &op3 : set3) { job; } // NOLINT
 
   void OPENSPEC(const CustomOp::value_type &op1, const CustomOp::value_type &op2, const string_token &stringtoken, speclist &spectra, const string &prefix,
                 set<string> &rec1, set<string> &rec2, matstype mt, int Spin = 0) {
@@ -2014,12 +1996,12 @@ void nrg_recalculate_operators(DiagInfo &dg, IterInfo &a) { // XXX: DiagInfo sho
 void nrg_spectral_densities(const DiagInfo &diag) {
   nrglog('@', "@ nrg_spectral_densities()");
   TIME("spec");
-  for (auto &i : spectraS) calc_generic(i, diag, CorrelatorFactorFnc, trivialCheckSpinFnc);
-  for (auto &i : spectraCHIT) calc_generic(i, diag, CorrelatorFactorFnc, trivialCheckSpinFnc);
+  for (auto &i : spectraS) calc_generic(i, diag, CorrelatorFactorFnc, TrivialCheckSpinFnc);
+  for (auto &i : spectraCHIT) calc_generic(i, diag, CorrelatorFactorFnc, TrivialCheckSpinFnc);
   for (auto &i : spectraD) calc_generic(i, diag, SpecdensFactorFnc, SpecdensCheckSpinFnc);
-  for (auto &i : spectraT) calc_generic(i, diag, SpinSuscFactorFnc, trivialCheckSpinFnc);
-  for (auto &i : spectraOT) calc_generic(i, diag, OrbSuscFactorFnc, trivialCheckSpinFnc);
-  for (auto &i : spectraQ) calc_generic(i, diag, SpecdensquadFactorFnc, trivialCheckSpinFnc);
+  for (auto &i : spectraT) calc_generic(i, diag, SpinSuscFactorFnc, TrivialCheckSpinFnc);
+  for (auto &i : spectraOT) calc_generic(i, diag, OrbSuscFactorFnc, TrivialCheckSpinFnc);
+  for (auto &i : spectraQ) calc_generic(i, diag, SpecdensquadFactorFnc, TrivialCheckSpinFnc);
   for (auto &i : spectraGT) calc_generic(i, diag, SpecdensFactorFnc, SpecdensCheckSpinFnc);
   for (auto &i : spectraI1T) calc_generic(i, diag, SpecdensFactorFnc, SpecdensCheckSpinFnc);
   for (auto &i : spectraI2T) calc_generic(i, diag, SpecdensFactorFnc, SpecdensCheckSpinFnc);
@@ -2668,8 +2650,8 @@ void nrg_iterate(IterInfo &iterinfo) {
 }
 
 void docalc0ht(unsigned int extra_steps) {
-  for (int i = -extra_steps; i <= -1; i++) {
-    STAT::set_N(P::Ninit - 1 + i);
+  for (int i = -int(extra_steps); i <= -1; i++) {
+    STAT::set_N(int(P::Ninit) - 1 + i);
     double E_rescale_factor = pow(P::Lambda, i / 2.0); // NOLINT
     nrg_calculate_TD(diagprev, E_rescale_factor);
   }
@@ -2678,7 +2660,7 @@ void docalc0ht(unsigned int extra_steps) {
 // Perform calculations with quantities from 'data' file
 void docalc0(const IterInfo &iterinfo) {
   nrglog('@', "@ docalc0()");
-  STAT::set_N(P::Ninit - 1); // in the usual case with Ninit=0, this will result in N=-1
+  STAT::set_N(int(P::Ninit) - 1); // in the usual case with Ninit=0, this will result in N=-1
   cout << endl << "Before NRG iteration";
   cout << " (N=" << STAT::N << ")" << endl;
   nrg_perform_measurements(diagprev);
@@ -2694,7 +2676,7 @@ void docalc0(const IterInfo &iterinfo) {
 void doZBW(IterInfo &iterinfo) {
   cout << endl << "Zero bandwidth calculation" << endl;
   // TRICK: scale will be that for N=Ninit-1, but STAT::N=Ninit.
-  STAT::set_N(P::Ninit - 1);
+  STAT::set_N(int(P::Ninit) - 1);
   STAT::N = P::Ninit; // this is a hack!
   // begin nrg_do_diag() equivalent
   if (nrgrun) diag = diagprev;
