@@ -45,7 +45,7 @@ namespace nrgljubljana_interface {
     /// Common ratio of the geometric sequence
     double mesh_ratio = 1.05;
 
-    std::string get_model_dir() const {
+    [[nodiscard]] std::string get_model_dir() const {
       if (const char *env_tdir = std::getenv("NRGIF_TEMPLATE_DIR")) {
         return std::string{env_tdir} + "/" + model + "/" + symtype;
       } else {

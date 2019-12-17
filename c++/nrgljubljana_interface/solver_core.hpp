@@ -55,6 +55,7 @@ namespace nrgljubljana_interface {
     solver_core(solver_core &&s)      = default;
     solver_core &operator=(solver_core const &s) = delete;
     solver_core &operator=(solver_core &&s) = default;
+    ~solver_core() = default;
 
     /**
      * Solve method that performs NRGLJUBLJANA_INTERFACE calculation

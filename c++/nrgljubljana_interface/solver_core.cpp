@@ -56,7 +56,7 @@ namespace nrgljubljana_interface {
     chi_struct = read_structure("chi_struct", false); // false=optional
 
     // Read model-specific parameter defaults (file may not exist)
-    auto getline = [=](std::string fn) -> std::string {
+    auto getline = [=](const std::string &fn) -> std::string {
       std::ifstream F(constr_params.get_model_dir() + "/" + fn);
       if (!F) { return ""; }
       std::string s;
@@ -88,22 +88,22 @@ namespace nrgljubljana_interface {
   gf_struct_t solver_core::read_structure(const std::string &filename, bool mandatory = true) {
     std::ifstream F(constr_params.get_model_dir() + "/" + filename);
     if (mandatory && not F.is_open()) TRIQS_RUNTIME_ERROR << "Failed to open structure file " << filename;
-    gf_struct_t gf_struct;
+    gf_struct_t _gf_struct;
     if (F) {
       std::string bl_name;
       int bl_size;
       while (F >> bl_name >> bl_size) {
         indices_t idx_lst;
         for (int i : range(bl_size)) idx_lst.push_back(i);
-        gf_struct.emplace_back(bl_name, idx_lst);
+        _gf_struct.emplace_back(bl_name, idx_lst);
       }
     }
-    return gf_struct;
+    return _gf_struct;
   }
    
-  void solver_core::readGF(const std::string &name, std::optional<g_w_t> &G_w, gf_struct_t &gf_struct) {
-    G_w = g_w_t{log_mesh, gf_struct};
-    for (int bl_idx : range(gf_struct.size())) {
+  void solver_core::readGF(const std::string &name, std::optional<g_w_t> &G_w, gf_struct_t &_gf_struct) {
+    G_w = g_w_t{log_mesh, _gf_struct};
+    for (int bl_idx : range(_gf_struct.size())) {
       long bl_size = Delta_w[bl_idx].target_shape()[0];
       for (auto [i, j] : product_range(bl_size, bl_size)) {
         auto bl_name     = Delta_w.block_names()[bl_idx];
@@ -126,9 +126,9 @@ namespace nrgljubljana_interface {
     }
   }
   
-  void solver_core::readA(const std::string &name, std::optional<g_w_t> &A_w, gf_struct_t &gf_struct) {
-    A_w = g_w_t{log_mesh, gf_struct};
-    for (int bl_idx : range(gf_struct.size())) {
+  void solver_core::readA(const std::string &name, std::optional<g_w_t> &A_w, gf_struct_t &_gf_struct) {
+    A_w = g_w_t{log_mesh, _gf_struct};
+    for (int bl_idx : range(_gf_struct.size())) {
       long bl_size = Delta_w[bl_idx].target_shape()[0];
       for (auto [i, j] : product_range(bl_size, bl_size)) {
         auto bl_name     = Delta_w.block_names()[bl_idx];
@@ -297,7 +297,7 @@ namespace nrgljubljana_interface {
   std::string solver_core::create_tempdir() {
     const std::string tempdir_template = "nrg_tempdir_XXXXXX";
     size_t len = tempdir_template.length()+1;
-    auto x = std::make_unique<char[]>(len);
+    auto x = std::make_unique<char[]>(len); // NOLINT
     strncpy(x.get(), tempdir_template.c_str(), len);
     if (auto w = mkdtemp(x.get())) // create a unique directory
       return w;

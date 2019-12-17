@@ -1,3 +1,3 @@
 Checks: '-*,modernize-*,cppcoreguidelines-*,-modernize-use-trailing-return-type,-cppcoreguidelines-avoid-magic-numbers,-cppcoreguidelines-non-private-member-variables-in-classes'
-HeaderFilterRegex: 'nrgljubljana_interface'
-#/(?!.*gtest).*$'
+HeaderFilterRegex: '^[^/]*\.(h|cc|hpp|cpp)$'
+#'^(?!.*gtest).*$'
