@@ -1,3 +1,13 @@
+# ############
+# Dependencies
+
+## GSL
+#find_package(GSL REQUIRED)
+#add_library(gsl INTERFACE)
+#target_include_directories(gsl SYSTEM INTERFACE ${GSL_INCLUDE_DIRS})
+#target_link_libraries(gsl INTERFACE ${GSL_LIBRARIES})
+#install(TARGETS gsl EXPORT nrgljubljana_interface-targets)
+
 file(GLOB_RECURSE sources *.cpp)
 add_library(nrgljubljana_interface_c STATIC ${sources})
 
@@ -18,6 +28,9 @@ target_compile_definitions(nrgljubljana_interface_c PUBLIC
 
 # Link against NRG
 target_link_libraries(nrgljubljana_interface_c PRIVATE nrgljubljana_c)
+
+# Link against other libraries
+target_link_libraries(nrgljubljana_interface_c PUBLIC gsl)
 
 # Add tool dependencies
 add_dependencies(nrgljubljana_interface_c adapt nrgchain matrix diag unitary broaden kk)

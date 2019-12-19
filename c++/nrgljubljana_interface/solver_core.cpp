@@ -100,7 +100,7 @@ namespace nrgljubljana_interface {
     }
     return _gf_struct;
   }
-   
+
   void solver_core::readGF(const std::string &name, std::optional<g_w_t> &G_w, gf_struct_t &_gf_struct) {
     G_w = g_w_t{log_mesh, _gf_struct};
     for (int bl_idx : range(_gf_struct.size())) {
@@ -174,7 +174,7 @@ namespace nrgljubljana_interface {
     }
     for (auto &i : expv) { i.second /= Nz; }
   }
-   
+
   void solver_core::solve(solve_params_t const &sp) {
     last_solve_params = sp;
     std::string tempdir{};

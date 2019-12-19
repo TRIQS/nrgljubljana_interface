@@ -39,6 +39,11 @@ c.add_member(c_name = "A_w",
              read_only= True,
              doc = r"""The spectral function""")
 
+c.add_member(c_name = "B_w",
+             c_type = "std::optional<g_w_t>",
+             read_only= True,
+             doc = r"""The spectral function of the auxiliary correlator F_w""")
+
 c.add_member(c_name = "G_w",
              c_type = "std::optional<g_w_t>",
              read_only= True,
@@ -59,6 +64,16 @@ c.add_member(c_name = "expv",
              read_only= True,
              doc = r"""Expectation values""")
 
+c.add_member(c_name = "chi_NN_w",
+             c_type = "std::optional<g_w_t>",
+             read_only= True,
+             doc = r"""Charge susceptibility""")
+
+c.add_member(c_name = "chi_SS_w",
+             c_type = "std::optional<g_w_t>",
+             read_only= True,
+             doc = r"""Spin susceptibility""")
+
 c.add_member(c_name = "constr_params",
              c_type = "nrgljubljana_interface::constr_params_t",
              read_only= True,
@@ -67,7 +82,7 @@ c.add_member(c_name = "constr_params",
 c.add_member(c_name = "nrg_params",
              c_type = "nrgljubljana_interface::nrg_params_t",
              read_only= True,
-             doc = r"""""")
+             doc = r"""Low-level NRG parameters""")
 
 c.add_member(c_name = "last_solve_params",
              c_type = "std::optional<solve_params_t>",
@@ -78,6 +93,16 @@ c.add_member(c_name = "gf_struct",
              c_type = "triqs::hilbert_space::gf_struct_t",
              read_only= True,
              doc = r"""The Green function structure object""")
+
+c.add_member(c_name = "chi_struct",
+             c_type = "triqs::hilbert_space::gf_struct_t",
+             read_only= True,
+             doc = r"""The susceptibility structure object""")
+
+c.add_member(c_name = "log_mesh",
+             c_type = "gf_mesh<triqs::gfs::refreq_pts>",
+             read_only= True,
+             doc = r"""Logarithmic mesh""")
 
 c.add_member(c_name = "Delta_w",
              c_type = "nrgljubljana_interface::g_w_t",
@@ -158,6 +183,9 @@ c.add_method("""void solve (**nrgljubljana_interface::solve_params_t)""",
 | model_parameters | std::map<std::string, double> | --      | Model parameters                                 |
 +------------------+-------------------------------+---------+--------------------------------------------------+
 """)
+
+c.add_method("""triqs::hilbert_space::gf_struct_t read_structure (std::string filename, bool mandatory)""",
+             doc = r"""""")
 
 c.add_method("""void solve_one_z (double z, std::string taskdir)""",
              doc = r"""""")
@@ -356,6 +384,16 @@ c.add_method("""void set_nrg_params (**nrgljubljana_interface::nrg_params_t)""",
 
 c.add_method("""void generate_param_file (double z)""",
              doc = r"""""")
+
+c.add_method("""void readexpv (int Nz)""",
+             doc = r"""Read expectation values""")
+
+c.add_method("""void readGF (std::string name, std::optional<g_w_t> G_w, triqs::hilbert_space::gf_struct_t _gf_struct)""",
+             doc = r"""Read a block Green's function (im/re)name-block-ij.dat""")
+
+c.add_method("""void readA (std::string name, std::optional<g_w_t> A_w, triqs::hilbert_space::gf_struct_t _gf_struct)""",
+             doc = r"""Read a block spectral function name-block-ij.dat; here we assume that the
+     spectral function is purely real.""")
 
 c.add_method("""std::string hdf5_scheme ()""",
              is_static = True,

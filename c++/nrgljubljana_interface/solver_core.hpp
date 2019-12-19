@@ -66,7 +66,7 @@ namespace nrgljubljana_interface {
     void solve(solve_params_t const &solve_params);
 
     // Read the block structure of Green's function objects from file
-    gf_struct_t read_structure(const std::string &filename, bool);
+    gf_struct_t read_structure(const std::string &filename, bool mandatory);
 
     // Create a temporary directory for a series of NRG runs
     std::string create_tempdir();
@@ -109,14 +109,14 @@ namespace nrgljubljana_interface {
     void readexpv(int Nz);
     
     /// Read a block Green's function (im/re)name-block-ij.dat
-    void readGF(const std::string &name, std::optional<g_w_t> &G_w, gf_struct_t &);
+    void readGF(const std::string &name, std::optional<g_w_t> &G_w, gf_struct_t &_gf_struct);
 
     /// Read a block spectral function name-block-ij.dat; here we assume that the
     /// spectral function is purely real.
-    void readA(const std::string &name, std::optional<g_w_t> &A_w, gf_struct_t &);
+    void readA(const std::string &name, std::optional<g_w_t> &A_w, gf_struct_t &_gf_struct);
 
     /// Read a scalar real-valued function name.dat
-    void readc(const std::string &name, std::optional<s_w_t> &s_w);
+    // void readc(const std::string &name, std::optional<s_w_t> &s_w); TO DO
 
     static std::string hdf5_scheme() { return "NRGLJUBLJANA_INTERFACE_SolverCore"; }
 
