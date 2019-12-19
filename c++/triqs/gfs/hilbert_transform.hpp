@@ -82,7 +82,7 @@ namespace triqs::gfs {
 //    std::cout << "Xmin=" << Xmin << " Xmax=" << Xmax << " B=" << B << std::endl;
 //    double sum = gsl_spline_eval_integ(spliner, Xmin, Xmax, accr);
 //    std::cout << "sum=" << sum << std::endl;
-    auto rho = [Xmin, Xmax, spliner, accr](double x) -> double { return (Xmin < x && x < Xmax ? gsl_spline_eval(spliner, x, accr) : 0.0); };
+    auto rho = [Xmin, Xmax, spliner, accr](double x) -> double { return (Xmin <= x && x <= Xmax ? gsl_spline_eval(spliner, x, accr) : 0.0); };
 //    for (auto &w : gin.mesh()) {
 //      double x = w;
 //      double y = rho(x);
@@ -99,22 +99,28 @@ namespace triqs::gfs {
       double lim1up   = -1;
       double lim2down = 1;
       double lim2up   = -1;
+      bool inside;
       if (W1 < 0 && W2 > 0) {       // x within the band
         lim1down = ln1016;
         lim1up   = log(-W1);
         lim2down = ln1016;
         lim2up   = log(W2);
-      }
+        inside = true;
+      } else
       if (W1 > 0 && W2 > 0) {       // x above the band
         lim2down = log(W1);
         lim2up   = log(W2);
-      }
+        inside = false;
+      } else
       if (W1 < 0 && W2 < 0) {       // x below the band
         lim1down = log(-W2);
         lim1up   = log(-W1);
+        inside = false;
+      } else {                      // special case: boundary points
+        inside = true;
       }
 //      std::cout << lim1down << " " << lim1up << " " << lim2down << " " << lim2up << " " << W1 << " " << W2 << std::endl;
-      return std::make_tuple(lim1down, lim1up, lim2down, lim2up, W1, W2);
+      return std::make_tuple(lim1down, lim1up, lim2down, lim2up, W1, W2, inside);
     };
     auto calcimA = [x,y,B,rho,limits,work]() -> double {
       // Im part of rho(omega)/(z-omega) with the singularity subtracted out.
@@ -122,10 +128,10 @@ namespace triqs::gfs {
       auto imf2 = [x,y,imf1](double W) -> double { return abs(y)*imf1(abs(y)*W+x); };
       auto imf3p = [x,y,imf2](double r) -> double { return imf2(exp(r)) * exp(r); };
       auto imf3m = [x,y,imf2](double r) -> double { return imf2(-exp(r)) * exp(r); };
-      auto [lim1down, lim1up, lim2down, lim2up, W1, W2] = limits();
+      auto [lim1down, lim1up, lim2down, lim2up, W1, W2, inside] = limits();
       auto result1 = (lim1down < lim1up ? integrate(imf3p, lim1down, lim1up, work) : 0.0);
       auto result2 = (lim2down < lim2up ? integrate(imf3m, lim2down, lim2up, work) : 0.0);
-      auto result3 = (W1 < 0 && W2 > 0 ? rho(x) * atg(x,y,B) : 0.0);
+      auto result3 = (inside ? rho(x) * atg(x,y,B) : 0.0);
 //      std::cout << "i: " << result1 << " " << result2 << " " << result3 << std::endl;
       return result1 + result2 + result3;
     };
@@ -140,10 +146,10 @@ namespace triqs::gfs {
       auto ref2 = [x,y,ref1](double W) -> double { return abs(y)*ref1(abs(y)*W+x); };
       auto ref3p = [x,y,ref2](double r) -> double { return ref2(exp(r)) * exp(r); };
       auto ref3m = [x,y,ref2](double r) -> double { return ref2(-exp(r)) * exp(r); };
-      auto [lim1down, lim1up, lim2down, lim2up, W1, W2] = limits();
+      auto [lim1down, lim1up, lim2down, lim2up, W1, W2, inside] = limits();
       auto result1 = (lim1down < lim1up ? integrate(ref3p, lim1down, lim1up, work) : 0.0);
       auto result2 = (lim2down < lim2up ? integrate(ref3m, lim2down, lim2up, work) : 0.0);
-      auto result3 = (W1 < 0 && W2 > 0 ? rho(x) * logs(x,y,B) : 0.0);
+      auto result3 = (inside ? rho(x) * logs(x,y,B) : 0.0);
 //      std::cout << "r: " << result1 << " " << result2 << " " << result3 << std::endl;
       return result1 + result2 + result3;
     };

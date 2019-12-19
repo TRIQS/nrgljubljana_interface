@@ -1,0 +1,2 @@
+#!/bin/bash
+hilb -G -d dos2.dat 0. 1

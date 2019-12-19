@@ -25,15 +25,10 @@ TEST(hilbert_transform, gf_point) {
   // Construction
   auto rho = gf<refreq_pts, scalar_valued>{w_mesh, {}};
   
-  if (true) { // regressions
-    rho[w_] << 2.0+w_;
-    
-    EXPECT_CPLX_EQ(hilbert_transform(rho, 1.5+0.000001i), dcomplex(3.633032693514235,-3.990562087558569e-06));
-  }
-  
   if (true) { // flat
     rho[w_] << 1.0;
-  
+
+    // Check all four quadrants
     EXPECT_CPLX_EQ(hilbert_transform(rho, 0.5+1.0i), dcomplex(0.4777557225137182,-1.446441332248135));
     EXPECT_CPLX_EQ(hilbert_transform(rho, 0.5+0.1i), dcomplex(1.081219230625402,-2.877628929964088));
     EXPECT_CPLX_EQ(hilbert_transform(rho, 0.5+0.01i), dcomplex(1.098434550385856,-3.114928751712775));
@@ -58,6 +53,7 @@ TEST(hilbert_transform, gf_point) {
     EXPECT_CPLX_EQ(hilbert_transform(rho, -0.5-0.001i), dcomplex(-1.098610510894283,3.138925989688554));
     EXPECT_CPLX_EQ(hilbert_transform(rho, -0.5-0.0001i), dcomplex(-1.098612270890332,3.141325986925892));
 
+    // Decreasing im part
     EXPECT_CPLX_EQ(hilbert_transform(rho, 0.0+1.0i), dcomplex(0,-1.570796326794897));
     EXPECT_CPLX_EQ(hilbert_transform(rho, 0.0+0.1i), dcomplex(0,-2.942255348607469));
     EXPECT_CPLX_EQ(hilbert_transform(rho, 0.0+0.01i), dcomplex(0,-3.121593320216463));
@@ -69,6 +65,7 @@ TEST(hilbert_transform, gf_point) {
     EXPECT_CPLX_EQ(hilbert_transform(rho, 0.0+0.00000001i), dcomplex(0,-3.141592633589793));
     EXPECT_CPLX_EQ(hilbert_transform(rho, 0.0+0.000000001i), dcomplex(0,-3.141592651589793));
     
+    // Increasing im part
     EXPECT_CPLX_EQ(hilbert_transform(rho, 0.0+10i), dcomplex(0,-0.1993373049823241));
     EXPECT_CPLX_EQ(hilbert_transform(rho, 0.0+100i), dcomplex(0,-0.01999933337333048));
     EXPECT_CPLX_EQ(hilbert_transform(rho, 0.0+1000i), dcomplex(0,-0.001999999333333734));
@@ -77,6 +74,7 @@ TEST(hilbert_transform, gf_point) {
     EXPECT_CPLX_EQ(hilbert_transform(rho, 0.0+1000000i), dcomplex(0,-1.999999999999333e-06));
     EXPECT_CPLX_EQ(hilbert_transform(rho, 0.0+10000000i), dcomplex(0,-1.999999999999993e-07));
     
+    // Close to boundary point
     EXPECT_CPLX_EQ(hilbert_transform(rho, 0.99+1.0i), dcomplex(0.8006629534117947,-1.115140355051159));
     EXPECT_CPLX_EQ(hilbert_transform(rho, 0.99+0.1i), dcomplex(2.987005569216831,-1.620255957002947));
     EXPECT_CPLX_EQ(hilbert_transform(rho, 0.99+0.01i), dcomplex(4.946743860228897,-2.351169406861533));
@@ -89,6 +87,7 @@ TEST(hilbert_transform, gf_point) {
     EXPECT_CPLX_EQ(hilbert_transform(rho, 1.01+0.001i), dcomplex(5.298329866391787,-0.09917114009439884));
     EXPECT_CPLX_EQ(hilbert_transform(rho, 1.01+0.0001i), dcomplex(5.303254911796501,-0.009949915442925172));
 
+    // At the boundary point
     EXPECT_CPLX_EQ(hilbert_transform(rho, 1.0+1.0i), dcomplex(0.8047189562170501,-1.107148717794091));
     EXPECT_CPLX_EQ(hilbert_transform(rho, 1.0+0.1i), dcomplex(2.996980713653285,-1.520837931072954));
     EXPECT_CPLX_EQ(hilbert_transform(rho, 1.0+0.01i), dcomplex(5.298329866391789,-1.565796368460938));
@@ -119,13 +118,39 @@ TEST(hilbert_transform, gf_point) {
     EXPECT_CPLX_EQ(hilbert_transform(rho, 1.5+0.0001i), dcomplex(3.63303264231935,-0.000399056201417923));
     EXPECT_CPLX_EQ(hilbert_transform(rho, 1.5+0.00001i), dcomplex(3.63303269300735,-3.990562086832032e-05));
     EXPECT_CPLX_EQ(hilbert_transform(rho, 1.5+0.000001i), dcomplex(3.633032693514235,-3.990562087558569e-06));
+  }
+  
+  if (true) { // boundary points
+    rho[w_] << 1.0;
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 0.999999+0.0001i), dcomplex(9.903437056285835,-1.580745993456891));
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 1.0+0.0001i), dcomplex(9.903487553786128,-1.570746326794938));
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 1.000001+0.0001i), dcomplex(9.903438056285786,-1.560746660134039));
+  }
+
+  if (true) { // quadratic
+    rho[w_] << w_*w_;
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 0.1+0.0001i), dcomplex(-0.1949353971060723,-0.02801896963898113));
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 0.3+0.0001i), dcomplex(-0.5544130613827618,-0.2667433437990276));
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 0.5+0.0001i), dcomplex(-0.7686654163590991,-0.7854361003849807));
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 0.9+0.0001i), dcomplex(0.6316789446424058,-2.604504227768861));
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 0.999+0.0001i), dcomplex(5.638584527557935,-3.035478473543426));
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 1.0+0.0001i), dcomplex(9.903487553786128,-1.570746326794938));
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 2.0+0.0001i), dcomplex(0.4017492503722853,-2.774977580331286e-05));
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 10.0+0.0001i), dcomplex(0.06826901230949829,-6.909867907756972e-07));
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 100.0+0.0001i), dcomplex(0.006786123243917645,-6.786941217796011e-09));
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 1000.0+0.0001i), dcomplex(0.0006785718375024526,-6.785726553607633e-11));
+
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 0.1+0.01i), dcomplex(-0.1893669676898915,-0.04687736359259637));
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 0.3+0.01i), dcomplex(-0.5361892421811076,-0.2819199341519583));
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 0.5+0.01i), dcomplex(-0.7358192647131685,-0.7888027308223274));
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 0.9+0.01i), dcomplex(0.6781071531276157,-2.483757944444507));
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 0.999+0.01i), dcomplex(3.367850434585618,-1.583988926839967));
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 1.0+0.01i), dcomplex(3.379481167807754,-1.487056643611624));
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 2.0+0.01i), dcomplex(0.4017278608919441,-0.002774801257511048));
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 10.0+0.01i), dcomplex(0.06826894196135165,-6.90986070152268e-05));
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 100.0+0.01i), dcomplex(0.006786123175586783,-6.786941149448809e-07));
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 1000.0+0.01i), dcomplex(0.0006785718374324345,-6.785726552907443e-09));
 }
-  
-  rho[w_] << w_*w_;
-  
-  // Compare against expected values
-//  EXPECT_EQ(hilbert_transform(rho, 1.0+1e-6), 0.0);
-//  EXPECT_EQ(hilbert_transform(rho, 1.0+1.0i), 0.0);
 }
 
 TEST(hilbert_transform, gf_mesh) {

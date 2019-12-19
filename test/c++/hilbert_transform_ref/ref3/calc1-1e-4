@@ -1,0 +1,5 @@
+#!/bin/bash
+HILB=hilb
+$HILB -G -d dos1.dat 0.999999 1e-4
+$HILB -G -d dos1.dat 1.0 1e-4
+$HILB -G -d dos1.dat 1.000001 1e-4
