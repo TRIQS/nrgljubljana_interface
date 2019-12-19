@@ -150,7 +150,12 @@ TEST(hilbert_transform, gf_point) {
     EXPECT_CPLX_EQ(hilbert_transform(rho, 10.0+0.01i), dcomplex(0.06826894196135165,-6.90986070152268e-05));
     EXPECT_CPLX_EQ(hilbert_transform(rho, 100.0+0.01i), dcomplex(0.006786123175586783,-6.786941149448809e-07));
     EXPECT_CPLX_EQ(hilbert_transform(rho, 1000.0+0.01i), dcomplex(0.0006785718374324345,-6.785726552907443e-09));
-}
+  }
+  
+  if (true) { // imaginary spectral function
+    rho[w_] << 1.0i;
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 0.5+1.0i), dcomplex(1.446441332248135,0.4777557225137182));
+  }
 }
 
 TEST(hilbert_transform, gf_mesh) {

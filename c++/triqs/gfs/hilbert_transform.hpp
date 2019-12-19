@@ -82,7 +82,8 @@ namespace triqs::gfs {
 //    std::cout << "Xmin=" << Xmin << " Xmax=" << Xmax << " B=" << B << std::endl;
 //    double sum = gsl_spline_eval_integ(spliner, Xmin, Xmax, accr);
 //    std::cout << "sum=" << sum << std::endl;
-    auto rho = [Xmin, Xmax, spliner, accr](double x) -> double { return (Xmin <= x && x <= Xmax ? gsl_spline_eval(spliner, x, accr) : 0.0); };
+    auto rhor = [Xmin, Xmax, spliner, accr](double x) -> double { return (Xmin <= x && x <= Xmax ? gsl_spline_eval(spliner, x, accr) : 0.0); };
+    auto rhoi = [Xmin, Xmax, splinei, acci](double x) -> double { return (Xmin <= x && x <= Xmax ? gsl_spline_eval(splinei, x, acci) : 0.0); };
 //    for (auto &w : gin.mesh()) {
 //      double x = w;
 //      double y = rho(x);
@@ -122,40 +123,40 @@ namespace triqs::gfs {
 //      std::cout << lim1down << " " << lim1up << " " << lim2down << " " << lim2up << " " << W1 << " " << W2 << std::endl;
       return std::make_tuple(lim1down, lim1up, lim2down, lim2up, W1, W2, inside);
     };
-    auto calcimA = [x,y,B,rho,limits,work]() -> double {
+    auto calcimA = [x,y,B,rhor,rhoi,limits,work]() -> double {
       // Im part of rho(omega)/(z-omega) with the singularity subtracted out.
-      auto imf1 = [x,y,rho](double omega) -> double { return (rho(omega)-rho(x))*(-y/(sqr(y)+sqr(x-omega))); };
+      auto imf1 = [x,y,rhor,rhoi](double omega) -> double { return ( (rhor(omega)-rhor(x))*(-y) + (rhoi(omega)-rhoi(x))*(x-omega) )/(sqr(y)+sqr(x-omega)); };
       auto imf2 = [x,y,imf1](double W) -> double { return abs(y)*imf1(abs(y)*W+x); };
       auto imf3p = [x,y,imf2](double r) -> double { return imf2(exp(r)) * exp(r); };
       auto imf3m = [x,y,imf2](double r) -> double { return imf2(-exp(r)) * exp(r); };
       auto [lim1down, lim1up, lim2down, lim2up, W1, W2, inside] = limits();
       auto result1 = (lim1down < lim1up ? integrate(imf3p, lim1down, lim1up, work) : 0.0);
       auto result2 = (lim2down < lim2up ? integrate(imf3m, lim2down, lim2up, work) : 0.0);
-      auto result3 = (inside ? rho(x) * atg(x,y,B) : 0.0);
+      auto result3 = (inside ? rhor(x) * atg(x,y,B) : 0.0);
 //      std::cout << "i: " << result1 << " " << result2 << " " << result3 << std::endl;
       return result1 + result2 + result3;
     };
-    auto calcimB = [x,y,B,rho,work]() -> double {
+    auto calcimB = [x,y,B,rhor,rhoi,work]() -> double {
       // Im part of rho(omega)/(z-omega)
-      auto imf0 = [x,y,rho](double omega) -> double { return rho(omega)*(-y/(sqr(y)+sqr(x-omega))); };
+      auto imf0 = [x,y,rhor,rhoi](double omega) -> double { return (rhor(omega)*(-y) + rhoi(omega)*(x-omega) )/(sqr(y)+sqr(x-omega)); };
       return integrate(imf0, -B, B, work);
     };
-    auto calcreA = [x,y,B,rho,limits,work]() -> double {
+    auto calcreA = [x,y,B,rhor,rhoi,limits,work]() -> double {
       // Re part of rho(omega)/(z-omega) with the singularity subtracted out.
-      auto ref1 = [x,y,rho](double omega) -> double { return (rho(omega)-rho(x))*((x-omega)/(sqr(y)+sqr(x-omega))); };
+      auto ref1 = [x,y,rhor,rhoi](double omega) -> double { return ( (rhor(omega)-rhor(x))*(x-omega) + (rhoi(omega)-rhoi(x))*(y) )/(sqr(y)+sqr(x-omega)); };
       auto ref2 = [x,y,ref1](double W) -> double { return abs(y)*ref1(abs(y)*W+x); };
       auto ref3p = [x,y,ref2](double r) -> double { return ref2(exp(r)) * exp(r); };
       auto ref3m = [x,y,ref2](double r) -> double { return ref2(-exp(r)) * exp(r); };
       auto [lim1down, lim1up, lim2down, lim2up, W1, W2, inside] = limits();
       auto result1 = (lim1down < lim1up ? integrate(ref3p, lim1down, lim1up, work) : 0.0);
       auto result2 = (lim2down < lim2up ? integrate(ref3m, lim2down, lim2up, work) : 0.0);
-      auto result3 = (inside ? rho(x) * logs(x,y,B) : 0.0);
+      auto result3 = (inside ? rhor(x) * logs(x,y,B) : 0.0);
 //      std::cout << "r: " << result1 << " " << result2 << " " << result3 << std::endl;
       return result1 + result2 + result3;
     };
-    auto calcreB = [x,y,B,rho,work]() -> double {
+    auto calcreB = [x,y,B,rhor,rhoi,work]() -> double {
       // Re part of rho(omega)/(z-omega)
-      auto ref0 = [x,y,rho](double omega) -> double { return rho(omega)*((x-omega)/(sqr(y)+sqr(x-omega))); };
+      auto ref0 = [x,y,rhor,rhoi](double omega) -> double { return ( rhor(omega)*(x-omega) + rhoi(omega)*y )/(sqr(y)+sqr(x-omega)); };
       return integrate(ref0, -B, B, work);
     };
     const double LIM_DIRECT = 1e-3; // value y where we switch over to direct integration of rho(E)/(x+Iy-E)
