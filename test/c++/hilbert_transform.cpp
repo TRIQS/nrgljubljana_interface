@@ -181,7 +181,36 @@ TEST(hilbert_transform, gf_mesh) {
   EXPECT_CPLX_EQ(g(1.0), dcomplex(37.53450866846468,-1.570796326794897));
 }
 
-TEST(hilbert_transform, block_gf_point) {
+TEST(hilbert_transform, gf_gf) {
+  auto rho = gf<refreq_pts, scalar_valued>{w_mesh, {}};
+  rho[w_] << 1.0;
+  
+  auto gin = gf<refreq_pts, scalar_valued>{w_mesh, {}};
+  gin[w_] << w_ + 1e-16i;
+  
+  auto g = hilbert_transform(rho, gin);
+  
+  // Same as above, since epsdefault=1e-16
+  EXPECT_CPLX_EQ(g(-1.0), dcomplex(-37.53450866846468,-1.570796326794897));
+  EXPECT_CPLX_EQ(g(-0.5), dcomplex(-1.09861228866811,-3.141592653589793));
+  EXPECT_CPLX_EQ(g(0), dcomplex(0,-3.141592653589793));
+  EXPECT_CPLX_EQ(g(0.5), dcomplex(1.09861228866811,-3.141592653589793));
+  EXPECT_CPLX_EQ(g(1.0), dcomplex(37.53450866846468,-1.570796326794897));
+}
+
+TEST(hilbert_transform, matrix_gf_point) {
+  auto rho = gf<refreq_pts, matrix_valued>{w_mesh, {2,2}};
+  rho[w_] << matrix<double>{{1., 0.5}, {3., 2.}};
+
+  auto mat = hilbert_transform_elementwise(rho, 0.5+1e-16i);
+  
+  EXPECT_CPLX_EQ(mat(0,0), dcomplex(1.09861228866811,-3.141592653589793));
+  EXPECT_CPLX_EQ(mat(0,1), 0.5*dcomplex(1.09861228866811,-3.141592653589793));
+  EXPECT_CPLX_EQ(mat(1,1), 2.*dcomplex(1.09861228866811,-3.141592653589793));
+  EXPECT_CPLX_EQ(mat(1,0), 3.*dcomplex(1.09861228866811,-3.141592653589793));
+}
+
+TEST(hilbert_transform, block_gf_point) { // TO DO
   using namespace triqs::gfs;
   using namespace triqs::arrays;
   using namespace triqs::hilbert_space;
@@ -207,7 +236,7 @@ TEST(hilbert_transform, block_gf_point) {
 //  EXPECT_EQ(vals[1], 1.0);
 }
 
-TEST(hilbert_transform, block_gf_mesh) {
+TEST(hilbert_transform, block_gf_mesh) { // TO DO
 
   // Construction
 //  auto rho = block_gf<refreq_pts, scalar_valued>(w_mesh, {{"up", {}}, {"dn", {}}});

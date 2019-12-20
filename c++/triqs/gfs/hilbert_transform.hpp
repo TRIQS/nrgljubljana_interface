@@ -1,6 +1,7 @@
 // Rok Zitko, Nils Wentzell, Dec 2019
 
 #include <triqs/gfs.hpp>
+#include <itertools/itertools.hpp>
 #include "./meshes/refreq_pts.hpp"
 
 #include <gsl/gsl_errno.h>
@@ -49,23 +50,22 @@ namespace triqs::gfs {
   /**
    * Calculate the Hilbert transform of a given spectral function at fixed complex value z.
    *
-   * @param gin The spectral function
+   * @param Ain The spectral function
    * @param z The complex value for which to evaluate the Hilbert transform
-   * @tparam G The Green function type
+   * @tparam G The Green function type of Ain
    */
-  template <typename G> typename G::target_t::value_t hilbert_transform(G const &gin, dcomplex z) REQUIRES(is_gf_v<G>) {
-    static_assert(std::is_same_v<typename G::target_t, scalar_valued> or std::is_same_v<typename G::target_t, scalar_real_valued>,
-                  "Hilbert transform only implemented for scalar valued Green functions");
+  template <typename G> dcomplex hilbert_transform(G const &Ain, dcomplex z) REQUIRES(is_gf_v<G>) {
+    static_assert(std::is_same_v<typename G::target_t, scalar_valued>,
+                  "Hilbert transform only implemented for (complex) scalar-valued spectral functions");
     static_assert(std::is_same_v<typename G::variable_t, refreq> or std::is_same_v<typename G::variable_t, refreq_pts>,
                   "Hilbert transform only implemented for refreq and refreq_pts meshes");
-    gsl_set_error_handler_off();
-    gsl_integration_workspace *work = gsl_integration_workspace_alloc(limit);
+    // Copy the input data for GSL interpolation routines.
     using DVEC = std::vector<double>;
     DVEC Xpts, Rpts, Ipts;
-    for (const auto &w : gin.mesh()) {
+    for (const auto &w : Ain.mesh()) {
       double x = w;
-      double r = real(gin[w]);
-      double i = imag(gin[w]);
+      double r = real(Ain[w]);
+      double i = imag(Ain[w]);
       Xpts.push_back(x);
       Rpts.push_back(r);
       Ipts.push_back(i);
@@ -74,7 +74,10 @@ namespace triqs::gfs {
     double Xmin = Xpts[0];
     double Xmax = Xpts[len-1];
     assert(Xmin < Xmax);
-    double B = std::max(abs(Xmin), abs(Xmax)); // support is [-B:B]
+    double B = std::max(abs(Xmin), abs(Xmax)); // half-bandwidth, i.e. support is [-B:B]
+    // Initialize GSL and set up the cubic-spline interpolation
+    gsl_set_error_handler_off();
+    gsl_integration_workspace *work = gsl_integration_workspace_alloc(limit);
     gsl_interp_accel *accr = gsl_interp_accel_alloc();
     gsl_interp_accel *acci = gsl_interp_accel_alloc();
     gsl_spline *spliner = gsl_spline_alloc(gsl_interp_cspline, len);
@@ -83,6 +86,7 @@ namespace triqs::gfs {
     gsl_spline_init(splinei, &Xpts[0], &Ipts[0], len);
     auto rhor = [Xmin, Xmax, spliner, accr](double x) -> double { return (Xmin <= x && x <= Xmax ? gsl_spline_eval(spliner, x, accr) : 0.0); };
     auto rhoi = [Xmin, Xmax, splinei, acci](double x) -> double { return (Xmin <= x && x <= Xmax ? gsl_spline_eval(splinei, x, acci) : 0.0); };
+    // Determine the integration limits
     double x = real(z);
     double y = imag(z);
     auto limits = [x,y,B]() -> auto {
@@ -115,23 +119,9 @@ namespace triqs::gfs {
       }
       return std::make_tuple(lim1down, lim1up, lim2down, lim2up, W1, W2, inside);
     };
-    auto calcimA = [x,y,B,rhor,rhoi,limits,work]() -> double {
-      // Im part of rho(omega)/(z-omega) with the singularity subtracted out.
-      auto imf1 = [x,y,rhor,rhoi](double omega) -> double { return ( (rhor(omega)-rhor(x))*(-y) + (rhoi(omega)-rhoi(x))*(x-omega) )/(sqr(y)+sqr(x-omega)); };
-      auto imf2 = [x,y,imf1](double W) -> double { return abs(y)*imf1(abs(y)*W+x); };
-      auto imf3p = [x,y,imf2](double r) -> double { return imf2(exp(r)) * exp(r); };
-      auto imf3m = [x,y,imf2](double r) -> double { return imf2(-exp(r)) * exp(r); };
-      auto [lim1down, lim1up, lim2down, lim2up, W1, W2, inside] = limits();
-      auto result1 = (lim1down < lim1up ? integrate(imf3p, lim1down, lim1up, work) : 0.0);
-      auto result2 = (lim2down < lim2up ? integrate(imf3m, lim2down, lim2up, work) : 0.0);
-      auto result3 = (inside ? rhor(x) * atg(x,y,B) : 0.0);
-      return result1 + result2 + result3;
-    };
-    auto calcimB = [x,y,B,rhor,rhoi,work]() -> double {
-      // Im part of rho(omega)/(z-omega)
-      auto imf0 = [x,y,rhor,rhoi](double omega) -> double { return (rhor(omega)*(-y) + rhoi(omega)*(x-omega) )/(sqr(y)+sqr(x-omega)); };
-      return integrate(imf0, -B, B, work);
-    };
+    // Low-level Hilbert-transform routines. *A routines remove the singularity and perform the
+    // integration after a change of variables, *B routines directly evaluate the defining integral
+    // of the Hilbert transform. Real and imaginary parts are determined in separate steps.
     auto calcreA = [x,y,B,rhor,rhoi,limits,work]() -> double {
       // Re part of rho(omega)/(z-omega) with the singularity subtracted out.
       auto ref1 = [x,y,rhor,rhoi](double omega) -> double { return ( (rhor(omega)-rhor(x))*(x-omega) + (rhoi(omega)-rhoi(x))*(y) )/(sqr(y)+sqr(x-omega)); };
@@ -149,8 +139,26 @@ namespace triqs::gfs {
       auto ref0 = [x,y,rhor,rhoi](double omega) -> double { return ( rhor(omega)*(x-omega) + rhoi(omega)*y )/(sqr(y)+sqr(x-omega)); };
       return integrate(ref0, -B, B, work);
     };
+    auto calcimA = [x,y,B,rhor,rhoi,limits,work]() -> double {
+      // Im part of rho(omega)/(z-omega) with the singularity subtracted out.
+      auto imf1 = [x,y,rhor,rhoi](double omega) -> double { return ( (rhor(omega)-rhor(x))*(-y) + (rhoi(omega)-rhoi(x))*(x-omega) )/(sqr(y)+sqr(x-omega)); };
+      auto imf2 = [x,y,imf1](double W) -> double { return abs(y)*imf1(abs(y)*W+x); };
+      auto imf3p = [x,y,imf2](double r) -> double { return imf2(exp(r)) * exp(r); };
+      auto imf3m = [x,y,imf2](double r) -> double { return imf2(-exp(r)) * exp(r); };
+      auto [lim1down, lim1up, lim2down, lim2up, W1, W2, inside] = limits();
+      auto result1 = (lim1down < lim1up ? integrate(imf3p, lim1down, lim1up, work) : 0.0);
+      auto result2 = (lim2down < lim2up ? integrate(imf3m, lim2down, lim2up, work) : 0.0);
+      auto result3 = (inside ? rhor(x) * atg(x,y,B) : 0.0);
+      return result1 + result2 + result3;
+    };
+    auto calcimB = [x,y,B,rhor,rhoi,work]() -> double {
+      // Im part of rho(omega)/(z-omega)
+      auto imf0 = [x,y,rhor,rhoi](double omega) -> double { return (rhor(omega)*(-y) + rhoi(omega)*(x-omega) )/(sqr(y)+sqr(x-omega)); };
+      return integrate(imf0, -B, B, work);
+    };
     double re = (abs(y) < lim_direct ? calcreA() : calcreB());
     double im = (abs(y) < lim_direct ? calcimA() : calcimB());
+    // Deallocate GSL workspaces and return the result
     gsl_spline_free(spliner);
     gsl_spline_free(splinei);
     gsl_interp_accel_free(accr);
@@ -160,46 +168,84 @@ namespace triqs::gfs {
   }
 
   /**
-   * Calculate the Hilbert transform of a given spectral function on a given mesh
+   * Calculate the Hilbert transform of a given spectral function on a given mesh on real axis, i.e., the Green's function.
    *
-   * @param gin The spectral function
+   * @param Ain The spectral function
    * @param mesh The mesh
-   * @tparam G The Green function type
+   * @param eps The (small) displacement from the real axis. For eps>0, the calculation produces a retarded Green's function.
+   * @tparam G The Green function type of Ain
    * @tparam M The mesh type
    */
   template <typename G, typename M>
-  typename G::regular_type hilbert_transform(G const &gin, M const &mesh, double eps = defaulteps) REQUIRES(is_gf_v<G> and is_instantiation_of_v<gf_mesh, M>) {
-    auto gout = gf<typename M::var_t, typename G::target_t>{mesh, gin.target_shape()};
-    for (const auto mp : mesh) gout[mp] = hilbert_transform(gin, dcomplex{mp,eps});
+  typename G::regular_type hilbert_transform(G const &Ain, M const &mesh, double eps = defaulteps) REQUIRES(is_gf_v<G> and is_instantiation_of_v<gf_mesh, M>) {
+    auto gout = gf<typename M::var_t, typename G::target_t>{mesh, Ain.target_shape()};
+    for (const auto mp : mesh) gout[mp] = hilbert_transform(Ain, dcomplex{mp,eps});
     return gout;
+  }
+
+  /**
+   * Calculate the Hilbert transform of a given spectral function on complex-valued grid stored as the values of an input Green's function object. The output is
+   * an output Green's function on the same frequency domain as the input Green's function. This version of Hilbert transform is the one that is commonly
+   * used in the context of DMFT.
+   *
+   * @param Ain The spectral function
+   * @param gin Input Green's function.
+   * @tparam G The Green function type of Ain and gin.
+   */
+  template <typename G>
+  typename G::regular_type hilbert_transform(G const &Ain, G const &gin) REQUIRES(is_gf_v<G>) {
+    auto gout = gin;
+    for (const auto &mp : gin.mesh()) gout[mp] = hilbert_transform(Ain, gin[mp]);
+    return gout;
+  }
+
+  /**
+   * Calculate the Hilbert transform of a given spectral function at fixed complex value z. This version performs an element-wise
+   * Hilbert transformation.
+   *
+   * @param Ain The matrix-valued spectral function
+   * @param z The complex value for which to evaluate the Hilbert transform
+   * @tparam G The Green function type of Ain
+   */
+  template <typename G> matrix<dcomplex> hilbert_transform_elementwise(G const &Ain, dcomplex z) REQUIRES(is_gf_v<G>) {
+    static_assert(std::is_same_v<typename G::target_t, matrix_valued>,
+                  "Hilbert transform only implemented for matrix-valued spectral functions");
+    long size = Ain.target_shape()[0];
+    auto mat = matrix<dcomplex>(size, size);
+    for (auto [i, j] : itertools::product_range(size, size)) {
+      auto gtemp = gf<refreq_pts, scalar_valued>{Ain.mesh(), {}};       // XXX: refreqs_pts -> typename G::mesh_t
+      for (const auto &mp : Ain.mesh()) gtemp[mp] = Ain[mp](i,j);
+      mat(i,j) = hilbert_transform(gtemp, z);
+    }
+    return mat;
   }
 
   /**
    * Calculate the Hilbert transform of a block spectral function at fixed complex value z.
    *
-   * @param bgin The block spectral function
+   * @param bAin The block spectral function
    * @param z The complex value for which to evaluate the Hilbert transform
    * @tparam BG The block Green function type
    */
-  template <typename BG> auto hilbert_transform(BG const &bgin, dcomplex z) REQUIRES(is_block_gf_v<BG>) {
+  template <typename BG> auto hilbert_transform(BG const &bAin, dcomplex z) REQUIRES(is_block_gf_v<BG>) {
     using G = typename BG::g_t;
-    auto l  = [z](G const &gin) { return hilbert_transform<G>(gin, z); };
-    return map_block_gf(l, bgin);
+    auto l  = [z](G const &Ain) { return hilbert_transform<G>(Ain, z); };
+    return map_block_gf(l, bAin);
   }
 
   /**
    * Calculate the Hilbert transform of a block spectral function on a given mesh
    *
-   * @param gin The spectral function
+   * @param Ain The spectral function
    * @param mesh The mesh
    * @tparam G The block Green function type
    * @tparam M The mesh type
    */
   template <typename BG, typename M>
-  auto hilbert_transform(BG const &bgin, M const &mesh, double eps = defaulteps) REQUIRES(is_block_gf_v<BG> and is_instantiation_of_v<gf_mesh, M>) {
+  auto hilbert_transform(BG const &bAin, M const &mesh, double eps = defaulteps) REQUIRES(is_block_gf_v<BG> and is_instantiation_of_v<gf_mesh, M>) {
     using G = typename BG::g_t;
-    auto l  = [&mesh](G const &gin) { return hilbert_transform<G, M>(gin, mesh); };
-    return map_block_gf(l, bgin);
+    auto l  = [&mesh](G const &Ain) { return hilbert_transform<G, M>(Ain, mesh); };
+    return map_block_gf(l, bAin);
   }
 
 } // namespace triqs::gfs
