@@ -1,4 +1,8 @@
+// Rok Zitko, Dec 2019
+
 #include <gtest/gtest.h>
+
+#include <triqs/hilbert_space/fundamental_operator_set.hpp>
 
 #include <triqs/gfs/hilbert_transform.hpp>
 #include <triqs/gfs/meshes/refreq_pts.hpp>
@@ -164,19 +168,33 @@ TEST(hilbert_transform, gf_mesh) {
   auto rho = gf<refreq_pts, scalar_valued>{w_mesh, {}};
 
   // Initialize
-  rho[w_] << 0.;
+  rho[w_] << 1.0;
 
   // Full hilbert transform
   auto g = hilbert_transform(rho, w_mesh);
 
   // Compare against expected values
-  EXPECT_EQ(g[0], 0.0);
+  EXPECT_CPLX_EQ(g(-1.0), dcomplex(-37.53450866846468,-1.570796326794897));
+  EXPECT_CPLX_EQ(g(-0.5), dcomplex(-1.09861228866811,-3.141592653589793));
+  EXPECT_CPLX_EQ(g(0), dcomplex(0,-3.141592653589793));
+  EXPECT_CPLX_EQ(g(0.5), dcomplex(1.09861228866811,-3.141592653589793));
+  EXPECT_CPLX_EQ(g(1.0), dcomplex(37.53450866846468,-1.570796326794897));
 }
 
 TEST(hilbert_transform, block_gf_point) {
+  using namespace triqs::gfs;
+  using namespace triqs::arrays;
+  using namespace triqs::hilbert_space;
+  using namespace triqs::utility;
+  using namespace triqs::h5;
 
   // Construction
-//  auto rho = block_gf<refreq_pts, scalar_valued>(w_mesh, {{"up", {}}, {"dn", {}}});
+  //using g_w_t = block_gf<refreq_pts, matrix_valued>;
+  //gf_struct_t gf_struct;
+  //gf_struct.emplace_back("up", indices_t{1,1});
+  //gf_struct.emplace_back("dn", indices_t{1,1});
+  //auto rho = g_w_t{w_mesh, gf_struct};
+  auto rho = block_gf<refreq_pts, matrix_valued>(w_mesh, {{"up", {1,1}}, {"dn", {1,1}}});
 
   // Initialize
 //  rho[bl_][w_] << 0.;
@@ -193,6 +211,8 @@ TEST(hilbert_transform, block_gf_mesh) {
 
   // Construction
 //  auto rho = block_gf<refreq_pts, scalar_valued>(w_mesh, {{"up", {}}, {"dn", {}}});
+//  auto rho = block_gf<refreq_pts>(w_mesh, {{"up", {}}, {"dn", {}}});
+//  auto rho = block_gf<refreq_pts,scalar_valued>(w_mesh, {{"up", {}}, {"dn", {}}});
 
   // Initialize
 //  rho[bl_][w_] << 0.;
