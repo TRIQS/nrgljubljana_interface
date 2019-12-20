@@ -105,6 +105,7 @@ namespace triqs::gfs {
 
     template <typename F>[[nodiscard]] auto evaluate(F const &f, domain_pt_t x) const noexcept {
       EXPECTS(is_within_boundary(x));
+      if (x == _pts.front()) return f[0]; // special case
       auto id = get_interpolation_data(x);
       return id.w[0] * f[id.idx[0]] + id.w[1] * f[id.idx[1]];
     }
