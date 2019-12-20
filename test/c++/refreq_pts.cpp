@@ -34,6 +34,14 @@ TEST(refreq_pts, Base) {
   // Test Linear Interpolation
   EXPECT_EQ(G(0.5), 0.5);
   EXPECT_EQ(G(-0.5), 2.0);
+
+  // Test outside the support
+  // EXPECT_EQ(G(3), 0.0); // is_within_boundary(x) violated
+
+  // Test on mesh points
+  EXPECT_EQ(G(-1.0), 4.0);
+  EXPECT_EQ(G(0), 0.0);
+  EXPECT_EQ(G(2), 2.0);
 }
 
 TEST(refreq_pts, h5) {
@@ -77,4 +85,15 @@ TEST(refreq_pts, block_gf) {
   auto Gprod = gf<refreq_pts>{Gbl[0] * Gbl[1]};
 
   EXPECT_EQ(Gprod.data()(range(), 0, 0), (array<double, 1>{2.0, 0.0, 8.0}));
+}
+
+TEST(refreqs_pts, block_gf_scalar) {
+  // Construction
+  auto m = gf_mesh<refreq_pts>{-1.0, 0.0, 2.0};
+  auto Gbl = block_gf<refreq_pts>{m, {{"bl1", {}}, {"bl2", {}}}};
+
+  for (auto mp : m) {
+//    Gbl[0][mp] = double(mp);
+//    Gbl[1][mp] = 2 * double(mp);
+  }
 }
