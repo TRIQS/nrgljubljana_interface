@@ -36,7 +36,7 @@ TEST(refreq_pts, Base) {
   EXPECT_EQ(G(-0.5), 2.0);
 
   // Test outside the support
-  // EXPECT_EQ(G(3), 0.0); // is_within_boundary(x) violated
+  ASSERT_DEATH( G(3), "is_within_boundary"); // is_within_boundary(x) violated
 
   // Test on mesh points
   EXPECT_EQ(G(-1.0), 4.0);
