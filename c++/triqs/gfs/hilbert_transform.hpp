@@ -1,3 +1,5 @@
+// Rok Zitko, Nils Wentzell, Dec 2019
+
 #include <triqs/gfs.hpp>
 #include "./meshes/refreq_pts.hpp"
 
@@ -9,12 +11,14 @@
 
 namespace triqs::gfs {
 
-  const double epsabs   = 1e-14;  // numeric integration epsilon (absolute)
-  const double epsrel   = 1e-10;  // numeric integration epsilon (relative)
-  const double ln1016   = -36.8;  // \approx log(10^-16)
-  const size_t limit    = 1000;   // size of integration workspace
+  const double epsabs     = 1e-14; // numeric integration epsilon (absolute)
+  const double epsrel     = 1e-10; // numeric integration epsilon (relative)
+  const double ln1016     = -36.8; // \approx log(10^-16)
+  const size_t limit      = 1000;  // size of integration workspace
+  const double lim_direct = 1e-3;  // value y where we switch over to direct integration of rho(E)/(x+Iy-E)
+  const double defaulteps = 1e-16; // offset of z points from the real axis
 
-  // Unwrap a lambda expression and evaluate it at x.
+  // Unwrap a lambda expression and evaluate it at x
   // https://martin-ueding.de/articles/cpp-lambda-into-gsl/index.html
   double unwrap(double x, void *p) {
     auto fp = static_cast<std::function<double(double)> *>(p);
@@ -54,22 +58,20 @@ namespace triqs::gfs {
                   "Hilbert transform only implemented for scalar valued Green functions");
     static_assert(std::is_same_v<typename G::variable_t, refreq> or std::is_same_v<typename G::variable_t, refreq_pts>,
                   "Hilbert transform only implemented for refreq and refreq_pts meshes");
-//    std::cout << std::setprecision(16) << std::endl;
     gsl_set_error_handler_off();
     gsl_integration_workspace *work = gsl_integration_workspace_alloc(limit);
     using DVEC = std::vector<double>;
     DVEC Xpts, Rpts, Ipts;
-    for (auto &w : gin.mesh()) {
+    for (const auto &w : gin.mesh()) {
       double x = w;
       double r = real(gin[w]);
       double i = imag(gin[w]);
       Xpts.push_back(x);
       Rpts.push_back(r);
       Ipts.push_back(i);
-//      std::cout << x << " " << r << " " << i << std::endl;
     }
     size_t len = Xpts.size();
-    double Xmin = Xpts[0]; // XXX: guaranteed sorted?
+    double Xmin = Xpts[0];
     double Xmax = Xpts[len-1];
     assert(Xmin < Xmax);
     double B = std::max(abs(Xmin), abs(Xmax)); // support is [-B:B]
@@ -79,19 +81,10 @@ namespace triqs::gfs {
     gsl_spline *splinei = gsl_spline_alloc(gsl_interp_cspline, len);
     gsl_spline_init(spliner, &Xpts[0], &Rpts[0], len);
     gsl_spline_init(splinei, &Xpts[0], &Ipts[0], len);
-//    std::cout << "Xmin=" << Xmin << " Xmax=" << Xmax << " B=" << B << std::endl;
-//    double sum = gsl_spline_eval_integ(spliner, Xmin, Xmax, accr);
-//    std::cout << "sum=" << sum << std::endl;
     auto rhor = [Xmin, Xmax, spliner, accr](double x) -> double { return (Xmin <= x && x <= Xmax ? gsl_spline_eval(spliner, x, accr) : 0.0); };
     auto rhoi = [Xmin, Xmax, splinei, acci](double x) -> double { return (Xmin <= x && x <= Xmax ? gsl_spline_eval(splinei, x, acci) : 0.0); };
-//    for (auto &w : gin.mesh()) {
-//      double x = w;
-//      double y = rho(x);
-//      std::cout << x << " " << y << std::endl;
-//    }
     double x = real(z);
     double y = imag(z);
-//    std::cout << x << " " << y << std::endl;
     auto limits = [x,y,B]() -> auto {
       const double W1 = (x - B) / abs(y); // Rescaled integration limits. Only the absolute value of y matters here.
       const double W2 = (B + x) / abs(y);
@@ -120,7 +113,6 @@ namespace triqs::gfs {
       } else {                      // special case: boundary points
         inside = true;
       }
-//      std::cout << lim1down << " " << lim1up << " " << lim2down << " " << lim2up << " " << W1 << " " << W2 << std::endl;
       return std::make_tuple(lim1down, lim1up, lim2down, lim2up, W1, W2, inside);
     };
     auto calcimA = [x,y,B,rhor,rhoi,limits,work]() -> double {
@@ -133,7 +125,6 @@ namespace triqs::gfs {
       auto result1 = (lim1down < lim1up ? integrate(imf3p, lim1down, lim1up, work) : 0.0);
       auto result2 = (lim2down < lim2up ? integrate(imf3m, lim2down, lim2up, work) : 0.0);
       auto result3 = (inside ? rhor(x) * atg(x,y,B) : 0.0);
-//      std::cout << "i: " << result1 << " " << result2 << " " << result3 << std::endl;
       return result1 + result2 + result3;
     };
     auto calcimB = [x,y,B,rhor,rhoi,work]() -> double {
@@ -151,7 +142,6 @@ namespace triqs::gfs {
       auto result1 = (lim1down < lim1up ? integrate(ref3p, lim1down, lim1up, work) : 0.0);
       auto result2 = (lim2down < lim2up ? integrate(ref3m, lim2down, lim2up, work) : 0.0);
       auto result3 = (inside ? rhor(x) * logs(x,y,B) : 0.0);
-//      std::cout << "r: " << result1 << " " << result2 << " " << result3 << std::endl;
       return result1 + result2 + result3;
     };
     auto calcreB = [x,y,B,rhor,rhoi,work]() -> double {
@@ -159,15 +149,13 @@ namespace triqs::gfs {
       auto ref0 = [x,y,rhor,rhoi](double omega) -> double { return ( rhor(omega)*(x-omega) + rhoi(omega)*y )/(sqr(y)+sqr(x-omega)); };
       return integrate(ref0, -B, B, work);
     };
-    const double LIM_DIRECT = 1e-3; // value y where we switch over to direct integration of rho(E)/(x+Iy-E)
-    double re = (abs(y) < LIM_DIRECT ? calcreA() : calcreB());
-    double im = (abs(y) < LIM_DIRECT ? calcimA() : calcimB());
+    double re = (abs(y) < lim_direct ? calcreA() : calcreB());
+    double im = (abs(y) < lim_direct ? calcimA() : calcimB());
     gsl_spline_free(spliner);
     gsl_spline_free(splinei);
     gsl_interp_accel_free(accr);
     gsl_interp_accel_free(acci);
     gsl_integration_workspace_free(work);
-//    std::cout << "-> " << re << " " << im << std::endl;
     return dcomplex{re,im};
   }
 
@@ -180,9 +168,9 @@ namespace triqs::gfs {
    * @tparam M The mesh type
    */
   template <typename G, typename M>
-  typename G::regular_type hilbert_transform(G const &gin, M const &mesh) REQUIRES(is_gf_v<G> and is_instantiation_of_v<gf_mesh, M>) {
+  typename G::regular_type hilbert_transform(G const &gin, M const &mesh, double eps = defaulteps) REQUIRES(is_gf_v<G> and is_instantiation_of_v<gf_mesh, M>) {
     auto gout = gf<typename M::var_t, typename G::target_t>{mesh, gin.target_shape()};
-//    for (auto mp : mesh) gout[mp] = hilbert_transform(gin, dcomplex{mp});
+    for (const auto mp : mesh) gout[mp] = hilbert_transform(gin, dcomplex{mp,eps});
     return gout;
   }
 
@@ -208,7 +196,7 @@ namespace triqs::gfs {
    * @tparam M The mesh type
    */
   template <typename BG, typename M>
-  auto hilbert_transform(BG const &bgin, M const &mesh) REQUIRES(is_block_gf_v<BG> and is_instantiation_of_v<gf_mesh, M>) {
+  auto hilbert_transform(BG const &bgin, M const &mesh, double eps = defaulteps) REQUIRES(is_block_gf_v<BG> and is_instantiation_of_v<gf_mesh, M>) {
     using G = typename BG::g_t;
     auto l  = [&mesh](G const &gin) { return hilbert_transform<G, M>(gin, mesh); };
     return map_block_gf(l, bgin);
