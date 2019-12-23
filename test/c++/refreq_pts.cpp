@@ -36,8 +36,9 @@ TEST(refreq_pts, Base) {
   EXPECT_EQ(G(-0.5), 2.0);
 
   // Test outside the support
-  // Note: does not work properly on all build platforms, commented out (RZ)
-  // ASSERT_DEATH( G(3), "is_within_boundary"); // is_within_boundary(x) violated
+#ifdef NRGLJUBLJANA_INTERFACE_DEBUG
+  ASSERT_DEATH(G(3), "is_within_boundary"); // is_within_boundary(x) violated
+#endif
 
   // Test on mesh points
   EXPECT_EQ(G(-1.0), 4.0);
