@@ -2,6 +2,7 @@
 # Dependencies
 
 ## GSL
+# Already included in nrgljubljana/tools/CMakeLists.txt. Keep commented out for now.
 #find_package(GSL REQUIRED)
 #add_library(gsl INTERFACE)
 #target_include_directories(gsl SYSTEM INTERFACE ${GSL_INCLUDE_DIRS})
