@@ -159,6 +159,7 @@ TEST(hilbert_transform, gf_point) {
   if (true) { // imaginary spectral function
     rho[w_] << 1.0i;
     EXPECT_CPLX_EQ(hilbert_transform(rho, 0.5+1.0i), dcomplex(1.446441332248135,0.4777557225137182));
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 0.5+0.0001i), dcomplex(3.141325986925892,1.098612270890332));
   }
 }
 
@@ -211,25 +212,15 @@ TEST(hilbert_transform, matrix_gf_point) {
 }
 
 TEST(hilbert_transform, block_gf_point) { // TO DO
-  using namespace triqs::gfs;
-  using namespace triqs::arrays;
-  using namespace triqs::hilbert_space;
-  using namespace triqs::utility;
-  using namespace triqs::h5;
 
   // Construction
-  //using g_w_t = block_gf<refreq_pts, matrix_valued>;
-  //gf_struct_t gf_struct;
-  //gf_struct.emplace_back("up", indices_t{1,1});
-  //gf_struct.emplace_back("dn", indices_t{1,1});
-  //auto rho = g_w_t{w_mesh, gf_struct};
-  auto rho = block_gf<refreq_pts, matrix_valued>(w_mesh, {{"up", {1,1}}, {"dn", {1,1}}});
+  auto rho = block_gf<refreq_pts, scalar_valued>(w_mesh, {{"up", {}}, {"dn", {}}});
 
   // Initialize
-//  rho[bl_][w_] << 0.;
+  rho[bl_][w_] << 0.;
 
   // Full hilbert transform
-//  auto vals = hilbert_transform(rho, 1.0);
+  auto vals = hilbert_transform(rho, 1.0+1.0i);
 
   // Compare against expected values
 //  EXPECT_EQ(vals[0], 1.0);
@@ -239,15 +230,13 @@ TEST(hilbert_transform, block_gf_point) { // TO DO
 TEST(hilbert_transform, block_gf_mesh) { // TO DO
 
   // Construction
-//  auto rho = block_gf<refreq_pts, scalar_valued>(w_mesh, {{"up", {}}, {"dn", {}}});
-//  auto rho = block_gf<refreq_pts>(w_mesh, {{"up", {}}, {"dn", {}}});
-//  auto rho = block_gf<refreq_pts,scalar_valued>(w_mesh, {{"up", {}}, {"dn", {}}});
+  auto rho = block_gf<refreq_pts, scalar_valued>(w_mesh, {{"up", {}}, {"dn", {}}});
 
   // Initialize
-//  rho[bl_][w_] << 0.;
+  rho[bl_][w_] << w_ + 1e-16i;
 
   // Full hilbert transform
-//  auto bg = hilbert_transform(rho, w_mesh);
+  auto bg = hilbert_transform(rho, w_mesh);
 
   // Compare against expected values
 //  EXPECT_EQ(bg[0][0], 1.0);

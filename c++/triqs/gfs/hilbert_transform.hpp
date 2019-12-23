@@ -19,12 +19,13 @@ namespace triqs::gfs {
     return (*fp)(x);
   }
 
+  // Wrap around GSL integration routines
   class integrator {
   private:
     size_t limit;                    // size of workspace
     bool exit_on_error;              // if true, integration error will trigger a hard error
     gsl_integration_workspace *work; // work space
-    gsl_function F;                  // for evaluation of integrand
+    gsl_function F;                  // GSL function struct for evaluation of the integrand
   public:
     integrator(size_t _limit = 1000, bool _exit_on_error = false) : limit(_limit), exit_on_error(_exit_on_error) {
       work = gsl_integration_workspace_alloc(limit);
@@ -49,6 +50,32 @@ namespace triqs::gfs {
       return result;
     }
   };
+   
+  // Wrap around GSL interpolation routines
+  class interpolator {
+  private:
+    gsl_interp_accel *acc; // workspace
+    gsl_spline *spline;    // spline data
+    size_t len;            // number of data points
+    double Xmin, Xmax;     // boundary points
+  public:
+    interpolator(std::vector<double> &X, std::vector<double> &Y) {
+      acc = gsl_interp_accel_alloc();
+      len = X.size();
+      spline = gsl_spline_alloc(gsl_interp_cspline, len);
+      gsl_spline_init(spline, &X[0], &Y[0], len);
+      EXPECTS(std::is_sorted(X.begin(), X.end()));
+      Xmin = X[0];
+      Xmax = X[len-1];
+    }
+    ~interpolator() {
+      gsl_spline_free(spline);
+      gsl_interp_accel_free(acc);
+    }
+    double operator() (double x) {
+       return (Xmin <= x && x <= Xmax ? gsl_spline_eval(spline, x, acc) : 0.0);
+    }
+  };
 
   // Square of x
   inline double sqr(double x) { return x*x; }
@@ -59,7 +86,16 @@ namespace triqs::gfs {
   // Integrate[((x - omega)/(y^2 + (x - omega)^2)), {omega, -B, B}]
   inline double logs(double x, double y, double B) { return (-log(sqr(B - x) + sqr(y)) + log(sqr(B + x) + sqr(y))) / 2.0; }
 
-  /**
+  // Calculate the (half)bandwidth, i.e., the size B of the enclosing interval [-B:B].
+  inline double bandwidth(std::vector<double> X) {
+    size_t len = X.size();
+    EXPECTS(std::is_sorted(X.begin(), X.end()));
+    double Xmin = X[0];
+    double Xmax = X[len-1];
+    return std::max(abs(Xmin), abs(Xmax));
+  }
+
+   /**
    * Calculate the Hilbert transform of a given spectral function at fixed complex value z. This is the low-level routine, called from
    * other interfaces. The general strategy is to perform a direct integration of the defining integral for cases where z has a sufficiently
    * large imaginary part, otherwise the singularity is subtracted out and the calculation of the transformed integrand is performed using
@@ -91,32 +127,23 @@ namespace triqs::gfs {
       Rpts.push_back(r);
       Ipts.push_back(i);
     }
-    size_t len = Xpts.size();
-    EXPECTS(std::is_sorted(Xpts.begin(), Xpts.end()));
-    double Xmin = Xpts[0];
-    double Xmax = Xpts[len-1];
-    double B = std::max(abs(Xmin), abs(Xmax)); // half-bandwidth, i.e. support is [-B:B]
     // Initialize GSL and set up the cubic-spline interpolation
     gsl_set_error_handler_off();
-    gsl_interp_accel *accr = gsl_interp_accel_alloc();
-    gsl_interp_accel *acci = gsl_interp_accel_alloc();
-    gsl_spline *spliner = gsl_spline_alloc(gsl_interp_cspline, len);
-    gsl_spline *splinei = gsl_spline_alloc(gsl_interp_cspline, len);
-    gsl_spline_init(spliner, &Xpts[0], &Rpts[0], len);
-    gsl_spline_init(splinei, &Xpts[0], &Ipts[0], len);
-    auto rhor = [Xmin, Xmax, spliner, accr](double x) -> double { return (Xmin <= x && x <= Xmax ? gsl_spline_eval(spliner, x, accr) : 0.0); };
-    auto rhoi = [Xmin, Xmax, splinei, acci](double x) -> double { return (Xmin <= x && x <= Xmax ? gsl_spline_eval(splinei, x, acci) : 0.0); };
+    interpolator rhor(Xpts, Rpts);
+    interpolator rhoi(Xpts, Ipts);
+    integrator integr;
     double x = real(z);
     double y = imag(z);
-    // Determine the integration limits for the case with removed singularity.
-    auto limits = [x,y,B]() -> auto {
+    double B = bandwidth(Xpts);
+    // Low-level Hilbert-transform routines. calcA routine handles the case with removed singularity and 
+    // perform the integration after a change of variables. calcB routine directly evaluates the defining 
+    // integral of the Hilbert transform. Real and imaginary parts are determined in separate steps.
+    auto calcA = [&integr, x, y, B](auto f3p, auto f3m, auto d) -> double {
       const double W1 = (x - B) / abs(y); // Rescaled integration limits. Only the absolute value of y matters here.
       const double W2 = (B + x) / abs(y);
       assert(W2 >= W1);
-      double lim1down = 1;
-      double lim1up   = -1;
-      double lim2down = 1;
-      double lim2up   = -1;
+      // Determine the integration limits depending on the values of (x,y).
+      double lim1down = 1.0, lim1up = -1.0, lim2down = 1.0, lim2up   = -1.0;
       bool inside;
       if (W1 < 0 && W2 > 0) {       // x within the band
         const double ln1016 = -36.8; // \approx log(10^-16)
@@ -138,45 +165,35 @@ namespace triqs::gfs {
       } else {                      // special case: boundary points
         inside = true;
       }
-      return std::make_tuple(lim1down, lim1up, lim2down, lim2up, inside);
-    };
-    // Low-level Hilbert-transform routines. calcA routine handles the case with removed singularity and 
-    // perform the integration after a change of variables. calcB routine directly evaluates the defining 
-    // integral of the Hilbert transform. Real and imaginary parts are determined in separate steps.
-    integrator integr;
-    auto calcA = [&integr,limits](auto f3p, auto f3m, auto d) -> double {
-      auto [lim1down, lim1up, lim2down, lim2up, inside] = limits();
       auto result1 = (lim1down < lim1up ? integr.integrate(f3p, lim1down, lim1up) : 0.0);
       auto result2 = (lim2down < lim2up ? integr.integrate(f3m, lim2down, lim2up) : 0.0);
       auto result3 = (inside ? d : 0.0);
       return result1 + result2 + result3;
     };
-    auto calcB = [&integr,B](auto f0) -> double {
-      return integr.integrate(f0, -B, B); // direct integration
-    };
+    auto calcB = [&integr, B](auto f0) -> double { return integr.integrate(f0, -B, B); }; // direct integration
+
     // Re part of rho(omega)/(z-omega)
-    auto ref0 = [x,y,rhor,rhoi](double omega) -> double { return ( rhor(omega)*(x-omega) + rhoi(omega)*y )/(sqr(y)+sqr(x-omega)); };
+    auto ref0 = [x,y,&rhor,&rhoi](double omega) -> double { return ( rhor(omega)*(x-omega) + rhoi(omega)*y )/(sqr(y)+sqr(x-omega)); };
+
     // Im part of rho(omega)/(z-omega)
-    auto imf0 = [x,y,rhor,rhoi](double omega) -> double { return (rhor(omega)*(-y) + rhoi(omega)*(x-omega) )/(sqr(y)+sqr(x-omega)); };
+    auto imf0 = [x,y,&rhor,&rhoi](double omega) -> double { return (rhor(omega)*(-y) + rhoi(omega)*(x-omega) )/(sqr(y)+sqr(x-omega)); };
+
     // Re part of rho(omega)/(z-omega) with the singularity subtracted out.
-    auto ref1 = [x,y,rhor,rhoi](double omega) -> double { return ( (rhor(omega)-rhor(x))*(x-omega) + (rhoi(omega)-rhoi(x))*(y) )/(sqr(y)+sqr(x-omega)); };
+    auto ref1 = [x,y,&rhor,&rhoi](double omega) -> double { return ( (rhor(omega)-rhor(x))*(x-omega) + (rhoi(omega)-rhoi(x))*(y) )/(sqr(y)+sqr(x-omega)); };
     auto ref2 = [x,y,ref1](double W) -> double { return abs(y)*ref1(abs(y)*W+x); };
     auto ref3p = [x,y,ref2](double r) -> double { return ref2(exp(r)) * exp(r); };
     auto ref3m = [x,y,ref2](double r) -> double { return ref2(-exp(r)) * exp(r); };
     auto red = rhor(x) * logs(x,y,B) - rhoi(x) * atg(x,y,B);
+
     // Im part of rho(omega)/(z-omega) with the singularity subtracted out.
-    auto imf1 = [x,y,rhor,rhoi](double omega) -> double { return ( (rhor(omega)-rhor(x))*(-y) + (rhoi(omega)-rhoi(x))*(x-omega) )/(sqr(y)+sqr(x-omega)); };
+    auto imf1 = [x,y,&rhor,&rhoi](double omega) -> double { return ( (rhor(omega)-rhor(x))*(-y) + (rhoi(omega)-rhoi(x))*(x-omega) )/(sqr(y)+sqr(x-omega)); };
     auto imf2 = [x,y,imf1](double W) -> double { return abs(y)*imf1(abs(y)*W+x); };
     auto imf3p = [x,y,imf2](double r) -> double { return imf2(exp(r)) * exp(r); };
     auto imf3m = [x,y,imf2](double r) -> double { return imf2(-exp(r)) * exp(r); };
     auto imd = rhor(x) * atg(x,y,B) + rhoi(x) * logs(x,y,B);
+
     double re = (abs(y) < lim_direct ? calcA(ref3p, ref3m, red) : calcB(ref0));
     double im = (abs(y) < lim_direct ? calcA(imf3p, imf3m, imd) : calcB(imf0));
-    // Deallocate GSL workspaces and return the result
-    gsl_spline_free(spliner);
-    gsl_spline_free(splinei);
-    gsl_interp_accel_free(accr);
-    gsl_interp_accel_free(acci);
     return dcomplex{re,im};
   }
 
