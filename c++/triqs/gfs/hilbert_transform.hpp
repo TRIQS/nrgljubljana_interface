@@ -42,7 +42,7 @@ namespace triqs::gfs {
      * @param epsabs numeric integration epsilon (absolute)
      * @param epsrel numeric integration epsilon (relative)
      */
-    double integrate(std::function<double(double)> f, double a, double b, double epsabs = 1e-14, double epsrel = 1e-10) {
+    double operator() (std::function<double(double)> f, double a, double b, double epsabs = 1e-14, double epsrel = 1e-10) {
       F.params = &f;
       double result, error;
       int status = gsl_integration_qag(&F, a, b, epsabs, epsrel, limit, GSL_INTEG_GAUSS15, work, &result, &error);
@@ -60,11 +60,11 @@ namespace triqs::gfs {
     double Xmin, Xmax;     // boundary points
   public:
     interpolator(std::vector<double> &X, std::vector<double> &Y) {
+      EXPECTS(std::is_sorted(X.begin(), X.end()));
       acc = gsl_interp_accel_alloc();
       len = X.size();
       spline = gsl_spline_alloc(gsl_interp_cspline, len);
       gsl_spline_init(spline, &X[0], &Y[0], len);
-      EXPECTS(std::is_sorted(X.begin(), X.end()));
       Xmin = X[0];
       Xmax = X[len-1];
     }
@@ -72,9 +72,7 @@ namespace triqs::gfs {
       gsl_spline_free(spline);
       gsl_interp_accel_free(acc);
     }
-    double operator() (double x) {
-       return (Xmin <= x && x <= Xmax ? gsl_spline_eval(spline, x, acc) : 0.0);
-    }
+    double operator() (double x) { return (Xmin <= x && x <= Xmax ? gsl_spline_eval(spline, x, acc) : 0.0); }
   };
 
   // Square of x
@@ -88,8 +86,8 @@ namespace triqs::gfs {
 
   // Calculate the (half)bandwidth, i.e., the size B of the enclosing interval [-B:B].
   inline double bandwidth(std::vector<double> X) {
-    size_t len = X.size();
     EXPECTS(std::is_sorted(X.begin(), X.end()));
+    size_t len = X.size();
     double Xmin = X[0];
     double Xmax = X[len-1];
     return std::max(abs(Xmin), abs(Xmax));
@@ -127,7 +125,7 @@ namespace triqs::gfs {
       Rpts.push_back(r);
       Ipts.push_back(i);
     }
-    // Initialize GSL and set up the cubic-spline interpolation
+    // Initialize GSL and set up the interpolation
     gsl_set_error_handler_off();
     interpolator rhor(Xpts, Rpts);
     interpolator rhoi(Xpts, Ipts);
@@ -145,7 +143,7 @@ namespace triqs::gfs {
       // Determine the integration limits depending on the values of (x,y).
       double lim1down = 1.0, lim1up = -1.0, lim2down = 1.0, lim2up   = -1.0;
       bool inside;
-      if (W1 < 0 && W2 > 0) {       // x within the band
+      if (W1 < 0 && W2 > 0) {        // x within the band
         const double ln1016 = -36.8; // \approx log(10^-16)
         lim1down = ln1016;
         lim1up   = log(-W1);
@@ -153,25 +151,28 @@ namespace triqs::gfs {
         lim2up   = log(W2);
         inside = true;
       } else
-      if (W1 > 0 && W2 > 0) {       // x above the band
+      if (W1 > 0 && W2 > 0) {        // x above the band
         lim2down = log(W1);
         lim2up   = log(W2);
         inside = false;
       } else
-      if (W1 < 0 && W2 < 0) {       // x below the band
+      if (W1 < 0 && W2 < 0) {        // x below the band
         lim1down = log(-W2);
         lim1up   = log(-W1);
         inside = false;
-      } else {                      // special case: boundary points
+      } else {                       // special case: boundary points
         inside = true;
       }
-      auto result1 = (lim1down < lim1up ? integr.integrate(f3p, lim1down, lim1up) : 0.0);
-      auto result2 = (lim2down < lim2up ? integr.integrate(f3m, lim2down, lim2up) : 0.0);
+      auto result1 = (lim1down < lim1up ? integr(f3p, lim1down, lim1up) : 0.0);
+      auto result2 = (lim2down < lim2up ? integr(f3m, lim2down, lim2up) : 0.0);
       auto result3 = (inside ? d : 0.0);
       return result1 + result2 + result3;
     };
-    auto calcB = [&integr, B](auto f0) -> double { return integr.integrate(f0, -B, B); }; // direct integration
-
+    auto calcB = [&integr, B](auto f0) -> double { return integr(f0, -B, B); }; // direct integration
+    auto calc = [y, lim_direct, calcA, calcB](auto f3p, auto f3m, auto d, auto f0){ 
+      return (abs(y) < lim_direct ? calcA(f3p, f3m, d) : calcB(f0)); 
+    };
+    
     // Re part of rho(omega)/(z-omega)
     auto ref0 = [x,y,&rhor,&rhoi](double omega) -> double { return ( rhor(omega)*(x-omega) + rhoi(omega)*y )/(sqr(y)+sqr(x-omega)); };
 
@@ -192,9 +193,7 @@ namespace triqs::gfs {
     auto imf3m = [x,y,imf2](double r) -> double { return imf2(-exp(r)) * exp(r); };
     auto imd = rhor(x) * atg(x,y,B) + rhoi(x) * logs(x,y,B);
 
-    double re = (abs(y) < lim_direct ? calcA(ref3p, ref3m, red) : calcB(ref0));
-    double im = (abs(y) < lim_direct ? calcA(imf3p, imf3m, imd) : calcB(imf0));
-    return dcomplex{re,im};
+    return dcomplex{calc(ref3p, ref3m, red, ref0), calc(imf3p, imf3m, imd, imf0)};
   }
 
   /**
