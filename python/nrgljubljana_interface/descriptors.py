@@ -7,7 +7,7 @@ from mesh_refreq_pts import MeshReFreqPts
 
 import warnings
 import numpy
-                
+
 ##################################################
 
 class SemiCircularNew (Base):
@@ -15,9 +15,9 @@ class SemiCircularNew (Base):
 
      .. math::
         g(z) = \int \frac{A(\omega)}{z-\omega} d\omega
-        
+
     where :math:`A(\omega) = \theta( D - |\omega|) 2 \sqrt{ D^2 - \omega^2}/(\pi D^2)`.
-      
+
     (Only works in combination with frequency Green's functions.)
     """
     def __init__ (self, half_bandwidth, chem_potential=0.):
@@ -29,7 +29,7 @@ semicircle
 """
         Base.__init__(self, half_bandwidth=half_bandwidth, chem_potential=chem_potential)
 
-    def __str__(self): return "SemiCircular(%s, %s)"%self.half_bandwidth, chem_potential 
+    def __str__(self): return "SemiCircular(%s, %s)"%self.half_bandwidth, chem_potential
 
     def __call__(self,G):
         D = self.half_bandwidth
@@ -62,16 +62,16 @@ class FlatNew (Base):
 
     .. math::
         g(z) = \int \frac{A(\omega)}{z-\omega} d\omega
-        
+
     where :math:`A(\omega) = \theta( D^2 - \omega^2)/(2D)`.
-      
+
     (Only works in combination with frequency Green's functions.)
     """
     def __init__ (self, half_bandwidth):
         """:param half_bandwidth: :math:`D`, the half bandwidth """
         Base.__init__(self, half_bandwidth=half_bandwidth)
 
-    def __str__(self): return "Flat(%s)"%self.half_bandwidth 
+    def __str__(self): return "Flat(%s)"%self.half_bandwidth
 
     def __call__(self,G):
 
@@ -95,3 +95,22 @@ class FlatNew (Base):
         Function(f)(G)
         numpy.seterr(**old_err)
         return G
+
+#########################################################################
+
+class Omega_(Base):
+    r"""The function:math:`\omega \rightarrow \omega` """
+    def __str__(self): return "Omega"
+    def __call__(self,G):
+        if G.mesh.__class__.__name__ not in ['MeshImFreq', 'MeshReFreq', 'MeshReFreqPts']:
+            raise TypeError, "This initializer is only correct in frequency"
+
+        Id = 1. if G.target_rank == 0 else numpy.identity(G.target_shape[0])
+
+        for n,om in enumerate(G.mesh): G.data[n,...] = om*Id
+        return G
+
+##########################################################################
+
+Omega = Omega_()
+iOmega_n = Omega_()
