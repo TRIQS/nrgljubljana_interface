@@ -1,6 +1,6 @@
 r""" """
 
-from pytriqs.gf.descriptor_base import *
+from pytriqs.gf.descriptor_base import Base, Function
 from pytriqs.gf.meshes import MeshImFreq, MeshReFreq
 
 from mesh_refreq_pts import MeshReFreqPts
@@ -10,7 +10,7 @@ import numpy
 
 ##################################################
 
-class SemiCircularNew (Base):
+class SemiCircular (Base):
     r"""Hilbert transform of a semicircular density of states, i.e.
 
      .. math::
@@ -57,7 +57,7 @@ semicircle
 
 ##################################################
 
-class FlatNew (Base):
+class Flat (Base):
     r"""The Hilbert transform of a flat density of states, with cut-off
 
     .. math::
@@ -110,7 +110,4 @@ class Omega_(Base):
         for n,om in enumerate(G.mesh): G.data[n,...] = om*Id
         return G
 
-##########################################################################
-
 Omega = Omega_()
-iOmega_n = Omega_()

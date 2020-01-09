@@ -30,9 +30,9 @@ DOC
 from solver import Solver
 from solver_core import SolverCore
 from mesh_refreq_pts import MeshReFreqPts
-from descriptors import FlatNew, SemiCircularNew
+from descriptors import FlatNew, SemiCircularNew, Omega
 
-__all__ = ['Solver','SolverCore', 'MeshReFreqPts', 'FlatNew', 'SemiCircularNew']
+__all__ = ['Solver','SolverCore', 'MeshReFreqPts', 'FlatNew', 'SemiCircularNew', 'OmegaNew']
 
 import pytriqs.gf.gf
 pytriqs.gf.gf.all_meshes = pytriqs.gf.gf.all_meshes + (MeshReFreqPts,)
