@@ -34,6 +34,7 @@ m = class_( py_type = "MeshReFreqPts",
         comparisons = "== !="
        )
 
+m.add_constructor(signature = "(std::vector<gf_mesh<refreq_pts>::domain_pt_t> pts)")
 m.add_method("long index_to_linear(long i)", doc = "index -> linear index")
 m.add_len(calling_pattern = "int result = self_c.size()", doc = "Size of the mesh")
 m.add_iterator()
