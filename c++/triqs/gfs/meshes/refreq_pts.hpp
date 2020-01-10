@@ -12,6 +12,8 @@ namespace triqs::gfs {
     using point_mesh_t = point_mesh<R_domain>;
     using point_mesh_t::point_mesh_t;
 
+    using point_mesh<R_domain>::domain_t;
+
     using var_t = refreq_pts;
 
     static std::string hdf5_scheme() { return "MeshReFreqPts"; }

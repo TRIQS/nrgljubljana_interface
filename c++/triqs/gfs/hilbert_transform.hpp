@@ -242,7 +242,7 @@ namespace triqs::gfs {
     long size = Ain.target_shape()[0];
     auto mat = matrix<dcomplex>(size, size);
     for (auto [i, j] : itertools::product_range(size, size)) {
-      auto gtemp = gf<refreq_pts, scalar_valued>{Ain.mesh(), {}};       // XXX: refreqs_pts -> typename G::mesh_t
+      auto gtemp = gf<typename G::variable_t, scalar_valued>{Ain.mesh(), {}};
       for (const auto &mp : Ain.mesh()) gtemp[mp] = Ain[mp](i,j);
       mat(i,j) = hilbert_transform(gtemp, z);
     }

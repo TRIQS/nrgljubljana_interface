@@ -81,6 +81,9 @@ namespace nrgljubljana_interface {
     std::sort(begin(mesh_points), end(mesh_points));
     log_mesh = gf_mesh<refreq_pts>{mesh_points};
     Delta_w  = g_w_t{log_mesh, gf_struct};
+    // We construct G_w and Sigma_w for initialization in DMFT loops
+    G_w = g_w_t{log_mesh, gf_struct};
+    Sigma_w = g_w_t{log_mesh, gf_struct};
   }
 
   // -------------------------------------------------------------------------------
@@ -117,9 +120,12 @@ namespace nrgljubljana_interface {
           for (auto const &mp : log_mesh) {
             imG >> w >> im;
             reG >> w >> re;
+            TRIQS_ASSERT2(abs(w-double(mp)) < 1e-8*abs(w), "frequency mismatch");
             (*G_w)[bl_idx][mp](i, j) = re + 1i * im;
           }
         } else {
+          // If the files cannot be read (do not exist), the corresponding GF matrix component
+          // is zero-ed out.
           for (auto const &mp : log_mesh) (*G_w)[bl_idx][mp](i, j) = 0.0;
         }
       }
@@ -268,7 +274,7 @@ namespace nrgljubljana_interface {
       np.xmax = np.Nmax / 2. + 2.;
     if (np.bandrescale < 0) // Make the NRG energy window correspond to the extend of the frequency mesh
       np.bandrescale = cp.mesh_max;
-    // Ensure the selected method is enabled. Other methods may be enables as well, but only the output files for the selected method well be read-in by the nrglj-interface.
+    // Ensure the selected method is enabled. Other methods may be enabled as well, but only the output files for the selected method well be read-in by the nrglj-interface. [TODO]
     if (sp.method == "fdm") { np.fdm = true; }
     if (sp.method == "dmnrg") { np.dmnrg = true; }
     if (sp.method == "cfs") { np.cfs = true; }

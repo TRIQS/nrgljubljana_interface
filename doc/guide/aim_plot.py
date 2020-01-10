@@ -13,11 +13,13 @@ with HDFArchive('aim_solution.h5','r') as ar:
 
     a = ar['A_w']['imp']
     g = GfReFreq(indices=[0], window=(-2,2), n_points=1000, name='imp')
+    g << iOmega_n
     for w in g.mesh:
       print(g[w])
       print(g(w.value))
-      print(a(w.value))
-      g[w] = a(w.value)
+#      print(a(w.value))
+#      g[w] = a(w.value) # not implemented
+
     print("g_dens=", g.density()) # seems incorrect ??
 
     oplot(g, '-o', mode = 'R', name = "A")
