@@ -2,11 +2,9 @@
 
 import unittest
 
-from nrgljubljana_interface import Solver, FlatNew, SemiCircularNew
+from nrgljubljana_interface import Solver, SemiCircular
 
-from pytriqs.gf import *
 from pytriqs.archive import *
-from pytriqs.operators import *
 from pytriqs.utility.h5diff import h5diff
 
 
@@ -45,8 +43,8 @@ class test_SIAM(unittest.TestCase):
     S.set_nrg_params(**np)
 
     # # Initialize hybridization function
-    S.Delta_w['up'] << 0.05 * SemiCircularNew(1.0)
-    S.Delta_w['dn'] << 0.1 * SemiCircularNew(1.0)
+    S.Delta_w['up'] << 0.05 * SemiCircular(1.0)
+    S.Delta_w['dn'] << 0.1 * SemiCircular(1.0)
 
     # Solve the impurity model
     S.solve(**sp)

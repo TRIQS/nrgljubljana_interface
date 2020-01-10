@@ -5,7 +5,7 @@ foreach(file ${all_h5_ref_files})
 endforeach()
 
 # List of all tests
-set(all_tests 1_SIAM_QS 2_SIAM_QSZ 3_2orb-UJ_QS 4_mesh_max=10 5_bandrescale)
+set(all_tests 1_SIAM_QS 2_SIAM_QSZ 3_2orb-UJ_QS 4_mesh_max=10 5_bandrescale A_refreq_pts)
 
 foreach(test ${all_tests})
   get_filename_component(test_name ${test} NAME_WE)

@@ -1,7 +1,7 @@
 from pytriqs.gf import *
 from pytriqs.operators import *
 from pytriqs.archive import *
-from nrgljubljana_interface import Solver, FlatNew
+from nrgljubljana_interface import Solver, Flat
 
 # Parameters
 D, V, U = 1.0, 0.25, 1.0
@@ -32,7 +32,7 @@ np["bandrescale"] = 1.0
 S.set_nrg_params(**np)
 
 # Initialize hybridization function
-S.Delta_w['imp'] << V**2 * FlatNew(D)
+S.Delta_w['imp'] << V**2 * Flat(D)
 
 # Solve the impurity model
 S.solve(**sp)
