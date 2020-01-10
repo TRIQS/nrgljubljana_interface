@@ -9,3 +9,5 @@ symtype=QSZ
 polarized=true
 model=SIAM.m
 ops=n_d n_d^2 hop0 A_d self_d sigma_d SZd
+
+data_has_rescaled_energies=false

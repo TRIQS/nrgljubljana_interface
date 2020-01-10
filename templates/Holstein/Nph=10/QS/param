@@ -10,3 +10,5 @@ options=GENERATE_TEMPLATE Nph=10
 symtype=QS
 model=Holstein.m
 ops=n_d n_d^2 hop0 A_d self_d sigma_d nph displ displ^2 aan
+
+data_has_rescaled_energies=false

@@ -439,6 +439,7 @@ namespace nrgljubljana_interface {
     F << "checksumrules=" << np.checksumrules << std::endl;
     F << "checkdiag=" << np.checkdiag << std::endl;
     F << "checkrho=" << np.checkrho << std::endl;
+    F << "data_has_rescaled_energies=false" << std::endl; // NRGLj-TRIQS interface uses unscaled energies
   }
 
   // -------------------------------------------------------------------------------

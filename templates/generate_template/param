@@ -35,3 +35,7 @@ broaden_min=1e-4
 bins=1000
 alpha=0.3
 T=0.001
+
+###
+
+data_has_rescaled_energies=false

@@ -4,7 +4,7 @@
 #!9
 # Number of channels, chain sites, subspaces: 
 2	0	15
-# SCALE 	1.0201394465967895
+# SCALE 	1
 # Energies (GS energy subtracted, multiplied by 1/SCALE):
 -4	1
 1
