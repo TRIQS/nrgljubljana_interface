@@ -1,0 +1,7 @@
+#!/bin/bash
+HILB=hilb
+$HILB -G -d dos1.dat -- -1.0 1e-16
+$HILB -G -d dos1.dat -- -0.5 1e-16
+$HILB -G -d dos1.dat -- 0 1e-16
+$HILB -G -d dos1.dat -- 0.5 1e-16
+$HILB -G -d dos1.dat -- 1.0 1e-16
