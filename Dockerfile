@@ -1,10 +1,13 @@
 # See ../triqs/packaging for other options
 FROM flatironinstitute/triqs:unstable-ubuntu-clang
-ARG APPNAME
+ARG APPNAME=nrgljubljana_interface
 
-# I can't figure out how to make boost use a different compiler binary:
-RUN for f in '' '++' '-cpp' ; do ln -s clang$f-6.0 /usr/bin/clang$f ; done
-ENV BOOST_VERSION=1.72.0
+COPY requirements.txt /src/$APPNAME/requirements.txt
+RUN pip install -r /src/$APPNAME/requirements.txt
+
+RUN apt-get install -y libgsl-dev || yum install -y gsl-devel
+
+ENV BOOST_VERSION=1.72.0 BOOST_ROOT=/opt/boost
 ADD --chown=build https://github.com/boostorg/boost/archive/boost-$BOOST_VERSION.tar.gz /tmp/boost-boost.tar.gz
 ADD --chown=build https://github.com/boostorg/build/archive/boost-$BOOST_VERSION.tar.gz /tmp/boost-build.tar.gz
 ADD --chown=build https://github.com/boostorg/config/archive/boost-$BOOST_VERSION.tar.gz /tmp/boost-config.tar.gz
@@ -27,15 +30,12 @@ RUN mkdir -p /tmp/boost && \
       # https://github.com/boostorg/${c%:*}/archive/boost-$BOOST_VERSION.tar.gz
       tar -C ${c#*:} --strip-components=1 -xf /tmp/boost-${c%:*}.tar.gz && rm /tmp/boost-${c%:*}.tar.gz ; \
     done && \
-    ./bootstrap.sh --with-toolset=clang --with-libraries=serialization && \
+    case $CC in (clang*) toolset=clang ;; (gcc*) toolset=gcc ;; esac ; \
+    ./bootstrap.sh --prefix=$BOOST_ROOT --with-toolset=$toolset --with-libraries=serialization && \
     ./b2 cxxflags=$CXXFLAGS linkflags=$CXXFLAGS
 USER root
-RUN cd /tmp/boost && ./b2 install
-
-COPY requirements.txt /src/$APPNAME/requirements.txt
-RUN pip install -r /src/$APPNAME/requirements.txt
-
-RUN apt-get install -y libgsl-dev || yum install -y gsl-devel
+RUN cd /tmp/boost && ./b2 install && \
+    cd / && rm -rf /tmp/boost
 
 COPY . $SRC/$APPNAME
 WORKDIR $BUILD/$APPNAME
