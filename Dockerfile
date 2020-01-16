@@ -8,13 +8,14 @@ RUN pip install -r /src/$APPNAME/requirements.txt
 RUN apt-get install -y libgsl-dev || yum install -y gsl-devel
 
 ENV BOOST_VERSION=1.72.0 BOOST_ROOT=/opt/boost
-ADD --chown=build https://github.com/boostorg/boost/archive/boost-$BOOST_VERSION.tar.gz /tmp/boost-boost.tar.gz
-ADD --chown=build https://github.com/boostorg/build/archive/boost-$BOOST_VERSION.tar.gz /tmp/boost-build.tar.gz
-ADD --chown=build https://github.com/boostorg/config/archive/boost-$BOOST_VERSION.tar.gz /tmp/boost-config.tar.gz
-ADD --chown=build https://github.com/boostorg/boost_install/archive/boost-$BOOST_VERSION.tar.gz /tmp/boost-boost_install.tar.gz
-ADD --chown=build https://github.com/boostorg/headers/archive/boost-$BOOST_VERSION.tar.gz /tmp/boost-headers.tar.gz
-ADD --chown=build https://github.com/boostorg/core/archive/boost-$BOOST_VERSION.tar.gz /tmp/boost-core.tar.gz
-ADD --chown=build https://github.com/boostorg/serialization/archive/boost-$BOOST_VERSION.tar.gz /tmp/boost-serialization.tar.gz
+ADD https://github.com/boostorg/boost/archive/boost-$BOOST_VERSION.tar.gz /tmp/boost-boost.tar.gz
+ADD https://github.com/boostorg/build/archive/boost-$BOOST_VERSION.tar.gz /tmp/boost-build.tar.gz
+ADD https://github.com/boostorg/config/archive/boost-$BOOST_VERSION.tar.gz /tmp/boost-config.tar.gz
+ADD https://github.com/boostorg/boost_install/archive/boost-$BOOST_VERSION.tar.gz /tmp/boost-boost_install.tar.gz
+ADD https://github.com/boostorg/headers/archive/boost-$BOOST_VERSION.tar.gz /tmp/boost-headers.tar.gz
+ADD https://github.com/boostorg/core/archive/boost-$BOOST_VERSION.tar.gz /tmp/boost-core.tar.gz
+ADD https://github.com/boostorg/serialization/archive/boost-$BOOST_VERSION.tar.gz /tmp/boost-serialization.tar.gz
+RUN chown build /tmp/boost-*.tar.gz
 USER build
 RUN mkdir -p /tmp/boost && \
     cd /tmp/boost && \
