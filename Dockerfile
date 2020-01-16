@@ -3,7 +3,6 @@ FROM flatironinstitute/triqs:unstable-ubuntu-clang
 ARG APPNAME
 
 # I can't figure out how to make boost use a different compiler binary:
-RUN for f in '' '++' '-cpp' ; do ln -s clang$f-6.0 /usr/bin/clang$f ; done
 ENV BOOST_VERSION=1.72.0
 ADD --chown=build https://github.com/boostorg/boost/archive/boost-$BOOST_VERSION.tar.gz /tmp/boost-boost.tar.gz
 ADD --chown=build https://github.com/boostorg/build/archive/boost-$BOOST_VERSION.tar.gz /tmp/boost-build.tar.gz
