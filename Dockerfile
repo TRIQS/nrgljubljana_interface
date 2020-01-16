@@ -33,7 +33,7 @@ RUN mkdir -p /tmp/boost && \
     done && \
     case $CC in (clang*) toolset=clang ;; (gcc*) toolset=gcc ;; esac ; \
     ./bootstrap.sh --prefix=$BOOST_ROOT --with-toolset=$toolset --with-libraries=serialization && \
-    ./b2 cxxflags=$CXXFLAGS linkflags=$CXXFLAGS
+    ./b2 ${CXXFLAGS:+cxxflags=$CXXFLAGS linkflags=$CXXFLAGS}
 USER root
 RUN cd /tmp/boost && ./b2 install && \
     cd / && rm -rf /tmp/boost
