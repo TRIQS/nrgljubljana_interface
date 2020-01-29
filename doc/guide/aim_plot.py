@@ -1,23 +1,31 @@
+import numpy as np
 import matplotlib as mpl
-mpl.use('PDF')
+#mpl.use('PDF')
+import matplotlib.pyplot as plt
 
 from pytriqs.gf import *
 from pytriqs.archive import *
-from pytriqs.plot.mpl_interface import *
 from nrgljubljana_interface import MeshReFreqPts
+
+def A_to_nparrays(A):
+  lx = []
+  ly = []
+  for w in A.mesh:
+    lx.append(float(w))
+    ly.append(A[w][0,0].real)
+  lx = np.array(lx)
+  ly = np.array(ly)
+  return lx, ly
 
 with HDFArchive('aim_solution.h5','r') as ar:
     # Expectation values
     print("<n>=",ar['expv']['n_d'])
     print("<n^2>=",ar['expv']['n_d^2'])
 
-    a = ar['A_w']['imp']
-    g = GfReFreq(indices=[0], window=(-2,2), n_points=1000, name='imp')
-    for w in g.mesh:
-      g[w] = a(w.value) # not implemented yet (Jan 2020)
+    # Spectral function
+    A_w = ar['A_w']['imp']
+    lx, ly = A_to_nparrays(A_w)
 
-    print("g_dens=", g.density()) # seems incorrect ??
-
-    oplot(g, '-o', mode = 'R', name = "A")
+    plt.plot(lx, ly)
     plt.show()
-    plt.savefig("A_w.pdf")
+#    plt.savefig("A_w.pdf")
