@@ -36,6 +36,14 @@ namespace nrgljubljana_interface {
     /// Symmetry
     std::string symtype = "QS";
 
+    [[nodiscard]] std::string get_model_dir() const {
+      if (const char *env_tdir = std::getenv("NRGIF_TEMPLATE_DIR")) {
+        return std::string{env_tdir} + "/" + model + "/" + symtype;
+      } else {
+        return templatedir + "/" + model + "/" + symtype;
+      }
+    }
+
     /// Mesh maximum frequency
     double mesh_max = 10;
 
@@ -44,14 +52,6 @@ namespace nrgljubljana_interface {
 
     /// Common ratio of the geometric sequence
     double mesh_ratio = 1.05;
-
-    [[nodiscard]] std::string get_model_dir() const {
-      if (const char *env_tdir = std::getenv("NRGIF_TEMPLATE_DIR")) {
-        return std::string{env_tdir} + "/" + model + "/" + symtype;
-      } else {
-        return templatedir + "/" + model + "/" + symtype;
-      }
-    }
 
     /// Spin-polarized Wilson chain
     bool polarized = false;
@@ -173,16 +173,16 @@ namespace nrgljubljana_interface {
     bool v3mm = false;
 
     /// Band rescaling factor
-    double bandrescale = -1.0;
+    double bandrescale = -1.0; // set to the value of meshmax if negative
 
     /// Number of sites in the star representation
-    int mMAX = -1;
+    int mMAX = -1; // automatically determined
 
     /// Number of sites in the Wilson chain
-    int Nmax = -1;
+    int Nmax = -1; // automatically determined
 
     /// Largest x in the discretization ODE solver
-    double xmax = -1.0;
+    double xmax = -1.0; // automatically determined
 
     /// Discretization scheme
     std::string discretization = "Z";
@@ -247,7 +247,7 @@ namespace nrgljubljana_interface {
     /// FDM lesser correlation function?
     bool fdmls = false;
 
-    /// Iteration where we evaluate expv
+    /// Iteration where we evaluate the expectation values
     size_t fdmexpvn = 0;
 
     /// T>0 calculation on Matsubara axis
@@ -257,16 +257,16 @@ namespace nrgljubljana_interface {
     bool dm = false;
 
     /// Broadening mesh maximum frequency
-    //double broaden_max = 10;
+    //double broaden_max = 10; // We use mesh_max instead
 
     /// Broadening mesh minimum frequency
-    //double broaden_min = -99.;
+    //double broaden_min = -99.; // We use mesh_min instead
 
     /// Auto-tune broaden_min parameter
     double broaden_min_ratio = 3.0;
 
     /// Common ration of the geometric sequence
-    //double broaden_ratio = 1.05;
+    //double broaden_ratio = 1.05; // We use mesh_ratio instead
 
     /// Smallest energy scale in the problem
     double omega0 = -1.0;
@@ -274,10 +274,10 @@ namespace nrgljubljana_interface {
     /// omega0 = omega0_ratio x T
     double omega0_ratio = 1.0;
 
-    /// Diagonalisation threads
+    /// Number of diagonalisation threads
     int diagth = 1;
 
-    /// Interleaved diagonalization
+    /// Interleaved diagonalization scheme
     bool substeps = false;
 
     /// Recalculation strategy
@@ -311,11 +311,11 @@ namespace nrgljubljana_interface {
     size_t dumpdiagonal = 0;
 
     /// Save binned (unbroadened) data
-    bool savebins = true; // !!
+    bool savebins = true; // should be set to true!!
 
     /// Enable broadening of spectra
-    bool broaden = true;
-
+    bool broaden = false;
+    
     /// Lower binning limit
     double emin = -1.0;
 
@@ -323,7 +323,7 @@ namespace nrgljubljana_interface {
     double emax = -1.0;
 
     /// bins/decade for spectral data
-    size_t bins = 1000;
+    size_t bins = 1000; // good default for high-accuracy calculations
 
     /// Shift of the accumulation points for binning
     double accumulation = 0.0;
@@ -352,16 +352,16 @@ namespace nrgljubljana_interface {
     /// a in tanh[a(x-0.5)] window function
     double NNtanh = 0.0;
 
-    /// Widht of columns in 'td'
+    /// Width of columns in 'td' output file
     size_t width_td = 16;
 
-    /// Width of columns in 'custom'
+    /// Width of columns in 'custom' output file
     size_t width_custom = 16;
 
-    /// Precision of columns in 'td'
+    /// Precision of columns in 'td' output file
     size_t prec_td = 10;
 
-    /// Precision of columns in 'custom'
+    /// Precision of columns in 'custom' output file
     size_t prec_custom = 10;
 
     /// Precision of spectral function output
@@ -370,7 +370,7 @@ namespace nrgljubljana_interface {
     /// Attempt restart?
     bool resume = false;
 
-    /// list of tokens to define what to log
+    /// List of tokens to define what to log
     std::string log = "";
 
     /// Log everything

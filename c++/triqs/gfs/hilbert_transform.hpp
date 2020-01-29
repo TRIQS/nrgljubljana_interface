@@ -29,10 +29,10 @@ namespace triqs::gfs {
   public:
     integrator(size_t _limit = 1000, bool _exit_on_error = false) : limit(_limit), exit_on_error(_exit_on_error) {
       work = gsl_integration_workspace_alloc(limit);
-      F.function = &unwrap;
+      F.function = &unwrap; // the actual function (lambda expression) will be provided as an argument to operator()
     }
     ~integrator() { gsl_integration_workspace_free(work); }
-      
+
     /**
      * Integrate function f on [a:b].
      *
@@ -50,7 +50,7 @@ namespace triqs::gfs {
       return result;
     }
   };
-   
+
   // Wrap around GSL interpolation routines
   class interpolator {
   private:
@@ -58,9 +58,11 @@ namespace triqs::gfs {
     gsl_spline *spline;    // spline data
     size_t len;            // number of data points
     double Xmin, Xmax;     // boundary points
+    double oob_value;      // out-of-boundary value
   public:
-    interpolator(std::vector<double> &X, std::vector<double> &Y) {
+    interpolator(std::vector<double> &X, std::vector<double> &Y, double _oob_value = 0.0) : oob_value(_oob_value) {
       EXPECTS(std::is_sorted(X.begin(), X.end()));
+      EXPECTS(X.size() == Y.size());
       acc = gsl_interp_accel_alloc();
       len = X.size();
       spline = gsl_spline_alloc(gsl_interp_cspline, len);
@@ -72,16 +74,16 @@ namespace triqs::gfs {
       gsl_spline_free(spline);
       gsl_interp_accel_free(acc);
     }
-    double operator() (double x) { return (Xmin <= x && x <= Xmax ? gsl_spline_eval(spline, x, acc) : 0.0); }
+    double operator() (double x) { return (Xmin <= x && x <= Xmax ? gsl_spline_eval(spline, x, acc) : oob_value); }
   };
 
   // Square of x
   inline double sqr(double x) { return x*x; }
 
-  // Integrate[(-y/(y^2 + (x - omega)^2)), {omega, -B, B}]
+  // Result of Integrate[(-y/(y^2 + (x - omega)^2)), {omega, -B, B}]
   inline double atg(double x, double y, double B) { return atan((-B + x) / y) - atan((B + x) / y); }
 
-  // Integrate[((x - omega)/(y^2 + (x - omega)^2)), {omega, -B, B}]
+  // Result of Integrate[((x - omega)/(y^2 + (x - omega)^2)), {omega, -B, B}]
   inline double logs(double x, double y, double B) { return (-log(sqr(B - x) + sqr(y)) + log(sqr(B + x) + sqr(y))) / 2.0; }
 
   // Calculate the (half)bandwidth, i.e., the size B of the enclosing interval [-B:B].
@@ -112,11 +114,13 @@ namespace triqs::gfs {
     // Copy the input data for GSL interpolation routines.
     using DVEC = std::vector<double>;
     DVEC Xpts, Rpts, Ipts;
+//  TODO: make this work:
 //    auto const & w_mesh = Ain.mesh();
 //    auto Xpts = std::vector<double>(w_mesh.size());
 //    std::copy(w_mesh.begin(), w_mesh.end(), Xpts.begin());
 //    auto Rpts = make_regular(real(Ain.data()));
 //    auto Ipts = make_regular(imag(Ain.data()));
+//  Workaround:
     for (const auto &w : Ain.mesh()) {
       double x = w;
       double r = real(Ain[w]);
@@ -133,8 +137,8 @@ namespace triqs::gfs {
     double x = real(z);
     double y = imag(z);
     double B = bandwidth(Xpts);
-    // Low-level Hilbert-transform routines. calcA routine handles the case with removed singularity and 
-    // perform the integration after a change of variables. calcB routine directly evaluates the defining 
+    // Low-level Hilbert-transform routines. calcA routine handles the case with removed singularity and
+    // perform the integration after a change of variables. calcB routine directly evaluates the defining
     // integral of the Hilbert transform. Real and imaginary parts are determined in separate steps.
     auto calcA = [&integr, x, y, B](auto f3p, auto f3m, auto d) -> double {
       const double W1 = (x - B) / abs(y); // Rescaled integration limits. Only the absolute value of y matters here.
@@ -172,7 +176,7 @@ namespace triqs::gfs {
     auto calc = [y, lim_direct, calcA, calcB](auto f3p, auto f3m, auto d, auto f0){ 
       return (abs(y) < lim_direct ? calcA(f3p, f3m, d) : calcB(f0)); 
     };
-    
+
     // Re part of rho(omega)/(z-omega)
     auto ref0 = [x,y,&rhor,&rhoi](double omega) -> double { return ( rhor(omega)*(x-omega) + rhoi(omega)*y )/(sqr(y)+sqr(x-omega)); };
 

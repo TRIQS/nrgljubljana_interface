@@ -36,7 +36,7 @@ target_link_libraries(nrgljubljana_interface_c PUBLIC gsl)
 # Add tool dependencies
 add_dependencies(nrgljubljana_interface_c adapt nrgchain matrix diag unitary broaden kk)
 
-# C++ filesystem library
+# C++ filesystem library. Currently not used, keep commented out.
 #if((CMAKE_CXX_COMPILER_ID STREQUAL "GNU") AND (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "9.0.0"))
 #  target_link_libraries(nrgljubljana_interface_c PRIVATE stdc++fs)
 #  message("[filesystem library] Using stdc++fs")

@@ -33,6 +33,12 @@
 #include <utility>
 #include <deque>
 
+#include <boost/lexical_cast.hpp>
+#include <nrg-lib.h>
+
+// std::filesystem is not production-ready as of 2020. As a workaround,
+// we remove temporary files using "rm".
+//
 //#ifdef __has_include
 //#  if __has_include(<filesystem>)
 //#    include <filesystem>
@@ -44,10 +50,6 @@
 //#    error "Missing <filesystem>"
 //#  endif
 //#endif
-
-#include <boost/lexical_cast.hpp>
-
-#include <nrg-lib.h>
 
 namespace nrgljubljana_interface {
 
@@ -70,7 +72,7 @@ namespace nrgljubljana_interface {
     constr_params.specq     = getline("specq");
     constr_params.specot    = getline("specot");
     constr_params.polarized = getline("polarized") == "true";
-    // TO DO: single init file!
+    // TODO: single init file!
 
     // Create the hybridization function on a logarithmic mesh
     std::vector<double> mesh_points;
@@ -81,7 +83,8 @@ namespace nrgljubljana_interface {
     std::sort(begin(mesh_points), end(mesh_points));
     log_mesh = gf_mesh<refreq_pts>{mesh_points};
     Delta_w  = g_w_t{log_mesh, gf_struct};
-    // We construct G_w and Sigma_w for initialization in DMFT loops
+    // We also construct G_w and Sigma_w here to enable their initialization in DMFT loops
+    // prior to solver calls.
     G_w = g_w_t{log_mesh, gf_struct};
     Sigma_w = g_w_t{log_mesh, gf_struct};
   }
@@ -178,7 +181,7 @@ namespace nrgljubljana_interface {
       values.pop_front();
       for (auto [k, v] : zip(keywords, values)) expv[k] += v; // zeroed by default constructor
     }
-    for (auto &i : expv) { i.second /= Nz; }
+    for (auto &i : expv) { i.second /= Nz; } // calculate the average over discretization meshes
   }
 
   void solver_core::solve(solve_params_t const &sp) {
@@ -213,7 +216,9 @@ namespace nrgljubljana_interface {
       if (system("./discretize") != 0) TRIQS_RUNTIME_ERROR << "Running discretize script failed";
     }
 
-    // Perform the calculations (this must run in all MPI processes)
+    // Perform the calculations (this must run in all MPI processes).
+    // TODO: we could use nested parallelism here, since the calculations for different values of z
+    // are fully independent.
     const double dz = 1.0 / sp.Nz;
     double z        = dz;
     for (int cnt = 1; cnt <= sp.Nz; cnt++, z += dz) {
@@ -241,11 +246,13 @@ namespace nrgljubljana_interface {
     world.barrier();
     if (world.rank() == 0) {
       if (chdir("..") != 0) TRIQS_RUNTIME_ERROR << "failed to return from tempdir";
+#ifdef NDEBUG // In debug mode we keep the temporary files for inspection.
 //      std::error_code ec;
 //      fs::remove_all(tempdir, ec);
 //      if (ec) std::cout << "Warning: failed to remove the temporary directory." << std::endl;
 //    Workaround:
-//      if (system("rm -rf " + tempdir) != 0) std::cout << "Warning: failed to remove tempdir." << std::endl;
+      if (system("rm -rf " + tempdir) != 0) std::cout << "Warning: failed to remove tempdir." << std::endl;
+#endif
     }
   }
 
@@ -274,7 +281,8 @@ namespace nrgljubljana_interface {
       np.xmax = np.Nmax / 2. + 2.;
     if (np.bandrescale < 0) // Make the NRG energy window correspond to the extend of the frequency mesh
       np.bandrescale = cp.mesh_max;
-    // Ensure the selected method is enabled. Other methods may be enabled as well, but only the output files for the selected method well be read-in by the nrglj-interface. [TODO]
+    // Ensure the selected method is enabled. Other methods may be enabled as well, but only the output files for the selected method well be read-in by the nrglj-interface. 
+    TRIQS_ASSERT2(sp.method == "fdm", "currently only method=fdm is supported"); // TODO
     if (sp.method == "fdm") { np.fdm = true; }
     if (sp.method == "dmnrg") { np.dmnrg = true; }
     if (sp.method == "cfs") { np.cfs = true; }
@@ -296,7 +304,7 @@ namespace nrgljubljana_interface {
       run_nrg_master();
       if (chdir("..") != 0) TRIQS_RUNTIME_ERROR << "failed to return from taskdir " << taskdir;
     } else {
-      //	 run_nrg_slave();
+      // run_nrg_slave(); // TODO (requires testing)
     }
   }
 

@@ -62,7 +62,7 @@ c.add_member(c_name = "Sigma_w",
 c.add_member(c_name = "expv",
              c_type = "std::map<std::string, double>",
              read_only= True,
-             doc = r"""Expectation values""")
+             doc = r"""Expectation values of local impurity operators""")
 
 c.add_member(c_name = "chi_NN_w",
              c_type = "std::optional<g_w_t>",
@@ -270,7 +270,7 @@ c.add_method("""void set_nrg_params (**nrgljubljana_interface::nrg_params_t)""",
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | fdmls               | bool        | false     | FDM lesser correlation function?                           |
 +---------------------+-------------+-----------+------------------------------------------------------------+
-| fdmexpvn            | size_t      | 0         | Iteration where we evaluate expv                           |
+| fdmexpvn            | size_t      | 0         | Iteration where we evaluate the expectation values         |
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | finitemats          | bool        | false     | T>0 calculation on Matsubara axis                          |
 +---------------------+-------------+-----------+------------------------------------------------------------+
@@ -282,9 +282,9 @@ c.add_method("""void set_nrg_params (**nrgljubljana_interface::nrg_params_t)""",
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | omega0_ratio        | double      | 1.0       | omega0 = omega0_ratio x T                                  |
 +---------------------+-------------+-----------+------------------------------------------------------------+
-| diagth              | int         | 1         | Diagonalisation threads                                    |
+| diagth              | int         | 1         | Number of diagonalisation threads                          |
 +---------------------+-------------+-----------+------------------------------------------------------------+
-| substeps            | bool        | false     | Interleaved diagonalization                                |
+| substeps            | bool        | false     | Interleaved diagonalization scheme                         |
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | strategy            | std::string | "kept"    | Recalculation strategy                                     |
 +---------------------+-------------+-----------+------------------------------------------------------------+
@@ -308,7 +308,7 @@ c.add_method("""void set_nrg_params (**nrgljubljana_interface::nrg_params_t)""",
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | savebins            | bool        | true      | Save binned (unbroadened) data                             |
 +---------------------+-------------+-----------+------------------------------------------------------------+
-| broaden             | bool        | true      | Enable broadening of spectra                               |
+| broaden             | bool        | false     | Enable broadening of spectra                               |
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | emin                | double      | -1.0      | Lower binning limit                                        |
 +---------------------+-------------+-----------+------------------------------------------------------------+
@@ -334,19 +334,19 @@ c.add_method("""void set_nrg_params (**nrgljubljana_interface::nrg_params_t)""",
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | NNtanh              | double      | 0.0       | a in tanh[a(x-0.5)] window function                        |
 +---------------------+-------------+-----------+------------------------------------------------------------+
-| width_td            | size_t      | 16        | Widht of columns in 'td'                                   |
+| width_td            | size_t      | 16        | Width of columns in 'td' output file                       |
 +---------------------+-------------+-----------+------------------------------------------------------------+
-| width_custom        | size_t      | 16        | Width of columns in 'custom'                               |
+| width_custom        | size_t      | 16        | Width of columns in 'custom' output file                   |
 +---------------------+-------------+-----------+------------------------------------------------------------+
-| prec_td             | size_t      | 10        | Precision of columns in 'td'                               |
+| prec_td             | size_t      | 10        | Precision of columns in 'td' output file                   |
 +---------------------+-------------+-----------+------------------------------------------------------------+
-| prec_custom         | size_t      | 10        | Precision of columns in 'custom'                           |
+| prec_custom         | size_t      | 10        | Precision of columns in 'custom' output file               |
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | prec_xy             | size_t      | 10        | Precision of spectral function output                      |
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | resume              | bool        | false     | Attempt restart?                                           |
 +---------------------+-------------+-----------+------------------------------------------------------------+
-| log                 | std::string | ""        | list of tokens to define what to log                       |
+| log                 | std::string | ""        | List of tokens to define what to log                       |
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | logall              | bool        | false     | Log everything                                             |
 +---------------------+-------------+-----------+------------------------------------------------------------+
@@ -656,7 +656,7 @@ c.add_member(c_name = "fdmls",
 c.add_member(c_name = "fdmexpvn",
              c_type = "size_t",
              initializer = """ 0 """,
-             doc = r"""Iteration where we evaluate expv""")
+             doc = r"""Iteration where we evaluate the expectation values""")
 
 c.add_member(c_name = "finitemats",
              c_type = "bool",
@@ -686,12 +686,12 @@ c.add_member(c_name = "omega0_ratio",
 c.add_member(c_name = "diagth",
              c_type = "int",
              initializer = """ 1 """,
-             doc = r"""Diagonalisation threads""")
+             doc = r"""Number of diagonalisation threads""")
 
 c.add_member(c_name = "substeps",
              c_type = "bool",
              initializer = """ false """,
-             doc = r"""Interleaved diagonalization""")
+             doc = r"""Interleaved diagonalization scheme""")
 
 c.add_member(c_name = "strategy",
              c_type = "std::string",
@@ -750,7 +750,7 @@ c.add_member(c_name = "savebins",
 
 c.add_member(c_name = "broaden",
              c_type = "bool",
-             initializer = """ true """,
+             initializer = """ false """,
              doc = r"""Enable broadening of spectra""")
 
 c.add_member(c_name = "emin",
@@ -816,22 +816,22 @@ c.add_member(c_name = "NNtanh",
 c.add_member(c_name = "width_td",
              c_type = "size_t",
              initializer = """ 16 """,
-             doc = r"""Widht of columns in 'td'""")
+             doc = r"""Width of columns in 'td' output file""")
 
 c.add_member(c_name = "width_custom",
              c_type = "size_t",
              initializer = """ 16 """,
-             doc = r"""Width of columns in 'custom'""")
+             doc = r"""Width of columns in 'custom' output file""")
 
 c.add_member(c_name = "prec_td",
              c_type = "size_t",
              initializer = """ 10 """,
-             doc = r"""Precision of columns in 'td'""")
+             doc = r"""Precision of columns in 'td' output file""")
 
 c.add_member(c_name = "prec_custom",
              c_type = "size_t",
              initializer = """ 10 """,
-             doc = r"""Precision of columns in 'custom'""")
+             doc = r"""Precision of columns in 'custom' output file""")
 
 c.add_member(c_name = "prec_xy",
              c_type = "size_t",
@@ -846,7 +846,7 @@ c.add_member(c_name = "resume",
 c.add_member(c_name = "log",
              c_type = "std::string",
              initializer = """ "" """,
-             doc = r"""list of tokens to define what to log""")
+             doc = r"""List of tokens to define what to log""")
 
 c.add_member(c_name = "logall",
              c_type = "bool",

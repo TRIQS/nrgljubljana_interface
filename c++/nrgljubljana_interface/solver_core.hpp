@@ -116,7 +116,7 @@ namespace nrgljubljana_interface {
     void readA(const std::string &name, std::optional<g_w_t> &A_w, gf_struct_t &_gf_struct);
 
     /// Read a scalar real-valued function name.dat
-    // void readc(const std::string &name, std::optional<s_w_t> &s_w); TO DO
+    // void readc(const std::string &name, std::optional<s_w_t> &s_w); // TO DO
 
     static std::string hdf5_scheme() { return "NRGLJUBLJANA_INTERFACE_SolverCore"; }
 

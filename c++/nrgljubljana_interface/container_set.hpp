@@ -42,7 +42,7 @@ namespace nrgljubljana_interface {
     /// The retarded Self energy
     std::optional<g_w_t> Sigma_w;
 
-    /// Expectation values
+    /// Expectation values of local impurity operators
     std::map<std::string, double> expv;
 
     /// Charge susceptibility

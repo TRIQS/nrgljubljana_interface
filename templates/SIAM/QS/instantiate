@@ -214,7 +214,6 @@ sub unitary
             system("$matrix -c$coefchannels param.extra $fn >mat");
             if ($? != 0) { die "matrix call error for $fn"; }
         }
-#        system "cat -e mat";
         my $cmd = "$unitary -l -q -o mat.res vec.$qn1 mat vec.$qn2";
         system($cmd);
         if ($? != 0) { die "unitary call error: $cmd"; }
