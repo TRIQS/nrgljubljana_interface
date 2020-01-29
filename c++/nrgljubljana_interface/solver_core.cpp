@@ -253,7 +253,7 @@ namespace nrgljubljana_interface {
 //      fs::remove_all(tempdir, ec);
 //      if (ec) std::cout << "Warning: failed to remove the temporary directory." << std::endl;
 //    Workaround:
-      const string rmscript = "rm -rf " + tempdir;
+      const std::string rmscript = "rm -rf " + tempdir;
       if (system(rmscript.c_str()) != 0) std::cout << "Warning: failed to remove tempdir." << std::endl;
 #endif
     }
