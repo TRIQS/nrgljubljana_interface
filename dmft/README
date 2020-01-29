@@ -1,0 +1,5 @@
+This directory contains examples of Python scripts for running full blown DMFT
+calculations using NRG Ljubljana as the impurity solver through the TRIQS interface.
+
+hubbard.py - Hubbard model on Bethe lattice, at fixed band occupancy,
+             with convergence control and linear mixing of Delta
