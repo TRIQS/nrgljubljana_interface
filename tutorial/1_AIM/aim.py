@@ -20,8 +20,8 @@ mp = { "U1": U, "eps1": e_f }
 sp["model_parameters"] = mp
 
 # Low-level NRG Parameters
-np = { "bandrescale": 1.0 }
-S.set_nrg_params(**np)
+nrgp = { "bandrescale": 1.0 }
+S.set_nrg_params(**nrgp)
 
 # Initialize hybridization function
 S.Delta_w['imp'] << V**2 * Flat(D)
@@ -46,3 +46,4 @@ def A_to_nparrays(A):
 A_w = S.A_w['imp']
 lx, ly = A_to_nparrays(A_w)
 plt.plot(lx, ly)
+plt.show()
