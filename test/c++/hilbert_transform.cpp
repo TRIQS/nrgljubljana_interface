@@ -214,13 +214,13 @@ TEST(hilbert_transform, matrix_gf_point) {
 TEST(hilbert_transform, block_gf_point) { // TO DO
 
   // Construction
-  auto rho = block_gf<refreq_pts, scalar_valued>(w_mesh, {{"up", {}}, {"dn", {}}});
+  // auto rho = block_gf<refreq_pts, scalar_valued>(w_mesh, {{"up", {}}, {"dn", {}}});
 
   // Initialize
-  rho[bl_][w_] << 0.;
+  // rho[bl_][w_] << 0.;
 
   // Full hilbert transform
-  auto vals = hilbert_transform(rho, 1.0+1.0i);
+  // auto vals = hilbert_transform(rho, 1.0+1.0i);
 
   // Compare against expected values
 //  EXPECT_EQ(vals[0], 1.0);
@@ -230,13 +230,13 @@ TEST(hilbert_transform, block_gf_point) { // TO DO
 TEST(hilbert_transform, block_gf_mesh) { // TO DO
 
   // Construction
-  auto rho = block_gf<refreq_pts, scalar_valued>(w_mesh, {{"up", {}}, {"dn", {}}});
+  // auto rho = block_gf<refreq_pts, scalar_valued>(w_mesh, {{"up", {}}, {"dn", {}}});
 
   // Initialize
-  rho[bl_][w_] << w_ + 1e-16i;
+  // rho[bl_][w_] << w_ + 1e-16i;
 
   // Full hilbert transform
-  auto bg = hilbert_transform(rho, w_mesh);
+  // auto bg = hilbert_transform(rho, w_mesh);
 
   // Compare against expected values
 //  EXPECT_EQ(bg[0][0], 1.0);

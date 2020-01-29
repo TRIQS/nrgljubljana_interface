@@ -1,8 +1,8 @@
-import numpy as np
+from nrgljubljana_interface import Solver, Flat, MeshReFreqPts
+
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-
-from nrgljubljana_interface import Solver, Flat, MeshReFreqPts
+import numpy as np
 
 # Parameters
 D, V, U = 1.0, 0.25, 1.0
@@ -43,5 +43,6 @@ def A_to_nparrays(A):
   return lx, ly
 
 # Plot the spectral function
-lx, ly = A_to_nparrays(S.A_w['imp'])
+A_w = S.A_w['imp']
+lx, ly = A_to_nparrays(A_w)
 plt.plot(lx, ly)

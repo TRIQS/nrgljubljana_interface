@@ -186,15 +186,15 @@ namespace triqs::gfs {
     // Re part of rho(omega)/(z-omega) with the singularity subtracted out.
     auto ref1 = [x,y,&rhor,&rhoi](double omega) -> double { return ( (rhor(omega)-rhor(x))*(x-omega) + (rhoi(omega)-rhoi(x))*(y) )/(sqr(y)+sqr(x-omega)); };
     auto ref2 = [x,y,ref1](double W) -> double { return abs(y)*ref1(abs(y)*W+x); };
-    auto ref3p = [x,y,ref2](double r) -> double { return ref2(exp(r)) * exp(r); };
-    auto ref3m = [x,y,ref2](double r) -> double { return ref2(-exp(r)) * exp(r); };
+    auto ref3p = [ref2](double r) -> double { return ref2(exp(r)) * exp(r); };
+    auto ref3m = [ref2](double r) -> double { return ref2(-exp(r)) * exp(r); };
     auto red = rhor(x) * logs(x,y,B) - rhoi(x) * atg(x,y,B);
 
     // Im part of rho(omega)/(z-omega) with the singularity subtracted out.
     auto imf1 = [x,y,&rhor,&rhoi](double omega) -> double { return ( (rhor(omega)-rhor(x))*(-y) + (rhoi(omega)-rhoi(x))*(x-omega) )/(sqr(y)+sqr(x-omega)); };
     auto imf2 = [x,y,imf1](double W) -> double { return abs(y)*imf1(abs(y)*W+x); };
-    auto imf3p = [x,y,imf2](double r) -> double { return imf2(exp(r)) * exp(r); };
-    auto imf3m = [x,y,imf2](double r) -> double { return imf2(-exp(r)) * exp(r); };
+    auto imf3p = [imf2](double r) -> double { return imf2(exp(r)) * exp(r); };
+    auto imf3m = [imf2](double r) -> double { return imf2(-exp(r)) * exp(r); };
     auto imd = rhor(x) * atg(x,y,B) + rhoi(x) * logs(x,y,B);
 
     return dcomplex{calc(ref3p, ref3m, red, ref0), calc(imf3p, imf3m, imd, imf0)};
