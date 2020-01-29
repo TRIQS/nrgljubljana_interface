@@ -1,0 +1,47 @@
+import numpy as np
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+
+from nrgljubljana_interface import Solver, Flat, MeshReFreqPts
+
+# Parameters
+D, V, U = 1.0, 0.25, 1.0
+e_f = -U/2.0 # particle-hole symmetric case
+T = 1e-5
+
+# Set up the Solver
+S = Solver(model = "SIAM", symtype = "QS", mesh_max = 2.0, mesh_min = 1e-5, mesh_ratio = 1.01)
+
+# Solve Parameters
+sp = { "T": T, "Lambda": 2.0, "Nz": 4, "Tmin": 1e-6, "keep": 2000, "keepenergy": 10.0 }
+
+# Model Parameters
+mp = { "U1": U, "eps1": e_f }
+sp["model_parameters"] = mp
+
+# Low-level NRG Parameters
+np = { "bandrescale": 1.0 }
+S.set_nrg_params(**np)
+
+# Initialize hybridization function
+S.Delta_w['imp'] << V**2 * Flat(D)
+
+# Solve the impurity model
+S.solve(**sp)
+
+print("<n>=", S.expv["n_d"])
+print("<n^2>=", S.expv["n_d^2"])
+
+def A_to_nparrays(A):
+  lx = []
+  ly = []
+  for w in A.mesh:
+    lx.append(float(w))
+    ly.append(A[w][0,0].real)
+  lx = np.array(lx)
+  ly = np.array(ly)
+  return lx, ly
+
+# Plot the spectral function
+lx, ly = A_to_nparrays(S.A_w['imp'])
+plt.plot(lx, ly)
