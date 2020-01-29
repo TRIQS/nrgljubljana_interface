@@ -1,0 +1,109 @@
+\documentclass[prb,amsmath,amssymb,onecolumn,nopacs,floatfix]{revtex4}
+\usepackage{graphicx}
+\usepackage[english]{babel}
+\usepackage{times}
+\usepackage{dcolumn}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{units}
+\usepackage{color}
+
+\begin{document}
+
+\title{Hilbert transform (NRG Ljubljana and TRIQS implementation)}
+
+\author{Rok \v{Z}itko}
+
+\date{\today}
+
+\begin{abstract}
+\end{abstract}
+
+\maketitle
+
+\newcommand{\vc}[1]{{\mathbf{#1}}}
+\newcommand{\vck}{\vc{k}}
+\newcommand{\braket}[2]{\langle#1|#2\rangle}
+\newcommand{\expv}[1]{\langle #1 \rangle}
+\newcommand{\corr}[1]{\langle\langle #1 \rangle\rangle}
+\newcommand{\ket}[1]{| #1 \rangle}
+\newcommand{\bra}[1]{\langle #1 |}
+\newcommand{\Tr}{\mathrm{Tr}}
+\newcommand{\kor}[1]{\langle\langle #1 \rangle\rangle}
+\newcommand{\degg}{^\circ}
+\renewcommand{\Im}{\mathrm{Im}}
+\renewcommand{\Re}{\mathrm{Re}}
+\newcommand{\dtN}{{\dot N}}
+\newcommand{\dtQ}{{\dot Q}}
+\newcommand{\sgn}{\mathrm{sgn}}
+\newcommand{\beq}[1]{\begin{equation} #1 \end{equation}}
+\newcommand{\one}{\mathbf{1}}
+
+\section{Definition}
+
+The Hilbert transform of (spectral) function $A(\omega)$ is defined as
+%
+\beq{
+H(z) = \int_{-\infty}^{\infty} \frac{A(\omega)}{z-\omega} d\omega.
+}
+%
+The argument is a complex number $z=x+i y$. For large $|y|$, this integral
+can be evaluated directly. The tabulated spectral function $A(\omega)$ is
+interpolated using cubic splines (GSL). Outside its domain of definition (tabulation
+range), the spectral function is taken to be equal to zero.
+The real and imaginary parts of the result 
+are computed separately using real-valued integration:
+%
+\beq{
+\begin{split}
+\Re H(z) &= \int_{-\infty}^{\infty} \frac{\Re A(\omega) (x-\omega) + \Im A(\omega) y}
+{(x-\omega)^2 + y^2} d\omega, \\
+\Im H(z) &= \int_{-\infty}^{\infty} \frac{\Re A(\omega) (-y) + \Im A(\omega) (x-\omega)}
+{(x-\omega)^2 + y^2} d\omega.
+\end{split}
+}
+%
+We use 15-point Gauss-Kronrod rule ({\tt GSL\_INTEG\_GAUSS15} argument to {\tt gsl\_integration\_qag}).
+The accuracy goal is $10^{-14}$ absolute accuracy and $10^{-10}$ relative
+accuracy; failure to reach the goal is not considered an error and does not
+terminate the program.
+
+For small $|y|$, we handle the singular point explicitly, by subtraction:
+%
+\beq{
+H(z) = \int_{-\infty}^{\infty} \frac{A(\omega)-A(x)}{z-\omega} d\omega
++ A(x) \int_{-\infty}^{\infty} \frac{1}{z-\omega}d\omega.
+}
+%
+The second integral, $Q(z)=\int d\omega/(z-\omega)$, is evaluated analytically and expressed
+in terms of $\arctan$ and $\log$ functions. The first one is evaluated numerically after 
+a change of variables, $\omega = x + |y| W$, $W=\exp(r)$ or $W=-\exp(r)$, with $r$ 
+ranging from $\log(10^{-16})$ to the boundary of the integration range, 
+on both sides of the singularity. The ensures very high accuracy of the result.
+
+\section{Interfaces}
+
+For scalar-valued $A(\omega)$, there are three interfaces:
+%
+\begin{itemize}
+\item {\tt hilbert\_transform(A, z)} for single-point calculations,
+
+\item {\tt hilbert\_transform(A, mesh, eps = 1e-16)} for calculations on
+a mesh of real values with $y=\mathrm{eps}$, which produces the
+retarded Green's function on the real-frequency axis, (the corresponding advanced
+GF can be obtained using {\tt eps = -1e-16}),
+
+\item {\tt hilbert\_transform(A, G)} for calculations on a set of 
+complex values contained in a Green's function object $G(\omega)$, i.e., the
+output is $H[G(\omega)]$. This is useful in the context of DMFT where
+one needs to evaluate $H[\omega+\mu-\Sigma(\omega)]$.
+\end{itemize}
+
+For matrix-valued $A(\omega)$, there is an element-wise
+{\tt hilbert\_transform\_elementwise} which threads over the matrix components.
+
+For block GFs, there are two interfaces, one for single-point calculations and one for
+calculations one a mesh.
+
+
+
+\end{document}
