@@ -246,12 +246,15 @@ namespace nrgljubljana_interface {
     world.barrier();
     if (world.rank() == 0) {
       if (chdir("..") != 0) TRIQS_RUNTIME_ERROR << "failed to return from tempdir";
-#ifdef NDEBUG // In debug mode we keep the temporary files for inspection.
+#ifdef NDEBUG
+      // In production mode, we remove the temporary files.
+      // In debug mode, we keep the temporary files for inspection.
 //      std::error_code ec;
 //      fs::remove_all(tempdir, ec);
 //      if (ec) std::cout << "Warning: failed to remove the temporary directory." << std::endl;
 //    Workaround:
-      if (system("rm -rf " + tempdir) != 0) std::cout << "Warning: failed to remove tempdir." << std::endl;
+      const string rmscript = "rm -rf " + tempdir;
+      if (system(rmscript.c_str()) != 0) std::cout << "Warning: failed to remove tempdir." << std::endl;
 #endif
     }
   }
