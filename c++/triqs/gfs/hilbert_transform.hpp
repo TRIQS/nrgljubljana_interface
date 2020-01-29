@@ -80,11 +80,11 @@ namespace triqs::gfs {
   // Square of x
   inline double sqr(double x) { return x*x; }
 
-  // Result of Integrate[(-y/(y^2 + (x - omega)^2)), {omega, -B, B}]
-  inline double atg(double x, double y, double B) { return atan((-B + x) / y) - atan((B + x) / y); }
+  // Result of Integrate[(-y/(y^2 + (x - omega)^2)), {omega, -B, B}] (atg -> imQ).
+  inline double imQ(double x, double y, double B) { return atan((-B + x) / y) - atan((B + x) / y); }
 
-  // Result of Integrate[((x - omega)/(y^2 + (x - omega)^2)), {omega, -B, B}]
-  inline double logs(double x, double y, double B) { return (-log(sqr(B - x) + sqr(y)) + log(sqr(B + x) + sqr(y))) / 2.0; }
+  // Result of Integrate[((x - omega)/(y^2 + (x - omega)^2)), {omega, -B, B}] (logs -> reQ).
+  inline double reQ(double x, double y, double B) { return (-log(sqr(B - x) + sqr(y)) + log(sqr(B + x) + sqr(y))) / 2.0; }
 
   // Calculate the (half)bandwidth, i.e., the size B of the enclosing interval [-B:B].
   inline double bandwidth(std::vector<double> X) {
@@ -188,14 +188,14 @@ namespace triqs::gfs {
     auto ref2 = [x,y,ref1](double W) -> double { return abs(y)*ref1(abs(y)*W+x); };
     auto ref3p = [ref2](double r) -> double { return ref2(exp(r)) * exp(r); };
     auto ref3m = [ref2](double r) -> double { return ref2(-exp(r)) * exp(r); };
-    auto red = rhor(x) * logs(x,y,B) - rhoi(x) * atg(x,y,B);
+    auto red = rhor(x) * reQ(x,y,B) - rhoi(x) * imQ(x,y,B);
 
     // Im part of rho(omega)/(z-omega) with the singularity subtracted out.
     auto imf1 = [x,y,&rhor,&rhoi](double omega) -> double { return ( (rhor(omega)-rhor(x))*(-y) + (rhoi(omega)-rhoi(x))*(x-omega) )/(sqr(y)+sqr(x-omega)); };
     auto imf2 = [x,y,imf1](double W) -> double { return abs(y)*imf1(abs(y)*W+x); };
     auto imf3p = [imf2](double r) -> double { return imf2(exp(r)) * exp(r); };
     auto imf3m = [imf2](double r) -> double { return imf2(-exp(r)) * exp(r); };
-    auto imd = rhor(x) * atg(x,y,B) + rhoi(x) * logs(x,y,B);
+    auto imd = rhor(x) * imQ(x,y,B) + rhoi(x) * reQ(x,y,B);
 
     return dcomplex{calc(ref3p, ref3m, red, ref0), calc(imf3p, imf3m, imd, imf0)};
   }
