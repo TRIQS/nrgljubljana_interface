@@ -11,15 +11,15 @@ interacting part of the local Hamiltonian of this problem is simply:
 
   \mathcal{H}_\mathrm{int} = U n_\uparrow n_\downarrow,
 
-  and the non-interacting Green's function is:
+and the non-interacting Green's function is:
 
-  .. math::
+.. math::
 
-    G^{-1}_{0,\sigma} (\omega) = \omega - \epsilon_f - V^2 \Delta_\sigma(\omega).
+    G^{-1}_{0,\sigma} (\omega) = \omega - \epsilon_f - V^2 g(\omega).
 
 In this example, there is a Coulomb interaction :math:`U` on the impurity level,
 which is at an energy :math:`\epsilon_f`. The bath Green's function is
-:math:`\Delta(\omega)`, and it has a flat density of states over the interval
+:math:`g(\omega)`, and it has a flat density of states over the interval
 :math:`[-1,1]`.  Finally, :math:`V` is the hybridization amplitude between the
 impurity and the bath. Let us solve this problem with the NRG solver. Here is
 the python :download:`script <aim.py>`:
@@ -29,13 +29,13 @@ the python :download:`script <aim.py>`:
 Running this script takes a few minutes and generates an
 HDF5 archie file called :file:`aim_solution.h5`. This file contains
 the impurity spectral function, Green's function, auxiliary Green's function,
-self-energy, and expectation values of local variables (
-:math:`\langle n \rangle` and :math:`\langle n^2 \rangle). Let us plot
+self-energy, and expectation values of local variables 
+(:math:`\langle n \rangle` and :math:`\langle n^2 \rangle`). Let us plot
 the spectral function:
 
 .. plot:: guide/aim_plot.py
    :include-source:
-   :scale: 70
+   :scale: 100
 
 As expected, the result shows a particle-hole symmetric impurity
 spectral function.
@@ -63,8 +63,8 @@ define the logarithmic discretization mesh on which all quantities (input and
 output) are defined. The models are described in template files. The program
 will automatically determine the correct block structure of hybridisation
 and Green's functions from the templates. This ensures that all quantities
-with Solver are correctly initialized, and in particular that the block structure
-of all Green's function objects in consistent.
+within Solver are correctly initialized, and in particular that the block structure
+of all Green's function objects is consistent.
 
 .. literalinclude:: aim.py
   :lines: 13
@@ -82,7 +82,7 @@ but the default values are suitable for our purposes.
 .. literalinclude:: aim.py
   :lines: 16-17
 
-Finally, we fix the model parameters. These are contained in a separate Python
+Finally, we have set the model parameters. These are contained in a separate Python
 dictionary.
 
 .. literalinclude:: aim.py
@@ -93,6 +93,8 @@ Here we set the NRG energy window to the interval :math:`[-1:1]`, since
 the default is that the energy window is the same as the extent of the
 logarithmic mesh, which in this example is :math:`[-2:2]`, i.e., larger
 than the support of the hybridisation function which we set in this line:
+
+We set the hybridisation function:
 
 .. literalinclude:: aim.py
   :lines: 24
@@ -112,3 +114,6 @@ The expectation values can be accessed through the Python dictionary
 
 .. literalinclude:: aim.py
   :lines: 37
+
+A version of this documentation example can also be found in {\tt tutorial/1_AIM}
+in the form of a Python script and a Jupyter (IPython) notebook.

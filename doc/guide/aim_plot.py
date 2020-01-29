@@ -28,4 +28,4 @@ with HDFArchive('aim_solution.h5','r') as ar:
 
     plt.plot(lx, ly)
     plt.show()
-#    plt.savefig("A_w.pdf")
+
