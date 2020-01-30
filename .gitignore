@@ -3,4 +3,5 @@ doc/cpp2rst_generated
 build
 build.*
 build_*
+build-*
 rok_testing
