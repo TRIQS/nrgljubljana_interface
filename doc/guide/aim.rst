@@ -27,10 +27,10 @@ the python :download:`script <aim.py>`:
 .. literalinclude:: aim.py
 
 Running this script takes a few minutes and generates an
-HDF5 archie file called :file:`aim_solution.h5`. This file contains
+HDF5 archive file called :file:`aim_solution.h5`. This file contains
 the impurity spectral function, Green's function, auxiliary Green's function,
-self-energy, and expectation values of local variables 
-(:math:`\langle n \rangle` and :math:`\langle n^2 \rangle`). Let us plot
+self-energy, and expectation values of local variables, here
+:math:`\langle n \rangle` and :math:`\langle n^2 \rangle`. Let us plot
 the spectral function:
 
 .. plot:: guide/aim_plot.py
@@ -60,7 +60,8 @@ and the physical temperature :math:`T`.
 Here we construct the Solver object. The most important parameters here
 are the model name and its symmetry type, as well as the mesh parameters which
 define the logarithmic discretization mesh on which all quantities (input and
-output) are defined. The models are described in template files. The program
+output) are defined. The models are described in template files in the directory
+``templates/``. The program
 will automatically determine the correct block structure of hybridisation
 and Green's functions from the templates. This ensures that all quantities
 within Solver are correctly initialized, and in particular that the block structure
@@ -76,8 +77,8 @@ discretization meshes :math:`N_z`, the scale ``Tmin`` which defines the length
 of the Wilson chain (and which should be lower than the lowest physical temperature
 scale in the problem, in this case lower than the Kondo temperature), and
 the trucation settings which are determined by two parameters, the maximum number
-of states kept and the truncation energy cutoff. There are many other parameters,
-but the default values are suitable for our purposes.
+of states kept ``keep`` and the truncation energy cutoff ``keepenergy``. 
+There are many other parameters, but their default values are suitable for our purposes.
 
 .. literalinclude:: aim.py
   :lines: 16-17
@@ -88,23 +89,22 @@ dictionary.
 .. literalinclude:: aim.py
   :lines: 20-21
 
-The low-level NRG parameters are contained in yet another Python dictionary.
+The low-level NRG parameters are contained in yet another Python dictionary ``nrgp``.
 Here we set the NRG energy window to the interval :math:`[-1:1]`, since
 the default is that the energy window is the same as the extent of the
-logarithmic mesh, which in this example is :math:`[-2:2]`, i.e., larger
-than the support of the hybridisation function which we set in this line:
-
-We set the hybridisation function:
+logarithmic mesh, which in this example would be :math:`[-2:2]`, i.e., larger
+than the support of the hybridisation function. 
+The hybridisation function itself is set by the following line:
 
 .. literalinclude:: aim.py
   :lines: 24
 
-We can now call the solver:
+We can now call the solver...
 
 .. literalinclude:: aim.py
   :lines: 27
 
-We store the results in a HDF5 archive:
+... and store the results in an HDF5 archive:
 
 .. literalinclude:: aim.py
   :lines: 30-35
@@ -115,5 +115,5 @@ The expectation values can be accessed through the Python dictionary
 .. literalinclude:: aim.py
   :lines: 37
 
-A version of this documentation example can also be found in {\tt tutorial/1_AIM}
+A version of this documentation example can also be found in ``tutorial/1_AIM``
 in the form of a Python script and a Jupyter (IPython) notebook.
