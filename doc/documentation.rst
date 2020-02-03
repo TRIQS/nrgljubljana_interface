@@ -10,6 +10,7 @@ User guide
    :maxdepth: 1
 
    guide/aim
+   guide/holstein
 
 Table of Contents
 -----------------
@@ -17,7 +18,6 @@ Table of Contents
 .. toctree::
    :maxdepth: 1
 
-   index
    install
    issues
    changelog
