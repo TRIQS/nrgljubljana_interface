@@ -12,8 +12,16 @@ User guide
    guide/aim
    guide/holstein
 
-Table of Contents
------------------
+Model templates
+---------------
+
+   templates/SIAM/QS/doc
+   templates/SIAM/QSZ/doc
+   templates/Holstein/QS/doc
+   templates/2orb-UJ/QS/doc
+
+Miscelaneous
+------------
 
 .. toctree::
    :maxdepth: 1
