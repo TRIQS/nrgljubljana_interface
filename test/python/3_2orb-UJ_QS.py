@@ -8,7 +8,7 @@ from pytriqs.archive import *
 from pytriqs.utility.h5diff import h5diff
 
 
-class test_SIAM(unittest.TestCase):
+class test_2orb(unittest.TestCase):
 
     # Construct Parameters
     cp = {}
