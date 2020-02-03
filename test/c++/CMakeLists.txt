@@ -9,7 +9,7 @@ endforeach()
 
 # List of all tests
 #file(GLOB_RECURSE all_tests RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
-set(all_tests refreq_pts.cpp hilbert_transform.cpp)
+set(all_tests refreq_pts.cpp hilbert_transform.cpp siam.cpp)
 
 foreach(test ${all_tests})
   get_filename_component(test_name ${test} NAME_WE)
@@ -18,6 +18,10 @@ foreach(test ${all_tests})
   set_property(TARGET ${test_name} PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${test_dir})
   target_link_libraries(${test_name} nrgljubljana_interface_c gtest_main if_project_warnings)
   add_test(NAME ${test_name} COMMAND ${test_name} WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${test_dir})
+  set_property(TEST ${test_name} APPEND PROPERTY ENVIRONMENT
+    PATH=${CMAKE_BINARY_DIR}/nrgljubljana/tools:$ENV{PATH}
+    NRGIF_TEMPLATE_DIR=${PROJECT_SOURCE_DIR}/templates
+  )
   # Run clang-tidy if found
   if(CLANG_TIDY_EXECUTABLE)
     set_target_properties(${test_name} PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_EXECUTABLE}")
