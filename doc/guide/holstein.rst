@@ -16,8 +16,8 @@ and the non-interacting Green's function is:
 
     G^{-1}_{0,\sigma} (\omega) = \omega - \epsilon_f - V^2 g(\omega).
 
-The new elements compared to the Anderson impurity model is the presence of
-a phonon mode with frequency :math:`omega`, which couples through e-ph
+The new element (compared to the Anderson impurity model) is the presence of
+a phonon mode with frequency :math:`\omega`, which couples through e-ph
 coupling strength :math:`g`. Finally, :math:`n_1` is a shift, typically either
 0, 1 or :math:`\langle n \rangle`.
 
@@ -38,14 +38,14 @@ resonance and side peaks at multiples of the phonon frequency :math:`\omega`;
 Let us now go through the script in some more detail, focusing on the differences with respect to the
 standard Anderson impurity model.
 
-.. literalinclude:: aim.py
+.. literalinclude:: holstein.py
   :lines: 5-10
 
 Here we set the parameters. Note that we have set the Hubbard parameter to zero, thus this is
 a pure Holstein impurity problem, with the correlation effects stemming solely from the electron-phonon
 coupling. We set :math:`n_1` to 1, to ensure particle-hole symmetry.
 
-.. literalinclude:: aim.py
+.. literalinclude:: holstein.py
   :lines: 12
 
 Here we construct the Solver object. Note the model name which contains the phonon number cutoff (10).
@@ -53,7 +53,7 @@ In NRGLjubljana_interface, the model names are actually paths to template files 
 bundled with the interface in the directory ``templates/``, or custom templates created by the user). In the case of the Anderson-Holstein
 model, the template files need to be generated for a specific value of the phonon cutoff.
 
-.. literalinclude:: aim.py
+.. literalinclude:: holstein.py
   :lines: 40-42
 
 The Anderson-Holstein model defines several additional expectation values pertaining to the
