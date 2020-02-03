@@ -8,7 +8,7 @@ The interacting part of the local Hamiltonian of this problem is:
 
 .. math::
 
-  \mathcal{H}_\mathrm{int} = U n_\uparrow n_\downarrow + g (a+a^\dag)(n-n_1) + \omega a^\dag a,
+  \mathcal{H}_\mathrm{int} = U n_\uparrow n_\downarrow + g (a+a^\dagger)(n-n_1) + \omega a^\dagger a,
 
 and the non-interacting Green's function is:
 
@@ -56,5 +56,5 @@ model, the template files need to be generated for a specific value of the phono
 .. literalinclude:: aim.py
   :lines: 40-42
 
-The Anderson-Holstein model defines several additional expectation values pertaining to the 
+The Anderson-Holstein model defines several additional expectation values pertaining to the
 phonon degree of freedom.
