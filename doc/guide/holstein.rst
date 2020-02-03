@@ -1,4 +1,4 @@
-.. _aim:
+.. _holstein:
 
 An example: the Anderson-Holstein impurity model
 ================================================
