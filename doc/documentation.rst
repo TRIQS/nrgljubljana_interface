@@ -27,6 +27,7 @@ Miscelaneous
    :maxdepth: 1
 
    install
+   parallelization
    issues
    changelog
    about
