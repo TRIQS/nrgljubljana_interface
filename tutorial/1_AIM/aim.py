@@ -29,14 +29,9 @@ print("<n>=", S.expv["n_d"])
 print("<n^2>=", S.expv["n_d^2"])
 
 def A_to_nparrays(A):
-  lx = []
-  ly = []
-  for w in A.mesh:
-    lx.append(float(w))
-    ly.append(A[w][0,0].real)
-  lx = np.array(lx)
-  ly = np.array(ly)
-  return lx, ly
+    lx = np.array(list(A.mesh.values()))
+    ly = np.array(A.data[:,0,0].real)
+    return lx, ly
 
 # Plot the spectral function
 A_w = S.A_w['imp']
