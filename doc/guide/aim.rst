@@ -77,43 +77,40 @@ discretization meshes :math:`N_z`, the scale ``Tmin`` which defines the length
 of the Wilson chain (and which should be lower than the lowest physical temperature
 scale in the problem, in this case lower than the Kondo temperature), and
 the trucation settings which are determined by two parameters, the maximum number
-of states kept ``keep`` and the truncation energy cutoff ``keepenergy``. 
-There are many other parameters, but their default values are suitable for our purposes.
+of states kept ``keep`` and the truncation energy cutoff ``keepenergy``.
+We also explicitly set the NRG energy window to the interval :math:`[-1:1]`, since
+the default is to use an energy window with the same extent as the
+logarithmic mesh, which in this example would be :math:`[-2:2]`, i.e., larger
+than the support of the hybridisation function that we actually use; this
+is achieved by setting the parameter :math:`bandrescale` (back) to 1.
+All other parameters have suitable default values for our purposes.
+
+Finally, we have set the model parameters. These are contained in a separate Python
+dictionary:
 
 .. literalinclude:: aim.py
   :lines: 16-17
 
-Finally, we have set the model parameters. These are contained in a separate Python
-dictionary.
+The hybridisation function is set by the following line:
 
 .. literalinclude:: aim.py
-  :lines: 20-21
-
-The low-level NRG parameters are contained in yet another Python dictionary ``nrgp``.
-Here we set the NRG energy window to the interval :math:`[-1:1]`, since
-the default is that the energy window is the same as the extent of the
-logarithmic mesh, which in this example would be :math:`[-2:2]`, i.e., larger
-than the support of the hybridisation function. 
-The hybridisation function itself is set by the following line:
-
-.. literalinclude:: aim.py
-  :lines: 24
+  :lines: 20
 
 We can now call the solver...
 
 .. literalinclude:: aim.py
-  :lines: 27
+  :lines: 23
 
 ... and store the results in an HDF5 archive:
 
 .. literalinclude:: aim.py
-  :lines: 30-35
+  :lines: 26-31
 
 The expectation values can be accessed through the Python dictionary
 ``S.expv``:
 
 .. literalinclude:: aim.py
-  :lines: 37
+  :lines: 33
 
-A version of this documentation example can also be found in ``tutorial/1_AIM``
+A version of this example can also be found in ``tutorial/1_AIM``
 in the form of a Python script and a Jupyter (IPython) notebook.

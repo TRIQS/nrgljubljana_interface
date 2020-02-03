@@ -13,15 +13,11 @@ n1 = 1                   # n1 in g1*(a+a^dag)*(n-n1)
 S = Solver(model = "Holstein/Nph=10", symtype = "QS", mesh_max = 2.0, mesh_min = 1e-5, mesh_ratio = 1.01)
 
 # Solve Parameters
-sp = { "T": T, "Lambda": 2.0, "Nz": 4, "Tmin": 1e-6, "keep": 1000, "keepenergy": 10.0 }
+sp = { "T": T, "Lambda": 2.0, "Nz": 4, "Tmin": 1e-6, "keep": 1000, "keepenergy": 10.0, "bandrescale": 1.0 }
 
 # Model Parameters
 mp = { "U1": U, "eps1": e_f, "omega": omega, "g1": g1, "n1": n1 }
 sp["model_parameters"] = mp
-
-# Low-level NRG Parameters
-nrgp = { "bandrescale": 1.0 }
-S.set_nrg_params(**nrgp)
 
 # Initialize hybridization function
 S.Delta_w['imp'] << V**2 * Flat(D)
