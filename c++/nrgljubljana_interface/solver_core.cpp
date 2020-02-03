@@ -157,7 +157,7 @@ namespace nrgljubljana_interface {
       }
     }
   }
-   
+
   // Read expectation values and average over Nz runs
   void solver_core::readexpv(int Nz) {
     for (int cnt = 1; cnt <= Nz; cnt++) {
@@ -466,6 +466,7 @@ namespace nrgljubljana_interface {
     h5_write(grp, "constr_params", s.constr_params);
     h5_write(grp, "nrg_params", s.nrg_params);
     h5_write(grp, "last_solve_params", s.last_solve_params);
+    h5_write(grp, "Delta_w", s.Delta_w); // !!
   }
 
   // Function that constructs a solver object from an hdf5 file
@@ -476,6 +477,7 @@ namespace nrgljubljana_interface {
     h5_read(grp, "", s.result_set());
     h5_read(grp, "nrg_params", s.nrg_params);
     h5_read(grp, "last_solve_params", s.last_solve_params);
+    h5_read(grp, "Delta_w", s.Delta_w);
     return s;
   }
 } // namespace nrgljubljana_interface

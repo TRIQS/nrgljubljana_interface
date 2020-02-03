@@ -107,7 +107,7 @@ namespace nrgljubljana_interface {
 
     /// Read expectation values
     void readexpv(int Nz);
-    
+
     /// Read a block Green's function (im/re)name-block-ij.dat
     void readGF(const std::string &name, std::optional<g_w_t> &G_w, gf_struct_t &_gf_struct);
 

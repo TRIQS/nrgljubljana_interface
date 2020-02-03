@@ -6,7 +6,10 @@
 
 using namespace nrgljubljana_interface;
 
-TEST(nrgljubljana_interface, siam) { // NOLINT
+int main(int argc, char **argv) {
+
+  auto env  = mpi::environment(argc, argv);
+  auto comm = mpi::communicator();
 
   // System Parameters
   double U  = 1.0;
@@ -50,14 +53,10 @@ TEST(nrgljubljana_interface, siam) { // NOLINT
   // Solve the impurity model
   S.solve(sp);
 
-  // Store the Result
-  {
-    auto arch = triqs::h5::file("siam.out.h5", 'w');
-    h5_write(arch, "S", S);
-  }
+  if (comm.rank() == 0) h5_write(file("Solver.h5", 'w'), "S", S);
 
-  // Compare against the reference data
-  // h5diff("siam.out.h5", "siam.ref.h5") // TODO (h5diff is Python only)
+  // Rerun the Solver and Compare
+  auto S_old = solver_core::h5_read_construct(file("Solver.h5", 'r'), "S");
+  S_old.solve(S_old.last_solve_params.value());
+//  assert_block_gfs_are_close(S_old.G_w, S.G_w, 1e-16);
 }
-
-MAKE_MAIN
