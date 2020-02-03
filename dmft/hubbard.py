@@ -53,11 +53,8 @@ def store_result(fn, S):
 
 def gf_diff(a, b):
   lx = np.array(list(a.mesh.values()))
-  ly = []
-  for w in a.mesh:
-    ly.append((-1.0/math.pi)*a['imp'][w][0,0].imag - (-1.0/math.pi)*b['imp'][w][0,0].imag) # difference of spectral functions
-    # TO DO: matrix case: tr(A-A^dag)
-  ly = np.array(ly)
+  ly = (-1.0/math.pi)*np.array(a['imp'].data[:,0,0].imag) - (-1.0/math.pi)*np.array(b['imp'].data[:,0,0].imag)  # difference of spectral functions
+# TO DO: matrix case: tr(A-A^dag)
   f = interpolate.interp1d(lx, ly, kind='cubic', bounds_error=False, fill_value=0)
   maxw = S.constr_params["mesh_max"]
   with warnings.catch_warnings():
@@ -147,10 +144,7 @@ for itern in range(1,maxiter+1):
     for w in S.G_w.mesh:
       Gself['imp'][w] = 1.0/(w + x - S.Delta_w['imp'][w] - S.Sigma_w['imp'][w])
     lx = np.array(list(Gself.mesh.values()))
-    ly = []
-    for w in Gself.mesh:
-      ly.append((-1.0/math.pi)*Gself['imp'][w][0,0].imag)
-    ly = np.array(ly)
+    ly = -(1.0/math.pi)*np.array(Gself['imp'].data[:,0,0].imag)
     f = interpolate.interp1d(lx, ly, kind='cubic', bounds_error=False, fill_value=0)
     maxw = S.constr_params["mesh_max"]
     with warnings.catch_warnings():
