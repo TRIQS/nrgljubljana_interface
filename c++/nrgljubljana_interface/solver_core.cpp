@@ -263,7 +263,7 @@ namespace nrgljubljana_interface {
 
   void solver_core::set_params() {
     const constr_params_t &cp = constr_params;
-    const solve_params_t &sp  = *last_solve_params;
+    solve_params_t &sp        = *last_solve_params;
     nrg_params_t &np          = nrg_params; // only nrg_params allowed to be changed!
 
     // Test if the low-level paramerers are sensible for use with the
@@ -282,8 +282,8 @@ namespace nrgljubljana_interface {
       np.mMAX = std::max(80, 2 * np.Nmax);
     if (np.xmax < 0) // Length of the x-interval in the discretization=Z (ODE) approach
       np.xmax = np.Nmax / 2. + 2.;
-    if (np.bandrescale < 0) // Make the NRG energy window correspond to the extend of the frequency mesh
-      np.bandrescale = cp.mesh_max;
+    if (sp.bandrescale < 0) // Make the NRG energy window correspond to the extent of the frequency mesh
+      sp.bandrescale = cp.mesh_max;
     // Ensure the selected method is enabled. Other methods may be enabled as well, but only the output files for the selected method well be read-in by the nrglj-interface. 
     TRIQS_ASSERT2(sp.method == "fdm", "currently only method=fdm is supported"); // TODO
     if (sp.method == "fdm") { np.fdm = true; }
@@ -335,7 +335,7 @@ namespace nrgljubljana_interface {
     for (const auto &i : sp.model_parameters) F << i.first << "=" << i.second << std::endl;
     F << std::boolalpha; // important: we want to output true/false strings
     F << "[param]" << std::endl;
-    F << "bandrescale=" << np.bandrescale << std::endl;
+    F << "bandrescale=" << sp.bandrescale << std::endl; // !
     F << "model=" << cp.model << std::endl;
     F << "symtype=" << cp.symtype << std::endl;
     F << "Lambda=" << sp.Lambda << std::endl;

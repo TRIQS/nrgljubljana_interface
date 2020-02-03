@@ -77,6 +77,7 @@ namespace nrgljubljana_interface {
     h5_write(grp, "alpha", sp.alpha);
     h5_write(grp, "gamma", sp.gamma);
     h5_write(grp, "method", sp.method);
+    h5_write(grp, "bandrescale", sp.bandrescale);
     h5_write(grp, "model_parameters", sp.model_parameters);
   }
 
@@ -92,6 +93,7 @@ namespace nrgljubljana_interface {
     h5_read(grp, "alpha", sp.alpha);
     h5_read(grp, "gamma", sp.gamma);
     h5_read(grp, "method", sp.method);
+    h5_read(grp, "bandrescale", sp.bandrescale);
     h5_read(grp, "model_parameters", sp.model_parameters);
   }
 
@@ -108,7 +110,6 @@ namespace nrgljubljana_interface {
     h5_write(grp, "speci1t", np.speci1t);
     h5_write(grp, "speci2t", np.speci2t);
     h5_write(grp, "v3mm", np.v3mm);
-    h5_write(grp, "bandrescale", np.bandrescale);
     h5_write(grp, "mMAX", np.mMAX);
     h5_write(grp, "Nmax", np.Nmax);
     h5_write(grp, "xmax", np.xmax);
@@ -203,7 +204,6 @@ namespace nrgljubljana_interface {
     h5_read(grp, "speci1t", np.speci1t);
     h5_read(grp, "speci2t", np.speci2t);
     h5_read(grp, "v3mm", np.v3mm);
-    h5_read(grp, "bandrescale", np.bandrescale);
     h5_read(grp, "mMAX", np.mMAX);
     h5_read(grp, "Nmax", np.Nmax);
     h5_read(grp, "xmax", np.xmax);

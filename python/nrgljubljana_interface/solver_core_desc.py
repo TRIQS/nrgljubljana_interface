@@ -157,31 +157,33 @@ c.add_method("""void solve (**nrgljubljana_interface::solve_params_t)""",
 
 
 
-+------------------+-------------------------------+---------+--------------------------------------------------+
-| Parameter Name   | Type                          | Default | Documentation                                    |
-+==================+===============================+=========+==================================================+
-| Lambda           | double                        | 2.0     | Logarithmic discretization parameter             |
-+------------------+-------------------------------+---------+--------------------------------------------------+
-| Nz               | int                           | 1       | Number of discretization meshes                  |
-+------------------+-------------------------------+---------+--------------------------------------------------+
-| Tmin             | double                        | 1e-4    | Lowest scale on the Wilson chain                 |
-+------------------+-------------------------------+---------+--------------------------------------------------+
-| keep             | size_t                        | 100     | Maximum number of states to keep at each step    |
-+------------------+-------------------------------+---------+--------------------------------------------------+
-| keepenergy       | double                        | -1.0    | Cut-off energy for truncation                    |
-+------------------+-------------------------------+---------+--------------------------------------------------+
-| keepmin          | size_t                        | 0       | Minimum number of states to keep at each step    |
-+------------------+-------------------------------+---------+--------------------------------------------------+
-| T                | double                        | 0.001   | Temperature, k_B T/D,                            |
-+------------------+-------------------------------+---------+--------------------------------------------------+
-| alpha            | double                        | 0.3     | Width of logarithmic gaussian                    |
-+------------------+-------------------------------+---------+--------------------------------------------------+
-| gamma            | double                        | 0.2     | Parameter for Gaussian convolution step          |
-+------------------+-------------------------------+---------+--------------------------------------------------+
-| method           | std::string                   | "fdm"   | Method for calculating the dynamical quantities  |
-+------------------+-------------------------------+---------+--------------------------------------------------+
-| model_parameters | std::map<std::string, double> | --      | Model parameters                                 |
-+------------------+-------------------------------+---------+--------------------------------------------------+
++------------------+-------------------------------+---------+----------------------------------------------------------------------------------+
+| Parameter Name   | Type                          | Default | Documentation                                                                    |
++==================+===============================+=========+==================================================================================+
+| Lambda           | double                        | 2.0     | Logarithmic discretization parameter                                             |
++------------------+-------------------------------+---------+----------------------------------------------------------------------------------+
+| Nz               | int                           | 1       | Number of discretization meshes                                                  |
++------------------+-------------------------------+---------+----------------------------------------------------------------------------------+
+| Tmin             | double                        | 1e-4    | Lowest scale on the Wilson chain                                                 |
++------------------+-------------------------------+---------+----------------------------------------------------------------------------------+
+| keep             | size_t                        | 100     | Maximum number of states to keep at each step                                    |
++------------------+-------------------------------+---------+----------------------------------------------------------------------------------+
+| keepenergy       | double                        | -1.0    | Cut-off energy for truncation                                                    |
++------------------+-------------------------------+---------+----------------------------------------------------------------------------------+
+| keepmin          | size_t                        | 0       | Minimum number of states to keep at each step                                    |
++------------------+-------------------------------+---------+----------------------------------------------------------------------------------+
+| T                | double                        | 0.001   | Temperature, k_B T/D,                                                            |
++------------------+-------------------------------+---------+----------------------------------------------------------------------------------+
+| alpha            | double                        | 0.3     | Width of logarithmic gaussian                                                    |
++------------------+-------------------------------+---------+----------------------------------------------------------------------------------+
+| gamma            | double                        | 0.2     | Parameter for Gaussian convolution step                                          |
++------------------+-------------------------------+---------+----------------------------------------------------------------------------------+
+| method           | std::string                   | "fdm"   | Method for calculating the dynamical quantities                                  |
++------------------+-------------------------------+---------+----------------------------------------------------------------------------------+
+| bandrescale      | double                        | -1.0    | Band rescaling factor (half-width of the support of the hybridisation function)  |
++------------------+-------------------------------+---------+----------------------------------------------------------------------------------+
+| model_parameters | std::map<std::string, double> | --      | Model parameters                                                                 |
++------------------+-------------------------------+---------+----------------------------------------------------------------------------------+
 """)
 
 c.add_method("""triqs::hilbert_space::gf_struct_t read_structure (std::string filename, bool mandatory)""",
@@ -204,7 +206,7 @@ c.add_method("""void set_nrg_params (**nrgljubljana_interface::nrg_params_t)""",
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | fdm                 | bool        | true      | Perform FDM (full-density-matrix) calculation              |
 +---------------------+-------------+-----------+------------------------------------------------------------+
-| fdmexpv             | bool        | true      | Calculate expectation values using FDM                     |
+| fdmexpv             | bool        | true      | Calculate expectation values using FDM algorithm           |
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | dmnrgmats           | bool        | false     | DMNRG calculation on Matsubara axis                        |
 +---------------------+-------------+-----------+------------------------------------------------------------+
@@ -219,8 +221,6 @@ c.add_method("""void set_nrg_params (**nrgljubljana_interface::nrg_params_t)""",
 | speci2t             | std::string | ""        | I_2 curves to compute                                      |
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | v3mm                | bool        | false     | Compute 3-leg vertex on matsubara/matsubara axis?          |
-+---------------------+-------------+-----------+------------------------------------------------------------+
-| bandrescale         | double      | -1.0      | Band rescaling factor                                      |
 +---------------------+-------------+-----------+------------------------------------------------------------+
 | mMAX                | int         | -1        | Number of sites in the star representation                 |
 +---------------------+-------------+-----------+------------------------------------------------------------+
@@ -461,6 +461,11 @@ c.add_member(c_name = "method",
              initializer = """ "fdm" """,
              doc = r"""Method for calculating the dynamical quantities""")
 
+c.add_member(c_name = "bandrescale",
+             c_type = "double",
+             initializer = """ -1.0 """,
+             doc = r"""Band rescaling factor (half-width of the support of the hybridisation function)""")
+
 c.add_member(c_name = "model_parameters",
              c_type = "std::map<std::string, double>",
              initializer = """  """,
@@ -491,7 +496,7 @@ c.add_member(c_name = "fdm",
 c.add_member(c_name = "fdmexpv",
              c_type = "bool",
              initializer = """ true """,
-             doc = r"""Calculate expectation values using FDM""")
+             doc = r"""Calculate expectation values using FDM algorithm""")
 
 c.add_member(c_name = "dmnrgmats",
              c_type = "bool",
@@ -527,11 +532,6 @@ c.add_member(c_name = "v3mm",
              c_type = "bool",
              initializer = """ false """,
              doc = r"""Compute 3-leg vertex on matsubara/matsubara axis?""")
-
-c.add_member(c_name = "bandrescale",
-             c_type = "double",
-             initializer = """ -1.0 """,
-             doc = r"""Band rescaling factor""")
 
 c.add_member(c_name = "mMAX",
              c_type = "int",

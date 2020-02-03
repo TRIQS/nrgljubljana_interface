@@ -126,6 +126,9 @@ namespace nrgljubljana_interface {
     /// Method for calculating the dynamical quantities
     std::string method = "fdm";
 
+    /// Band rescaling factor (half-width of the support of the hybridisation function)
+    double bandrescale = -1.0; // set to the value of meshmax if negative
+
     /// Model parameters
     std::map<std::string, double> model_parameters;
 
@@ -148,7 +151,7 @@ namespace nrgljubljana_interface {
     /// Perform FDM (full-density-matrix) calculation
     bool fdm = true;
 
-    /// Calculate expectation values using FDM
+    /// Calculate expectation values using FDM algorithm
     bool fdmexpv = true;
 
     /// DMNRG calculation on Matsubara axis
@@ -171,9 +174,6 @@ namespace nrgljubljana_interface {
 
     /// Compute 3-leg vertex on matsubara/matsubara axis?
     bool v3mm = false;
-
-    /// Band rescaling factor
-    double bandrescale = -1.0; // set to the value of meshmax if negative
 
     /// Number of sites in the star representation
     int mMAX = -1; // automatically determined

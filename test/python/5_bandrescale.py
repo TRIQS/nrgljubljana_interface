@@ -29,6 +29,7 @@ class test_SIAM(unittest.TestCase):
     sp["Tmin"] = 1e-4
     sp["keep"] = 50
     sp["keepenergy"] = 6.0
+    sp["bandrescale"] = 1.0
 
     # Model Parameters
     mp = {}
@@ -39,7 +40,6 @@ class test_SIAM(unittest.TestCase):
     # Low-level NRG Parameters
     np = {}
     np["bins"] = 50
-    np["bandrescale"] = 1.0
     S.set_nrg_params(**np)
 
     # # Initialize hybridization function
