@@ -52,13 +52,11 @@ def store_result(fn, S):
     arch["expv"] = S.expv
 
 def gf_diff(a, b):
-  lx = []
+  lx = np.array(list(a.mesh.values()))
   ly = []
   for w in a.mesh:
-    lx.append(float(w))
     ly.append((-1.0/math.pi)*a['imp'][w][0,0].imag - (-1.0/math.pi)*b['imp'][w][0,0].imag) # difference of spectral functions
     # TO DO: matrix case: tr(A-A^dag)
-  lx = np.array(lx)
   ly = np.array(ly)
   f = interpolate.interp1d(lx, ly, kind='cubic', bounds_error=False, fill_value=0)
   maxw = S.constr_params["mesh_max"]
@@ -148,12 +146,10 @@ for itern in range(1,maxiter+1):
   def n_vs_mu(x):
     for w in S.G_w.mesh:
       Gself['imp'][w] = 1.0/(w + x - S.Delta_w['imp'][w] - S.Sigma_w['imp'][w])
-    lx = []
+    lx = np.array(list(Gself.mesh.values()))
     ly = []
     for w in Gself.mesh:
-      lx.append(float(w))
       ly.append((-1.0/math.pi)*Gself['imp'][w][0,0].imag)
-    lx = np.array(lx)
     ly = np.array(ly)
     f = interpolate.interp1d(lx, ly, kind='cubic', bounds_error=False, fill_value=0)
     maxw = S.constr_params["mesh_max"]
