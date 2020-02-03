@@ -307,7 +307,7 @@ namespace nrgljubljana_interface {
       run_nrg_master();
       if (chdir("..") != 0) TRIQS_RUNTIME_ERROR << "failed to return from taskdir " << taskdir;
     } else {
-      // run_nrg_slave(); // TODO (requires testing)
+      run_nrg_slave();
     }
   }
 
