@@ -82,7 +82,7 @@ We also explicitly set the NRG energy window to the interval :math:`[-1:1]`, sin
 the default is to use an energy window with the same extent as the
 logarithmic mesh, which in this example would be :math:`[-2:2]`, i.e., larger
 than the support of the hybridisation function that we actually use; this
-is achieved by setting the parameter :math:`bandrescale` (back) to 1.
+is achieved by setting the parameter ``bandrescale`` (back) to 1.
 All other parameters have suitable default values for our purposes.
 
 Finally, we have set the model parameters. These are contained in a separate Python

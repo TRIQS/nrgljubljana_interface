@@ -46,7 +46,7 @@ a pure Holstein impurity problem, with the correlation effects stemming solely f
 coupling. We set :math:`n_1` to 1, to ensure particle-hole symmetry.
 
 .. literalinclude:: holstein.py
-  :lines: 12
+  :lines: 13
 
 Here we construct the Solver object. Note the model name which contains the phonon number cutoff (10).
 In NRGLjubljana_interface, the model names are actually paths to template files (either those
@@ -54,7 +54,7 @@ bundled with the interface in the directory ``templates/``, or custom templates 
 model, the template files need to be generated for a specific value of the phonon cutoff.
 
 .. literalinclude:: holstein.py
-  :lines: 40-42
+  :lines: 36-38
 
 The Anderson-Holstein model defines several additional expectation values pertaining to the
 phonon degree of freedom.

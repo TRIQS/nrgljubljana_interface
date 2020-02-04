@@ -13,7 +13,9 @@ Hamiltonian
 
   H_\mathrm{imp} = \sum_{i} \epsilon_i n_i + \sum_i U_i n_{i,\uparrow} n_{i,\downarrow} + U_{12} n_1 n_2 + J_{12} \mathbf{S}_1 \cdot \mathbf{S}_2
 
-where $\mathbf{S}_i$ are the spin operators:
+where :math:`\mathbf{S}_i` are the spin operators:
+
+.. math::
 
   \mathbf{S}_i = \frac{1}{2} d_{i\alpha}^\dagger \boldsymbol{\sigma}_{\alpha\beta} d_{i\beta}
 
@@ -36,7 +38,7 @@ Expectation values
 - :math:`\langle n_1 n_2 \rangle`, ``n_an_d``, charge correlation
 - :math:`\langle \mathbf{S}_1 \cdot \mathbf{S}_2 \rangle`, ``SaSd``, spin correlation
 
-TODO: the indexes ``d`` and ``a`` are historical. To be fixed.
+TODO: the index labels ``d`` and ``a`` are historical. To be fixed.
 
 Structure of Green's functions
 ------------------------------
