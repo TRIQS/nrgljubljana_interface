@@ -1,0 +1,8 @@
+ops:n_d n_d^2 hop0 A_d self_d sigma_d
+specs:n_d-n_d
+specd:A_d-A_d self_d-A_d
+spect:sigma_d-sigma_d
+specq:
+specot:
+params:U1 eps1
+polarized:

@@ -42,6 +42,7 @@ namespace nrgljubljana_interface {
     h5_write(grp, "specot", cp.specot);
     h5_write(grp, "specchit", cp.specchit);
     h5_write(grp, "specv3", cp.specv3);
+    h5_write(grp, "params", cp.params);
   }
 
   void h5_read(triqs::h5::group h5group, std::string subgroup_name, constr_params_t &cp) {
@@ -63,6 +64,7 @@ namespace nrgljubljana_interface {
     h5_read(grp, "specot", cp.specot);
     h5_read(grp, "specchit", cp.specchit);
     h5_read(grp, "specv3", cp.specv3);
+    h5_read(grp, "params", cp.params);
   }
 
   void h5_write(triqs::h5::group h5group, std::string subgroup_name, solve_params_t const &sp) {

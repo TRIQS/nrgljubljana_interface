@@ -3,7 +3,7 @@
 SIAM (QS)
 =========
 
-This is the simplest single-impurity (and single-orbital) Anderson model with conserved
+This is the simplest single-impurity single-orbital Anderson model with conserved
 total charge (Q) and total spin (S) quantum numbers.
 
 Hamiltonian
@@ -24,8 +24,7 @@ Expectation values
 
 - :math:`\langle n \rangle`, ``n_d``, impurity occupancy
 - :math:`\langle n^2 \rangle`, ``n_d^2``, impurity occupancy squared
-- :math:`\langle \sum_\sigma d^\dagger_\sigma f_{0\sigma} + \text{h.c.} \rangle`,
-``hop0``, hopping between the impurity and the zero-th site of the Wilson chain
+- :math:`\langle \sum_\sigma d^\dagger_\sigma f_{0\sigma} + \text{h.c.} \rangle`, ``hop0``, hopping between the impurity and the zero-th site of the Wilson chain
 
 Structure of Green's functions
 ------------------------------

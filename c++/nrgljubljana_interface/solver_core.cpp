@@ -57,13 +57,17 @@ namespace nrgljubljana_interface {
     gf_struct = read_structure("gf_struct", true); // true=mandatory
     chi_struct = read_structure("chi_struct", false); // false=optional
 
-    // Read model-specific parameter defaults (file may not exist)
-    auto getline = [=](const std::string &fn) -> std::string {
-      std::ifstream F(constr_params.get_model_dir() + "/" + fn);
-      if (!F) { return ""; }
+    // Read model-specific template info file
+    std::ifstream F(constr_params.get_model_dir() + "/info");
+    if (!F) TRIQS_RUNTIME_ERROR << "Failed to open template info file";
+    auto getline = [&F](const std::string &keyword) -> std::string {
       std::string s;
       std::getline(F, s);
-      return s;
+      auto pos = s.find(':');
+      std::string keyword_found = s.substr(0, pos);
+      TRIQS_ASSERT2(keyword == keyword_found, "template info file is corrupted");
+      std::string value = s.substr(pos+1);
+      return value;
     };
     constr_params.ops       = getline("ops");
     constr_params.specs     = getline("specs");
@@ -71,8 +75,8 @@ namespace nrgljubljana_interface {
     constr_params.spect     = getline("spect");
     constr_params.specq     = getline("specq");
     constr_params.specot    = getline("specot");
+    constr_params.params    = getline("params");
     constr_params.polarized = getline("polarized") == "true";
-    // TODO: single init file!
 
     // Create the hybridization function on a logarithmic mesh
     std::vector<double> mesh_points;

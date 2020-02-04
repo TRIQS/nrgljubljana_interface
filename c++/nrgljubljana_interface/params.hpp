@@ -86,6 +86,9 @@ namespace nrgljubljana_interface {
     /// 3-leg vertex functions to compute?
     std::string specv3 = "";
 
+    /// List of model parameters that need to be specified
+    std::string params = "";
+
     /// Write constr_params_t to hdf5
     friend void h5_write(triqs::h5::group h5group, std::string subgroup_name, constr_params_t const &cp);
 
