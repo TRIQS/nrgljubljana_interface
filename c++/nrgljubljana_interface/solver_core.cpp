@@ -496,4 +496,10 @@ namespace nrgljubljana_interface {
     h5_read(grp, "Delta_w", s.Delta_w);
     return s;
   }
+
+  // Hilbert transform for refreq objects
+  std::complex<double> hilbert_transform_refreq(const c_w_cvt &gf, double z){
+    return hilbert_transform(gf, z);
+  }
+   
 } // namespace nrgljubljana_interface

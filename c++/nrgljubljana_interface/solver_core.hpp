@@ -28,6 +28,8 @@
 #include <fstream>
 #include <string>
 
+#include <triqs/gfs/hilbert_transform.hpp>
+
 namespace nrgljubljana_interface {
 
   /// The Solver class
@@ -130,4 +132,8 @@ namespace nrgljubljana_interface {
     CPP2PY_IGNORE
     static solver_core h5_read_construct(triqs::h5::group h5group, std::string subgroup_name);
   };
+
+  // Hilbert transform for refreq objects
+  std::complex<double> hilbert_transform_refreq(const c_w_cvt &gf, double z);
+
 } // namespace nrgljubljana_interface

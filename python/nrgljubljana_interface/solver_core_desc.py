@@ -13,6 +13,7 @@ module.add_include("nrgljubljana_interface/solver_core.hpp")
 
 # Add here anything to add in the C++ code at the start, e.g. namespace using
 module.add_preamble("""
+#include <cpp2py/converters/complex.hpp>
 #include <cpp2py/converters/map.hpp>
 #include <cpp2py/converters/optional.hpp>
 #include <cpp2py/converters/pair.hpp>
@@ -149,6 +150,8 @@ c.add_constructor("""(**nrgljubljana_interface::constr_params_t)""", doc = r"""C
 | specchit       | std::string | ""                 | Susceptibilities to compute                                  |
 +----------------+-------------+--------------------+--------------------------------------------------------------+
 | specv3         | std::string | ""                 | 3-leg vertex functions to compute?                           |
++----------------+-------------+--------------------+--------------------------------------------------------------+
+| params         | std::string | ""                 | List of model parameters that need to be specified           |
 +----------------+-------------+--------------------+--------------------------------------------------------------+
 """)
 
@@ -382,6 +385,9 @@ c.add_method("""void set_nrg_params (**nrgljubljana_interface::nrg_params_t)""",
 +---------------------+-------------+-----------+------------------------------------------------------------+
 """)
 
+c.add_method("""void check_model_params (nrgljubljana_interface::solve_params_t sp)""",
+             doc = r"""""")
+
 c.add_method("""void generate_param_file (double z)""",
              doc = r"""""")
 
@@ -404,6 +410,8 @@ c.add_property(name = "create_tempdir",
                doc = r"""""")
 
 module.add_class(c)
+
+module.add_function ("std::complex<double> nrgljubljana_interface::hilbert_transform_refreq (nrgljubljana_interface::c_w_cvt gf, double z)", doc = r"""""")
 
 
 # Converter for solve_params_t
@@ -1019,6 +1027,11 @@ c.add_member(c_name = "specv3",
              c_type = "std::string",
              initializer = """ "" """,
              doc = r"""3-leg vertex functions to compute?""")
+
+c.add_member(c_name = "params",
+             c_type = "std::string",
+             initializer = """ "" """,
+             doc = r"""List of model parameters that need to be specified""")
 
 module.add_converter(c)
 
