@@ -53,7 +53,7 @@ class test_SIAM(unittest.TestCase):
     # Rerun the Solver and Compare
     S_old = HDFArchive('Solver.h5', 'r')['S']
     S_old.solve(**S_old.last_solve_params)
-    assert_block_gfs_are_close(S_old.G_w, S.G_w, 1e-16)
+    assert_block_gfs_are_close(S_old.G_w, S.G_w, 1e-12)
 
 if __name__ == '__main__':
     unittest.main()

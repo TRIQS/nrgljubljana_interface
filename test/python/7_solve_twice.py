@@ -52,7 +52,7 @@ class test_SIAM(unittest.TestCase):
     S.solve(**sp)
     G_w_2 = S.G_w.copy()
 
-    assert_block_gfs_are_close(G_w_1, G_w_2, 1e-16)
+    assert_block_gfs_are_close(G_w_1, G_w_2, 1e-12)
 
 if __name__ == '__main__':
     unittest.main()
