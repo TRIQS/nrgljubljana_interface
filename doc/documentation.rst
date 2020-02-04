@@ -17,7 +17,7 @@ Model templates
 
 .. toctree::
    :maxdepth: 1
-   
+
    templates/SIAM_QS
    templates/SIAM_QSZ
    templates/Holstein_QS

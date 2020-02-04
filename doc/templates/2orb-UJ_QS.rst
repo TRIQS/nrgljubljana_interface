@@ -1,4 +1,4 @@
-.. _2ord-UJ:
+.. _2ord-UJ_QS:
 
 2orb-UJ (QS)
 ============

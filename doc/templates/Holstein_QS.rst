@@ -1,4 +1,4 @@
-.. _SIAM_QS:
+.. _Holstein_QS:
 
 Holstein (QS)
 =============
