@@ -15,10 +15,13 @@ User guide
 Model templates
 ---------------
 
-   templates/SIAM/QS/doc
-   templates/SIAM/QSZ/doc
-   templates/Holstein/QS/doc
-   templates/2orb-UJ/QS/doc
+.. toctree::
+   :maxdepth: 1
+   
+   templates/SIAM_QS
+   templates/SIAM_QSZ
+   templates/Holstein_QS
+   templates/2orb-UJ_QS
 
 Miscelaneous
 ------------

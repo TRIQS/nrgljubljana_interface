@@ -1,3 +1,5 @@
+.. _SIAM_QS:
+
 SIAM (QS)
 =========
 
@@ -11,7 +13,8 @@ Hamiltonian
 
   H_\mathrm{imp} = \epsilon_1 n + U_1 n_\uparrow n_\downarrow
 
-Parameters:
+Parameters
+----------
 
 - :math:`\epsilon_1`, ``eps1``, energy level
 - :math:`U_1`, ``U1``, electron-electron interaction
