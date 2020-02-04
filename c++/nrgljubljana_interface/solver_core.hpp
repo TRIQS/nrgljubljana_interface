@@ -81,6 +81,9 @@ namespace nrgljubljana_interface {
     // Establish good defaults for nrg_params
     void set_params();
 
+    // Check if all model parameters have been defined.
+    void check_model_params(const solve_params_t &sp);
+
     // Produce param file for a given value of the twist parameter z.
     void generate_param_file(double z);
 

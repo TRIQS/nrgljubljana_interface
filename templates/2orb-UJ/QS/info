@@ -4,5 +4,5 @@ specd:A_d-A_d A_a-A_a self_d-A_d self_a-A_a
 spect:sigma_d-sigma_d sigma_a-sigma_a sigma_a-sigma_d sigma_d-sigma_a
 specq:
 specot:
-params:U1 U2 Gamma1 Gamma2 eps1 eps2 U12 J12
+params:U1 U2 eps1 eps2 U12 J12
 polarized:

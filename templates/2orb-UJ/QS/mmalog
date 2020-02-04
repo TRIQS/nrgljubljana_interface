@@ -1,5 +1,5 @@
 NRG Ljubljana 2019.11 (c) Rok Zitko, rok.zitko@ijs.si, 2005-2019
-Mathematica version: 11.3.0 for Linux x86 (64-bit) (March 7, 2018)
+Mathematica version: 12.0.0 for Linux x86 (64-bit) (April 7, 2019)
 sneg version: 1.251
 Loading module initialparse.m
 Options: {GENERATE_TEMPLATE}
@@ -203,10 +203,10 @@ Customoperators done.
 Loading module modeloperators.m
 Can't load modeloperators.m. Continuing.
 Timing report
-{basis, 0.56349`6.202431206720416}
-{ham, 8.709018`6.215422922602443}
-{maketable, 16.957886`7.680916704874319}
-{xi, 0.01506`4.629369965360657}
+{basis, 0.494881`6.1460457737295275}
+{ham, 8.547838`6.2073100171914755}
+{maketable, 18.317998`7.714423000761038}
+{xi, 0.011308`4.504930793313455}
 {_, 0}
 data.in
 "Success!"

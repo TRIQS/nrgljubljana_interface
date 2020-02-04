@@ -325,6 +325,16 @@ namespace nrgljubljana_interface {
     else
       TRIQS_RUNTIME_ERROR << "Failed to create a directory for temporary files.";
   }
+   
+  void solver_core::check_model_params(const solve_params_t &sp) {
+    std::istringstream ss(constr_params.params);
+    do {
+      std::string p;
+      ss >> p;
+      if (p != "" && sp.model_parameters.count(p) != 1)
+        TRIQS_RUNTIME_ERROR << "Model parameter " << p << " has not been defined.";
+    } while (ss);
+  }
 
   void solver_core::generate_param_file(double z) {
     const constr_params_t &cp = constr_params;
@@ -333,6 +343,8 @@ namespace nrgljubljana_interface {
     np.z                      = z;
     // Automatically establish appropriate default values for the high-level interface
     set_params();
+    // Check if all model parameters have been defined
+    check_model_params(sp);
     // Generate the parameter file
     std::ofstream F("param");
     F << "[extra]" << std::endl;
