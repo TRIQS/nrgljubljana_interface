@@ -1,4 +1,4 @@
-ops:n_d n_d^2 hop0 A_d self_d sigma_d SZd
+ops:n_d n_d^2 hop0 A_d self_d SZd
 specs:n_d-n_d SZd-SZd
 specd:A_d-A_d-u A_d-A_d-d self_d-A_d-u self_d-A_d-d
 spect:

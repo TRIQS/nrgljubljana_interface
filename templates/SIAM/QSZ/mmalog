@@ -1,5 +1,5 @@
 NRG Ljubljana 2019.11 (c) Rok Zitko, rok.zitko@ijs.si, 2005-2019
-Mathematica version: 11.3.0 for Linux x86 (64-bit) (March 7, 2018)
+Mathematica version: 12.0.0 for Linux x86 (64-bit) (April 7, 2019)
 sneg version: 1.251
 Loading module initialparse.m
 Options: {GENERATE_TEMPLATE}
@@ -92,7 +92,6 @@ s: n_d nc[d[0, 0], d[1, 0]] + nc[d[0, 1], d[1, 1]]
 s: n_d^2 nc[d[0, 0], d[1, 0]] + nc[d[0, 1], d[1, 1]] - 2*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]
 s: hop0 nc[d[0, 0], f[1, 0, 0]] + nc[d[0, 1], f[1, 0, 1]] + nc[f[0, 0, 0], d[1, 0]] + nc[f[0, 0, 1], d[1, 1]]
 d: A_d d
-t: sigma_d d[]
 d: self_d Chop[Expand[komutator[Hint, d[#1, #2]]]] & 
 s: SZd -nc[d[0, 0], d[1, 0]]/2 + nc[d[0, 1], d[1, 1]]/2
 operators.m done
@@ -102,10 +101,10 @@ Customoperators done.
 Loading module modeloperators.m
 Can't load modeloperators.m. Continuing.
 Timing report
-{basis, 0.006807`4.284500744100571}
-{ham, 0.1479799999999999999`4.667505507042313}
-{maketable, 0.879171`6.3956183476751765}
-{xi, 0.010769`4.483720370457334}
+{basis, 0.009329`4.421380086571773}
+{ham, 0.200582`4.79959444139797}
+{maketable, 1.032707`6.465522114306052}
+{xi, 0.013681`4.587662836392449}
 {_, 0}
 data.in
 "Success!"
