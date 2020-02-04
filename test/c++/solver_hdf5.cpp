@@ -58,5 +58,5 @@ int main(int argc, char **argv) {
   // Rerun the Solver and Compare
   auto S_old = solver_core::h5_read_construct(file("Solver.h5", 'r'), "S");
   S_old.solve(*S_old.last_solve_params);
-  assert_block_gfs_are_close(*S_old.G_w, *S.G_w, 1e-16);
+  assert_block_gfs_are_close(*S_old.G_w, *S.G_w, 1e-12);
 }
