@@ -28,7 +28,7 @@ DOC
 
 """
 from solver import Solver
-from solver_core import SolverCore, hilbert_transform_refreq
+from solver_core import SolverCore, hilbert_transform_refreq, hilbert_transform_elementwise
 from mesh_refreq_pts import MeshReFreqPts
 from descriptors import Flat, SemiCircular, Omega
 

@@ -133,7 +133,10 @@ namespace nrgljubljana_interface {
     static solver_core h5_read_construct(triqs::h5::group h5group, std::string subgroup_name);
   };
 
-  // Hilbert transform for refreq objects
+  // Hilbert transform for refreq objects (scalar)
   std::complex<double> hilbert_transform_refreq(const c_w_cvt &gf, double z);
+
+  // Hilbert transform for refreq objects (matrix)
+  matrix<std::complex<double>> hilbert_transform_elementwise(const m_w_cvt &gf, double z);
 
 } // namespace nrgljubljana_interface

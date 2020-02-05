@@ -76,6 +76,15 @@ namespace nrgljubljana_interface {
   /// A const_view to c_w_t
   using c_w_cvt = c_w_t::const_view_type;
 
+  /// Container for matrix complex-valued quantities with no block structure
+  using m_w_t = gf<refreq_pts, matrix_valued>;
+
+  /// A view to m_w_t
+  using m_w_vt = m_w_t::view_type;
+
+  /// A const_view to m_w_t
+  using m_w_cvt = m_w_t::const_view_type;
+
   // Declare some placeholders for the rest of the code. Use anonymous namespace for proper linkage
   // in this code, all variables with trailing _ are placeholders by convention.
   namespace {

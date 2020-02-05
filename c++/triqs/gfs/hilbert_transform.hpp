@@ -173,8 +173,8 @@ namespace triqs::gfs {
       return result1 + result2 + result3;
     };
     auto calcB = [&integr, B](auto f0) -> double { return integr(f0, -B, B); }; // direct integration
-    auto calc = [y, lim_direct, calcA, calcB](auto f3p, auto f3m, auto d, auto f0){ 
-      return (abs(y) < lim_direct ? calcA(f3p, f3m, d) : calcB(f0)); 
+    auto calc = [y, lim_direct, calcA, calcB](auto f3p, auto f3m, auto d, auto f0){
+      return (abs(y) < lim_direct ? calcA(f3p, f3m, d) : calcB(f0));
     };
 
     // Re part of rho(omega)/(z-omega)
@@ -243,9 +243,10 @@ namespace triqs::gfs {
   template <typename G> matrix<dcomplex> hilbert_transform_elementwise(G const &Ain, dcomplex z) REQUIRES(is_gf_v<G>) {
     static_assert(std::is_same_v<typename G::target_t, matrix_valued>,
                   "Hilbert transform only implemented for matrix-valued spectral functions");
-    long size = Ain.target_shape()[0];
-    auto mat = matrix<dcomplex>(size, size);
-    for (auto [i, j] : itertools::product_range(size, size)) {
+    long size1 = Ain.target_shape()[0];
+    long size2 = Ain.target_shape()[1];
+    auto mat = matrix<dcomplex>(size1, size2);
+    for (auto [i, j] : itertools::product_range(size1, size2)) {
       auto gtemp = gf<typename G::variable_t, scalar_valued>{Ain.mesh(), {}};
       for (const auto &mp : Ain.mesh()) gtemp[mp] = Ain[mp](i,j);
       mat(i,j) = hilbert_transform(gtemp, z);

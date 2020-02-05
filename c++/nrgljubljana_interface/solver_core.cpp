@@ -501,5 +501,9 @@ namespace nrgljubljana_interface {
   std::complex<double> hilbert_transform_refreq(const c_w_cvt &gf, double z){
     return hilbert_transform(gf, z);
   }
-   
+
+  matrix<std::complex<double>> hilbert_transform_elementwise(const m_w_cvt &gf, double z) {
+    return hilbert_transform_elementwise(gf, z);
+  }
+
 } // namespace nrgljubljana_interface
