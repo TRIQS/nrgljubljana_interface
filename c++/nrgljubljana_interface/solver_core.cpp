@@ -498,11 +498,11 @@ namespace nrgljubljana_interface {
   }
 
   // Hilbert transform for refreq objects
-  std::complex<double> hilbert_transform_refreq(const c_w_cvt &gf, double z){
+  std::complex<double> hilbert_transform_refreq(const c_w_cvt &gf, std::complex<double> z){
     return hilbert_transform(gf, z);
   }
 
-  matrix<std::complex<double>> hilbert_transform_elementwise(const m_w_cvt &gf, double z) {
+  matrix<std::complex<double>> hilbert_transform_elementwise(const m_w_cvt &gf, std::complex<double> z) {
     return hilbert_transform_elementwise(gf, z);
   }
 

@@ -412,9 +412,9 @@ c.add_property(name = "create_tempdir",
 
 module.add_class(c)
 
-module.add_function ("std::complex<double> nrgljubljana_interface::hilbert_transform_refreq (nrgljubljana_interface::c_w_cvt gf, double z)", doc = r"""""")
+module.add_function ("std::complex<double> nrgljubljana_interface::hilbert_transform_refreq (nrgljubljana_interface::c_w_cvt gf, std::complex<double> z)", doc = r"""""")
 
-module.add_function ("matrix<std::complex<double>> nrgljubljana_interface::hilbert_transform_elementwise (nrgljubljana_interface::m_w_cvt gf, double z)", doc = r"""""")
+module.add_function ("matrix<std::complex<double>> nrgljubljana_interface::hilbert_transform_elementwise (nrgljubljana_interface::m_w_cvt gf, std::complex<double> z)", doc = r"""""")
 
 
 # Converter for solve_params_t
