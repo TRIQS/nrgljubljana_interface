@@ -332,11 +332,15 @@ namespace nrgljubljana_interface {
     if (chdir(taskdir.c_str()) != 0) TRIQS_RUNTIME_ERROR << "failed to chdir to taskdir " << taskdir;
     // Solve the impurity model
     std::streambuf *old = std::cout.rdbuf();
-    std::stringstream ss;
-    if (!verbose) std::cout.rdbuf(ss.rdbuf());
+    std::ofstream log_stream;
+    if (!verbose) {
+      log_stream.open("log");
+      if (!log_stream) TRIQS_RUNTIME_ERROR << "failed to open log file";
+      std::cout.rdbuf(log_stream.rdbuf()); // redirect stdout to log file
+    }
     set_workdir("."); // may be overridden by NRG_WORKDIR in environment
     run_nrg_master();
-    if (!verbose) std::cout.rdbuf(old);
+    if (!verbose) std::cout.rdbuf(old); // restore
     if (chdir("..") != 0) TRIQS_RUNTIME_ERROR << "failed to return from taskdir " << taskdir;
   }
 
