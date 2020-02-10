@@ -73,8 +73,14 @@ namespace nrgljubljana_interface {
     // Create a temporary directory for a series of NRG runs
     std::string create_tempdir();
 
+    // Write Gamma=-Im(Delta_w) to a file
+    void write_gamma();
+    
+    // Prepare input files for an individual NRG calculation. Called from solve()
+    void instantiate(double z, const std::string &taskdir);
+
     // Perform an individual NRG calculation. Called from solve()
-    void solve_one_z(double z, const std::string &taskdir);
+    void solve_one(const std::string &taskdir);
 
     // Adjust the advanced NRG parameters
     CPP2PY_ARG_AS_DICT
@@ -97,6 +103,9 @@ namespace nrgljubljana_interface {
 
     // Struct containing the parameters relevant for the solve process
     std::optional<solve_params_t> last_solve_params;
+
+    // If set true, detailed output from NRG Ljubljana and tools will be sent to stdout
+    bool verbose = false;
 
     /// The Green function structure object
     gf_struct_t gf_struct;
@@ -122,6 +131,12 @@ namespace nrgljubljana_interface {
 
     /// Read a scalar real-valued function name.dat
     // void readc(const std::string &name, std::optional<s_w_t> &s_w); // TO DO
+
+    // Suppress verbose output from the NRG solver
+    void be_quiet() { verbose = false; }
+    
+    // Set verbosity (see also be_quiet)
+    void set_verbosity(bool v) { verbose = v; }
 
     static std::string hdf5_scheme() { return "NRGLJUBLJANA_INTERFACE_SolverCore"; }
 

@@ -8,7 +8,7 @@
 #include <string>
 
 void run_nrg_master();
-void run_nrg_slave(); // note: only defined if compled using NRG_MPI
+void run_nrg_slave();
 void set_workdir(const std::string &workdir);
 namespace time_mem {
   void timing_report();

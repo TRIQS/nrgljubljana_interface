@@ -36,6 +36,9 @@
 #include <boost/lexical_cast.hpp>
 #include <nrg-lib.h>
 
+#include <mpi/mpi.hpp>
+#include <mpi/string.hpp>
+
 // std::filesystem is not production-ready as of 2020. As a workaround,
 // we remove temporary files using "rm".
 //
@@ -188,52 +191,68 @@ namespace nrgljubljana_interface {
     for (auto &i : expv) { i.second /= Nz; } // calculate the average over discretization meshes
   }
 
-  void solver_core::solve(solve_params_t const &sp) {
-    last_solve_params = sp;
-    std::string tempdir{};
-    // Reset the results
-    container_set::operator=(container_set{});
-    // Pre-Processing
-    if (world.rank() == 0) {
-      std::cout << "\nNRGLJUBLJANA_INTERFACE Solver\n";
-      // Create a temporary directory
-      tempdir = create_tempdir();
-      if (chdir(tempdir.c_str()) != 0) TRIQS_RUNTIME_ERROR << "chdir to tempdir failed.";
-      // Write Gamma=-Im(Delta_w) to a file
-      for (int bl_idx : range(gf_struct.size())) {
-        long bl_size = Delta_w[bl_idx].target_shape()[0];
-        auto bl_name = Delta_w.block_names()[bl_idx];
-        for (auto [i, j] : product_range(bl_size, bl_size)) {
-          std::ofstream F("Gamma_" + bl_name + "_" + std::to_string(i) + std::to_string(j) + ".dat");
-          const double cutoff = 1e-8; // ensure hybridisation function is positive
-          for (auto const &w : Delta_w[bl_idx].mesh()) {
-            double value = -Delta_w[bl_idx][w](i, j).imag();
-            if (value < cutoff) { value = cutoff; }
-            F << double(w) << " " << value << std::endl;
-          }
+  inline void call(std::string command, bool verbose = true, bool exit_on_failure = true) {
+    std::string s = command + (verbose ? "" : " >/dev/null");
+    std::cout << "running " << s << std::endl;
+    if (system(s.c_str()) != 0) {
+      if (exit_on_failure) 
+        TRIQS_RUNTIME_ERROR << "Failure running NRGLjubljana_interface script: " << s;
+      else
+        std::cerr << "Warning: failure running NRGLjubljana_interface script: " << s << std::endl;
+    }
+  }
+   
+  // Write Gamma=-Im(Delta_w) to a file
+  void solver_core::write_gamma() {
+    for (int bl_idx : range(gf_struct.size())) {
+      long bl_size = Delta_w[bl_idx].target_shape()[0];
+      auto bl_name = Delta_w.block_names()[bl_idx];
+      for (auto [i, j] : product_range(bl_size, bl_size)) {
+        std::ofstream F("Gamma_" + bl_name + "_" + std::to_string(i) + std::to_string(j) + ".dat");
+        const double cutoff = 1e-8; // ensure hybridisation function is positive
+        for (auto const &w : Delta_w[bl_idx].mesh()) {
+          double value = -Delta_w[bl_idx][w](i, j).imag();
+          if (value < cutoff) { value = cutoff; }
+          F << double(w) << " " << value << std::endl;
         }
       }
+    }
+  }
+   
+  void solver_core::solve(solve_params_t const &sp) {
+    last_solve_params = sp;
+    container_set::operator=(container_set{});  // Reset the results
+    std::string tempdir{};
+    if (world.rank() == 0) {
+      std::cout << "NRGLJUBLJANA_INTERFACE Solver\n";
+      // Create a temporary directory
+      tempdir = create_tempdir();
+    }
+    world.barrier(); // Ensures temporary directory is created
+    mpi::broadcast(tempdir, world);
+    if (chdir(tempdir.c_str()) != 0) TRIQS_RUNTIME_ERROR << "chdir to tempdir failed.";
+    if (world.rank() == 0) {
+      write_gamma();
       // we need a mock param file for 'adapt' tool
       generate_param_file(1.0);
-      const std::string script = constr_params.get_model_dir() + "/prepare";
-      if (system(script.c_str()) != 0) TRIQS_RUNTIME_ERROR << "Running prepare script failed: " << script;
-      if (system("./discretize") != 0) TRIQS_RUNTIME_ERROR << "Running discretize script failed";
+      call(constr_params.get_model_dir() + "/prepare", verbose);
+      call("./discretize", verbose);
+      for (int i: range(1,sp.Nz+1))
+        instantiate(double(i)/sp.Nz, std::to_string(i));
     }
+    world.barrier(); // Ensures the initialization scripts have completed
 
-    // Perform the calculations (this must run in all MPI processes).
-    // TODO: we could use nested parallelism here, since the calculations for different values of z
-    // are fully independent.
-    const double dz = 1.0 / sp.Nz;
-    double z        = dz;
-    for (int cnt = 1; cnt <= sp.Nz; cnt++, z += dz) {
-      const std::string taskdir = std::to_string(cnt);
-      solve_one_z(z, taskdir);
-    }
+    // Perform the calculations in parallel
+    auto chunk = mpi::chunk(range(1,sp.Nz+1), world);
+    for (int i: chunk)
+      solve_one(std::to_string(i));
 
+    world.barrier(); // Ensures all subcalculations are completed
     // Post-Processing in perl script
     if (world.rank() == 0)
-      if (system("./process") != 0) TRIQS_RUNTIME_ERROR << "Running post-processing script failed";
+      call("./process", verbose);
 
+    world.barrier(); // Ensures post-processing is completed
     // Read Results into TRIQS Containers
     readexpv(sp.Nz);
     readGF("G", G_w, gf_struct);
@@ -247,9 +266,10 @@ namespace nrgljubljana_interface {
     Sigma_w = (*F_w) / (*G_w);
 
     // Cleanup
-    world.barrier();
+    world.barrier(); // Ensures all processes have read the results before cleanup
+    if (chdir("..") != 0) TRIQS_RUNTIME_ERROR << "failed to return from tempdir";
+    world.barrier(); // Ensures all processes have chdired from temp dir before it is deleted
     if (world.rank() == 0) {
-      if (chdir("..") != 0) TRIQS_RUNTIME_ERROR << "failed to return from tempdir";
 #ifdef NDEBUG
       // In production mode, we remove the temporary files.
       // In debug mode, we keep the temporary files for inspection.
@@ -257,8 +277,7 @@ namespace nrgljubljana_interface {
 //      fs::remove_all(tempdir, ec);
 //      if (ec) std::cout << "Warning: failed to remove the temporary directory." << std::endl;
 //    Workaround:
-      const std::string rmscript = "rm -rf " + tempdir;
-      if (system(rmscript.c_str()) != 0) std::cout << "Warning: failed to remove tempdir." << std::endl;
+      call("rm -rf " + tempdir, verbose, false);
 #endif
     }
   }
@@ -298,21 +317,27 @@ namespace nrgljubljana_interface {
 
   void solver_core::set_nrg_params(nrg_params_t const &nrg_params_) { nrg_params = nrg_params_; }
 
-  // Solve the problem for a given value of the twist parameter z
-  void solver_core::solve_one_z(double z, const std::string &taskdir) {
-    if (world.rank() == 0) {
-      generate_param_file(z);
-      if (mkdir(taskdir.c_str(), 0755) != 0) TRIQS_RUNTIME_ERROR << "failed to mkdir taskdir " << taskdir;
-      const std::string cmd = "./instantiate " + taskdir;
-      if (system(cmd.c_str()) != 0) TRIQS_RUNTIME_ERROR << "Running " << cmd << " failed";
-      if (chdir(taskdir.c_str()) != 0) TRIQS_RUNTIME_ERROR << "failed to chdir to taskdir " << taskdir;
-      // Solve the impurity model
-      set_workdir("."); // may be overridden by NRG_WORKDIR in environment
-      run_nrg_master();
-      if (chdir("..") != 0) TRIQS_RUNTIME_ERROR << "failed to return from taskdir " << taskdir;
-    } else {
-      run_nrg_slave();
-    }
+  // Creates input files for NRG iteration (param & data) by calling the "instantiate" script
+  void solver_core::instantiate(double z, const std::string &taskdir) {
+    std::cout << "Preparing z=" << z << " taskdir=" << taskdir << std::endl;
+    TRIQS_ASSERT(world.rank() == 0); // should not run in parallel!
+    generate_param_file(z);
+    if (mkdir(taskdir.c_str(), 0755) != 0) TRIQS_RUNTIME_ERROR << "failed to mkdir taskdir " << taskdir;
+    call("./instantiate " + taskdir, verbose);
+  }
+   
+  // Solve the problem for a single value of the twist parameter z
+  void solver_core::solve_one(const std::string &taskdir) {
+    std::cout << "Solving taskdir=" << taskdir << " rank=" << world.rank() << std::endl;
+    if (chdir(taskdir.c_str()) != 0) TRIQS_RUNTIME_ERROR << "failed to chdir to taskdir " << taskdir;
+    // Solve the impurity model
+    std::streambuf *old = std::cout.rdbuf();
+    std::stringstream ss;
+    if (!verbose) std::cout.rdbuf(ss.rdbuf());
+    set_workdir("."); // may be overridden by NRG_WORKDIR in environment
+    run_nrg_master();
+    if (!verbose) std::cout.rdbuf(old);
+    if (chdir("..") != 0) TRIQS_RUNTIME_ERROR << "failed to return from taskdir " << taskdir;
   }
 
   std::string solver_core::create_tempdir() {

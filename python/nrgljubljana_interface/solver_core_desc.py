@@ -91,6 +91,11 @@ c.add_member(c_name = "last_solve_params",
              read_only= True,
              doc = r"""""")
 
+c.add_member(c_name = "verbose",
+             c_type = "bool",
+             read_only= True,
+             doc = r"""""")
+
 c.add_member(c_name = "gf_struct",
              c_type = "triqs::hilbert_space::gf_struct_t",
              read_only= True,
@@ -193,7 +198,10 @@ c.add_method("""void solve (**nrgljubljana_interface::solve_params_t)""",
 c.add_method("""triqs::hilbert_space::gf_struct_t read_structure (std::string filename, bool mandatory)""",
              doc = r"""""")
 
-c.add_method("""void solve_one_z (double z, std::string taskdir)""",
+c.add_method("""void instantiate (double z, std::string taskdir)""",
+             doc = r"""""")
+
+c.add_method("""void solve_one (std::string taskdir)""",
              doc = r"""""")
 
 c.add_method("""void set_nrg_params (**nrgljubljana_interface::nrg_params_t)""",
@@ -402,12 +410,23 @@ c.add_method("""void readA (std::string name, std::optional<g_w_t> A_w, triqs::h
              doc = r"""Read a block spectral function name-block-ij.dat; here we assume that the
      spectral function is purely real.""")
 
+c.add_method("""void set_verbosity (bool v)""",
+             doc = r"""""")
+
 c.add_method("""std::string hdf5_scheme ()""",
              is_static = True,
              doc = r"""""")
 
 c.add_property(name = "create_tempdir",
                getter = cfunction("std::string create_tempdir ()"),
+               doc = r"""""")
+
+c.add_property(name = "write_gamma",
+               getter = cfunction("void write_gamma ()"),
+               doc = r"""""")
+
+c.add_property(name = "be_quiet",
+               getter = cfunction("void be_quiet ()"),
                doc = r"""""")
 
 module.add_class(c)
