@@ -341,7 +341,7 @@ namespace nrgljubljana_interface {
       if (!log_stream) TRIQS_RUNTIME_ERROR << "failed to open log file";
       std::cout.rdbuf(log_stream.rdbuf()); // redirect stdout to log file
     }
-    set_workdir("."); // may be overridden by NRG_WORKDIR in environment
+    set_workdir(""); // Defaults to . but may be overridden by NRG_WORKDIR in the environment
     run_nrg_master();
     if (!verbose) std::cout.rdbuf(old); // restore
     if (chdir("..") != 0) TRIQS_RUNTIME_ERROR << "failed to return from taskdir " << taskdir;
