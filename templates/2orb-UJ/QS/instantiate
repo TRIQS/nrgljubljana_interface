@@ -29,7 +29,7 @@ while (<F>) {
     print O if $section ne "";
 }
 close O if $section ne "";
-close F;	
+close F;
 
 system "./wilson";
 my $nr = getparam("Nmax");
@@ -60,7 +60,7 @@ my $fctr = 0;
 
 while (<F>) {
     print;
-    
+
     if (/^#/) {
         if (/^# SCALE\s+(\S+)$/) {
             # Extract the rescale factor
@@ -70,7 +70,7 @@ while (<F>) {
         print OUT;
         next;
     }
-    
+
     if ($mode == 0) {
         if (!/(\d+)\s+(\d+)\s+(\d+)/) { die "Parse error 1: $_"; }
         $channels = $1;
@@ -83,7 +83,7 @@ while (<F>) {
         $mode = 1;
         next;
     }
-    
+
     if ($mode == 1) {
         my @buffer;
         my $i;
@@ -100,7 +100,7 @@ while (<F>) {
             chomp($line1 = <F>);
             $line1 =~ /DIAG\s+(\S+)$/;
             my $fn = $1;
-            
+
             system("$matrix -c$coefchannels param.extra $fn >ham");
             if ($? != 0) { die "matrix call error"; }
             copy("ham", "ham.$qn");
@@ -118,10 +118,10 @@ while (<F>) {
         }
         $Egs=$smallest/$factor;
         print "E_gs=$Egs\n";
-        
+
         @buffer = map { $_->[0].subtract($_->[1]) } @buffer;
         print OUT @buffer;
-        
+
         $mode = 2;
         next;
     }
