@@ -62,10 +62,10 @@ symtype = ("QS" if B is None else "QSZ")
 S = Solver(model=model, symtype=symtype, mesh_max=mesh_max, mesh_min=mesh_min, mesh_ratio=mesh_ratio)
 S.set_verbosity(verbose_nrg)
 
-# Mesh and GF structure
-mesh = S.G_w.mesh
-gf_struct = [[x,S.G_w[x].indices[0]] for x in S.G_w.indices]
-newG = lambda : BlockGf(mesh=mesh, gf_struct=gf_struct) # Creates a BlockGf object of appropriate structure
+mesh = S.G_w.mesh                                             # Mesh
+gf_struct = [[x,S.G_w[x].indices[0]] for x in S.G_w.indices]  # GF structure
+newG = lambda : BlockGf(mesh=mesh, gf_struct=gf_struct)       # Creates a BlockGf object of appropriate structure
+identity = lambda bl : np.identity(len(S.G_w[bl].indices[0])) # Returns the identity matrix in block 'bl'
 
 # Solve Parameters
 sp = { "T": T, "Lambda": 2.0, "Nz": 4, "Tmin": 1e-5, "keep": 10000, "keepenergy": 10.0 }
@@ -111,7 +111,7 @@ def calc_G(Delta, Sigma, mu):
   G = newG()
   for bl in G.indices:
     for w in G.mesh:
-      G[bl][w] = 1.0/(w + mu - Delta[bl][w] - Sigma[bl][w])
+      G[bl][w] = np.linalg.inv( (w + mu)*identity(bl) - Delta[bl][w] - Sigma[bl][w] ) # !!!
   return G
 
 # Index range of a GF
@@ -150,7 +150,7 @@ def self_consistency(Sigma):
       for i in range(len(Gloc[bl].indices[0])):
         for j in range(len(Gloc[bl].indices[1])):
           if i == j:
-            Gloc[bl][w][i,j] = ht(w + mu - Sigma[bl][w][i,j]) # Hilbert-transform
+            Gloc[bl][w][i,i] = ht(w + mu - Sigma[bl][w][i,i]) # Hilbert-transform
           else:
             assert abs(Sigma[bl][w][i,j])<1e-10, "This implementation only supports diagonal self-energy"
             Gloc[bl][w][i,j] = 0.0
@@ -158,7 +158,7 @@ def self_consistency(Sigma):
   Delta = newG()
   for bl in Delta.indices:
     for w in Delta.mesh:
-      Delta[bl][w] = w + mu - Sigma[bl][w] - Glocinv[bl][w]
+      Delta[bl][w] = (w+mu)*identity(bl) - Sigma[bl][w] - Glocinv[bl][w] # !!!
   return Gloc, Delta
 
 # Iteratively adjust mu, taking into account the self-consistency equation.

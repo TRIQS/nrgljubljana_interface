@@ -15,7 +15,7 @@ T = 1e-3
 S = Solver(model = "2orb-UJ", symtype = "QS", mesh_max = 2.00676, mesh_min = 1e-5, mesh_ratio = 1.01)
 
 # Solve Parameters
-sp = { "T": T, "Lambda": 4.0, "Nz": 4, "Tmin": 1e-5, "keep": 10000, "keepenergy": 8.0, "bandrescale": 1.0 }
+sp = { "T": T, "Lambda": 4.0, "Nz": 4, "Tmin": 1e-5, "keep": 4000, "keepenergy": 10.0, "bandrescale": 1.0 }
 
 # Model Parameters
 mp = { "U1": U, "U2": U, "eps1": e_f, "eps2": e_f, "U12": U12, "J12": J12 }
