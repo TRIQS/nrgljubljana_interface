@@ -11,6 +11,7 @@ User guide
 
    guide/aim
    guide/holstein
+   guide/hubbard
 
 Model templates
 ---------------

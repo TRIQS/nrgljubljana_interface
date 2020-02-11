@@ -1,7 +1,7 @@
 .. _aim:
 
-An example: the Anderson impurity model
-=======================================
+Example: the Anderson impurity model
+====================================
 
 To illustrate how the NRG solver works in practice, we show the example of
 one-orbital Anderson impurity embedded in a flat (Wilson) conduction bath. The
