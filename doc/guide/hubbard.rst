@@ -333,3 +333,6 @@ The problem is initialized here:
 .. literalinclude:: hubbard.py
   :lines: 402-413
 
+
+
+Note: this script has not yet been tested for the case of matrix-valued Green's functions.
