@@ -32,6 +32,7 @@
 #include <fstream>
 #include <utility>
 #include <deque>
+#include <iomanip>    // setprecision
 #include <limits>     // max_digits10
 
 #include <boost/lexical_cast.hpp>
@@ -202,7 +203,7 @@ namespace nrgljubljana_interface {
         std::cerr << "Warning: failure running NRGLjubljana_interface script: " << s << std::endl;
     }
   }
-   
+
   // Write Gamma=-Im(Delta_w) to a file
   void solver_core::write_gamma() {
     for (int bl_idx : range(gf_struct.size())) {
@@ -220,7 +221,7 @@ namespace nrgljubljana_interface {
       }
     }
   }
-   
+
   void solver_core::solve(solve_params_t const &sp) {
     last_solve_params = sp;
     container_set::operator=(container_set{});  // Reset the results
@@ -327,7 +328,7 @@ namespace nrgljubljana_interface {
     if (mkdir(taskdir.c_str(), 0755) != 0) TRIQS_RUNTIME_ERROR << "failed to mkdir taskdir " << taskdir;
     call("./instantiate " + taskdir, verbose);
   }
-   
+
   // Solve the problem for a single value of the twist parameter z
   void solver_core::solve_one(const std::string &taskdir) {
     std::cout << "Solving taskdir=" << taskdir << " rank=" << world.rank() << std::endl;
@@ -378,9 +379,10 @@ namespace nrgljubljana_interface {
     check_model_params(sp);
     // Generate the parameter file
     std::ofstream F("param");
+    F << std::boolalpha; // important: we want to output true/false strings
+    F << std::setprecision(std::numeric_limits<double>::max_digits10); // number of decimal digits necessary to differentiate all values of this type
     F << "[extra]" << std::endl;
     for (const auto &i : sp.model_parameters) F << i.first << "=" << i.second << std::endl;
-    F << std::boolalpha; // important: we want to output true/false strings
     F << "[param]" << std::endl;
     F << "bandrescale=" << sp.bandrescale << std::endl; // !
     F << "model=" << cp.model << std::endl;
