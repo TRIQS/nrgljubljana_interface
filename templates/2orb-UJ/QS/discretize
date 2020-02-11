@@ -1,0 +1,16 @@
+#!/bin/sh
+mv param param.orig
+
+cp param.orig param
+echo dos=Gamma_imp_00.dat >>param
+adapt P
+adapt N
+mv FSOL.dat FSOL_imp_00.dat
+mv FSOLNEG.dat FSOLNEG_imp_00.dat
+
+cp param.orig param
+echo dos=Gamma_imp_11.dat >>param
+adapt P
+adapt N
+mv FSOL.dat FSOL_imp_11.dat
+mv FSOLNEG.dat FSOLNEG_imp_11.dat
