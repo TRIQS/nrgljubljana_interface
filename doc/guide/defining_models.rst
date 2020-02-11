@@ -5,12 +5,12 @@ Generating new templates for custom models
 
 Here we discuss how new models can be added to the template library.
 As an example, we here consider the case of two-orbital impurity model
-(model ``2orb_UJ``) that comes predefined in the library of default templates.
-The files are located in the directory ``templates/2orb_UJ/QS``.
+(model ``2orb-UJ``) that comes predefined in the library of default templates.
+The files are located in the directory ``templates/2orb-UJ/QS``.
 
-The model is defined in ``2orb_UJ.m``:
+The model is defined in ``2orb-UJ.m``:
 
-.. literalinclude:: 2orb_UJ.m
+.. literalinclude:: 2orb-UJ.m
 
 The first line declares that this is a two-channel problem with two impurity orbitals.
 The second line defines how we label the impurity orbitals. Here we choose consecutively
