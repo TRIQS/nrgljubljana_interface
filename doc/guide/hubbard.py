@@ -286,7 +286,7 @@ def fix_hyb_function(Delta, Delta_min):
         r = Delta[bl][w][n,n].real
         i = Delta[bl][w][n,n].imag
         Delta_fixed[bl][w][n,n] = r + 1j*(i if i<-Delta_min else -Delta_min)
-  # Possible improvement: re-adjust the real part using Kramers-Kronig so that causality is maintained
+  # Possible improvement: re-adjust the real part so that the Kramers-Kronig relation is maintained
   return Delta_fixed
 
 # Perform a DMFT step. Input is the hybridization function for solving the effective impurity model,

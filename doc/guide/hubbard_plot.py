@@ -1,14 +1,15 @@
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import math
 
 from pytriqs.gf import *
 from pytriqs.archive import *
 from nrgljubljana_interface import MeshReFreqPts
 
-def A_to_nparrays(A):
+def GF_to_nparrays(A):
     lx = np.array(list(A.mesh.values()))
-    ly = np.array(A.data[:,0,0].real)
+    ly = np.array(-1.0/math.pi*A.data[:,0,0].imag)
     return lx, ly
 
 with HDFArchive('solution.h5','r') as ar:
@@ -16,8 +17,8 @@ with HDFArchive('solution.h5','r') as ar:
     print("<n>=",ar['expv']['n_d'])
     print("<n^2>=",ar['expv']['n_d^2'])
 
-    # Spectral function (local lattice GF)
+    # Spectral function (of local lattice GF)
     A_w = ar['Gloc']['imp']
-    lx, ly = A_to_nparrays(A_w)
+    lx, ly = GF_to_nparrays(A_w)
     plt.plot(lx, ly)
     plt.show()

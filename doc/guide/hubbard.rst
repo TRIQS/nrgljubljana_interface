@@ -3,8 +3,8 @@
 DMFT for Hubbard and Hubbard-like models
 ========================================
 
-We now present a Python script for performing DMFT calculation with the NRG
-as the impurity solver. The script is fairly complete and suitable for production runs.
+We now present a Python script for performing DMFT calculations with the NRG
+as the impurity solver. The script is fairly complete and robust, and as such it is suitable for production runs.
 It supports a variety of models with different symmetry types (including cases
 with block structure and with matrix-valued Green's functions), controls
 the chemical potential to achieve the selected band occupancy, performs linear or Broyden mixing 
@@ -27,7 +27,12 @@ the difference between target and current band occupancy). This is followed by t
 the spectral function and by the expectation values of a range of local operators (the set depends on the
 model considered and on the symmetry type).
 
-If convergence is reached, the final results are stored in an HDF5 archive file called :file:`solution.h5`. 
+Note: NRG impurity solver produces big temporary files during the calculation. By default, these are
+stored in the working directory that is created in the current directory. To override this behavior,
+set the environment variable NRG_WORKDIR. A suitable choice is a local scratch hard drive or SSD,
+or a global scratch mount on a high-performance filesystem.
+
+When convergence is reached, the final results are stored in an HDF5 archive file called :file:`solution.h5`. 
 This file contains all quantities of interest. Let us plot the spectral function:
 
 .. plot:: guide/hubbard_plot.py
@@ -43,7 +48,7 @@ We make use of scipy interpolation and integration routines to obtain highly acc
 the real-frequency spectra, and we make use of the Broyden solver from ``scipy.optimize``.
 
 The model name is a full path to the model definition in the template library, except the symmetry part
-(e.g. "SIAM", "Holstein/Nph=10").
+(e.g. "SIAM", "Holstein/Nph=10", etc.).
 
 .. literalinclude:: hubbard.py
   :lines: 15
@@ -78,8 +83,8 @@ DMFT iteration corresponds to linear mixing with :math:`\alpha=1` which actually
 .. literalinclude:: hubbard.py
   :lines: 35-37
   
-For adjusting the chemical potential, it is useful to go through several DMFT self-consistency cycles to obtain
-an improved estimate. In practice order 10 cycles are quite sufficient in all cases.
+For adjusting the chemical potential, it is useful to go through several DMFT self-consistency cycles (using the
+same self-energy obtained in the last NRG run) to obtain an improved estimate. In practice order 10 cycles are quite sufficient in all cases.
 
 .. literalinclude:: hubbard.py
   :lines: 38
@@ -131,28 +136,32 @@ The key NRG solver parameters that control the discretization and the truncation
 .. literalinclude:: hubbard.py
   :lines: 70-71
 
-The default value of :math:`\Lambda=2` is an excellent choice for most cases, as long as the calculation remain
-feasible. We average over ``Nz=4`` interleaves discretization grids. This is suitable if the goal is
-reasonably good spectral resolution, but it needs to be increased for high-resolution calculations.
+The default value of the discretization parameter :math:`\Lambda=2` is an excellent choice for most cases, as long as the calculation remains
+feasible in reasonable time with the given computing resources; if not, one should increase :math:`\Lambda`.
+We average over ``Nz=4`` interleaves discretization grids; this is a good number for :math:`\Lambda=2`, but should be
+increased for coarses discretization to reduce the artifacts. Furthermore, it needs to be increased for high-resolution calculations
+where the broadening parameters are lower.
 The parameter ``Tmin`` controls the length of the Wilson chain and it has to be smaller than the physical temperature 
 :math:`T`. The truncation at rescaled energy 10 is sufficient to achieve good convergence of the spectral functions,
-while beyond 12 there are hardly any improvements.
+while beyond 12 there are hardly any improvements. ``keep`` (the maximum number of multiplets kept) should
+be some large number and it is basically constrained by the available memory.
 
 Model parameters are contained as a separate Python dictionary. We set it here:
 
 .. literalinclude:: hubbard.py
   :lines: 74-77
   
-We remove parameter which are not relevant (those set to ``None``). Furthermore, the interface checks if
-all required parameters for a given template are in fact defined.
+We remove parameters that are not relevant (those set to ``None``). Furthermore, the interface checks if
+all required parameters for a given template are in fact defined, to prevent user errors that are
+difficult to detect (e.g. typos).
 
-We provide a function for updating the chemical potential. This sets the global variable ``mu``, as well
-as sets the impurity level to :math:`\epsilon_d=-\mu`.
+We provide a function for updating the chemical potential. It sets the global variable ``mu``, as well
+as updates the impurity level to :math:`\epsilon_d=-\mu`.
 
 .. literalinclude:: hubbard.py
   :lines: 80-84
   
-If some details of the NRG calculation need to be tweak, this can be achieve by setting the appropriate
+If some details of the NRG calculation need to be tweaked, this can be achieve by setting the appropriate
 parameters in ``nrg_params``.
 
 .. literalinclude:: hubbard.py
@@ -166,14 +175,15 @@ generic case is handled by reading the DOS from a file and doing the Hilbert tra
   :lines: 92-103
   
 We wrap this in another function ``ht`` which ensures that in cases of causality violation (imaginary
-part of the self-energy being positive) things do no go terribly wrong. Causality violations in NRG
+part of the self-energy being positive) things do no go terribly wrong. Tiny causality violations in NRG
 commonly occur at very low temperatures close to the Fermi level, where :math:`\mathrm{Im}\Sigma` 
-overshoots zero.
+overshoots zero. This problem is well understood and, while annoying, it is usually not an issue, unless
+one is explicitly interested in the low-temperature asymptotics.
 
 .. literalinclude:: hubbard.py
   :lines: 106-107
   
-In addition, another issue in NRG calculation is that of artifacts arising from regions of very low DOS.
+In addition, another potential problem in NRG calculation is the artifacts arising from regions of very low DOS.
 We alleviate this problem by providing a minimal cutoff value ``Delta_min`` for the hybridisation function:
 
 .. literalinclude:: hubbard.py
@@ -191,7 +201,7 @@ frequencies outside the mesh range, the spectral function is assummed to be stri
 .. literalinclude:: hubbard.py
   :lines: 121-128
 
-This interpolation object is used to accurately compute the occupancy given hybridisation, self-energy and
+This interpolation object is then used e.g. to compute the occupancy given hybridisation, self-energy and
 chemical potential:
 
 .. literalinclude:: hubbard.py
@@ -199,7 +209,7 @@ chemical potential:
 
 And this, in turn, is used for occupancy control. The following function determines the optimal value of the
 chemical potential for given hybridisation and self-energy. It makes use of ``root_scalar``, which implements
-the secand method with initial values shifted by 0.1. This seems to be robust and works quite well in practice.
+the secant method with initial values shifted by 0.1. This seems to be robust and works quite well in practice.
 
 .. literalinclude:: hubbard.py
   :lines: 140-142
@@ -230,13 +240,13 @@ mesh window) of the difference squared. We ignore possible warnings about loss o
   :lines: 178-184
 
 We now define some functions for saving Green's function object to tabulated ASCII files. The filename is just
-the suffix. To this we append the block name and the suffix ``dat``.
+the prefix. To this we append the block name and the suffix ``dat``.
 
 .. literalinclude:: hubbard.py
   :lines: 186-208
   
-In addition, the full set of results is stores as a HDF5 file. We store the relevant objects from the solver
-object, as well as some additional quantities (self-energy improved Green's function, local lattice Green's function,
+In addition, the full set of results is stores as an HDF5 file. We store the relevant items from the solver
+object, as well as some additional quantities (self-energy-improved impurity Green's function, local lattice Green's function,
 chemical potential).
 
 .. literalinclude:: hubbard.py
@@ -310,10 +320,10 @@ There are two types of driving routines for the full DMFT iteration. The first i
   :lines: 350-355
   
 The second one is based on Broyden mixing. The idea is that the DMFT iteration can be thought of as a
-procedure for finding the fixed point of the mutli-dimensional function :math:`F(\Delta) = \Delta_\mathrm{out}  - \Delta_\mathrm{in}`,
+procedure for finding the fixed point of the mutli-dimensional function :math:`F(\Delta_\mathrm{in}) = \Delta_\mathrm{out}[\Delta_\mathrm{in}]  - \Delta_\mathrm{in}`,
 where :math:`\Delta_\mathrm{in}` is the input while :math:`\Delta_\mathrm{out}` the output of one DMFT step.
-For ths prupose we make use of optimize.broyden1 from scipy, but in order to do so, we
-need to wrap/unwrap the Green's function objects to/from numpy arrays, which adds a degree of complexity.
+For ths purpose we make use of ``optimize.broyden1`` from scipy, but in order to do so, we
+need to wrap/unwrap the Green's function objects to/from numpy arrays, which adds a degree of complexity:
 
 .. literalinclude:: hubbard.py
   :lines: 357-383
@@ -328,11 +338,12 @@ The problem is initialized here:
 .. literalinclude:: hubbard.py
   :lines: 392-396
 
-.. and the solver is started here:
+And the solver is started here:
 
 .. literalinclude:: hubbard.py
   :lines: 402-413
 
+This completes the exposition. Have fun running DMFT(NRG) calculations!
 
 
 Note: this script has not yet been tested for the case of matrix-valued Green's functions.
