@@ -31,14 +31,12 @@ Parameters
 Expectation values
 ------------------
 
-- :math:`\langle n_1 \rangle`, ``n_d``, orbital 1 impurity occupancy
-- :math:`\langle n_1^2 \rangle`, ``n_d^2``, orbital 1 impurity occupancy squared
-- :math:`\langle n_2 \rangle`, ``n_a``, orbital 2 impurity occupancy
-- :math:`\langle n_2^2 \rangle`, ``n_a^2``, orbital 2 impurity occupancy squared
-- :math:`\langle n_1 n_2 \rangle`, ``n_an_d``, charge correlation
-- :math:`\langle \mathbf{S}_1 \cdot \mathbf{S}_2 \rangle`, ``SaSd``, spin correlation
-
-TODO: the index labels ``d`` and ``a`` are historical. To be fixed.
+- :math:`\langle n_1 \rangle`, ``n_d1``, orbital 1 impurity occupancy
+- :math:`\langle n_1^2 \rangle`, ``n_d1^2``, orbital 1 impurity occupancy squared
+- :math:`\langle n_2 \rangle`, ``n_d2``, orbital 2 impurity occupancy
+- :math:`\langle n_2^2 \rangle`, ``n_d2^2``, orbital 2 impurity occupancy squared
+- :math:`\langle n_1 n_2 \rangle`, ``n_d1n_d2``, charge correlation
+- :math:`\langle \mathbf{S}_1 \cdot \mathbf{S}_2 \rangle`, ``S_d1S_d2``, spin correlation
 
 Structure of Green's functions
 ------------------------------
