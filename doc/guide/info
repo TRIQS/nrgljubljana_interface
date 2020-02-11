@@ -1,0 +1,8 @@
+ops:n_d1 n_d1^2 n_d2 n_d2^2 S_d1S_d2 n_d1n_d2 A_d1 A_d2 self_d1 self_d2 sigma_d1 sigma_d2
+specs:n_d1-n_d1 n_d1-n_d2 n_d2-n_d1 n_d2-n_d2
+specd:A_d1-A_d1 A_d2-A_d2 self_d1-A_d1 self_d2-A_d2
+spect:sigma_d1-sigma_d1 sigma_d1-sigma_d2 sigma_d2-sigma_d1 sigma_d2-sigma_d2
+specq:
+specot:
+params:U1 U2 eps1 eps2 U12 J12
+polarized:
