@@ -44,7 +44,10 @@ The template files are then obtained by running ``nrginit``. This will generate
 ``data.in``, ``ham_*`` and ``op.*`` template files. The log file with some details about
 the generation process is saved as ``mmalog``.
 
-The main template ``data.in`` is lengthy and not listed here (:download:`see it here <guide/data.in>`).
+The main template ``data.in`` is lengthy and we show only a small chunk:
+
+.. literalinclude:: data.in_excerpt
+
 The ``ham_*`` contain the symbolic expressions for the Hamiltonian matrices in various invariant subspaces.
 For instance, in the half-filled :math:`Q=0` spin triplet :math:`(2S+1)=3` subspace,
 we have ``ham_0.3``:

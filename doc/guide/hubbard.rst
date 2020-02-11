@@ -54,7 +54,7 @@ The model name is a full path to the model definition in the template library, e
   :lines: 15
 
 The code comes with a built-in support for the Bethe lattice (with half-bandwidth set by the parameter ``Bethe_unit``),
-or one can use tabulated DOS (example :download:`script <dos.py>` for generating the :download:`DOS <dos.dat>` file).
+or one can use tabulated DOS (example :download:`script <dos.py>` for generating the DOS file).
 
 .. literalinclude:: hubbard.py
   :lines: 16-18
