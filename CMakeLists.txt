@@ -95,6 +95,33 @@ target_compile_options(if_project_warnings
 # Template library
 add_subdirectory(templates)
 
+# ###
+# MPI
+
+message(STATUS "-------- MPI detection -------------")
+unset(MPIEXEC_EXECUTABLE CACHE)
+find_package(MPI REQUIRED)
+
+# Backward compatibility for older FindMPI.cmake
+if(NOT MPIEXEC_EXECUTABLE)
+  set(MPIEXEC_EXECUTABLE ${MPIEXEC} CACHE FILENAME "MPI Executable")
+endif()
+
+# Compatibility to Open-MPI 3.0.0: check whether MPI executable has option --oversubscribe and add it
+execute_process(COMMAND ${MPIEXEC_EXECUTABLE} --oversubscribe ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS} ls ${MPIEXEC_POSTFLAGS} RESULT_VARIABLE HAS_NO_OVERSUBSCRIBE OUTPUT_QUIET ERROR_QUIET)
+if(NOT HAS_NO_OVERSUBSCRIBE)
+  list(APPEND MPIEXEC_PREFLAGS --oversubscribe)
+  set(MPIEXEC_PREFLAGS ${MPIEXEC_PREFLAGS} CACHE STRING "These flags will be directly before the executable that is being run by mpiexec." FORCE)
+endif()
+
+message(STATUS "MPI_FOUND: ${MPI_FOUND} VERSION: ${MPI_VERSION}")
+message(STATUS "MPI_CXX_COMPILER: ${MPI_CXX_COMPILER}")
+message(STATUS "MPIEXEC: ${MPIEXEC}")
+message(STATUS "MPIEXEC_EXECUTABLE: ${MPIEXEC_EXECUTABLE}")
+message(STATUS "MPIEXEC_NUMPROC_FLAG: ${MPIEXEC_NUMPROC_FLAG}")
+message(STATUS "MPIEXEC_PREFLAGS: ${MPIEXEC_PREFLAGS}")
+message(STATUS "MPIEXEC_POSTFLAGS: ${MPIEXEC_POSTFLAGS}")
+
 # #############
 # Build Project
 

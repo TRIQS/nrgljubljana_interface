@@ -19,3 +19,23 @@ foreach(test ${all_tests})
     ${SANITIZER_RT_PRELOAD}
   )
 endforeach()
+
+# MPI testing
+macro(add_mpi_test TestName NumProc)
+  get_filename_component(test_name ${TestName} NAME_WE)
+  get_filename_component(test_dir ${TestName} DIRECTORY)
+  add_test(NAME ${TestName}_np${NumProc}
+           COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${NumProc} ${MPIEXEC_PREFLAGS} ${TRIQS_PYTHON_INTERPRETER} ${CMAKE_CURRENT_SOURCE_DIR}/${test_dir}/${test_name}.py 
+           ${MPIEXEC_POSTFLAGS} WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${test_dir})
+  set_property(TEST ${TestName}_np${NumProc} APPEND PROPERTY ENVIRONMENT
+      PYTHONPATH=${CMAKE_BINARY_DIR}/python:$ENV{PYTHONPATH}
+      PATH=${CMAKE_BINARY_DIR}/nrgljubljana/tools:$ENV{PATH}
+      NRGIF_TEMPLATE_DIR=${PROJECT_SOURCE_DIR}/templates
+      ${SANITIZER_RT_PRELOAD}
+  )
+endmacro()
+
+add_mpi_test(MPI_SIAM_QS 1)
+add_mpi_test(MPI_SIAM_QS 2)
+add_mpi_test(MPI_SIAM_QS 3)
+add_mpi_test(MPI_SIAM_QS 4)
