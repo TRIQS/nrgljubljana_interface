@@ -3,8 +3,8 @@
 Documentation
 =============
 
-User guide
-----------
+Examples
+--------
 
 .. toctree::
    :maxdepth: 1

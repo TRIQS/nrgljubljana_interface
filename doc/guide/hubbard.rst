@@ -1,7 +1,7 @@
 .. _hubbard:
 
-Example: DMFT for Hubbard and Hubbard-like models
-=================================================
+DMFT for Hubbard and Hubbard-like models
+========================================
 
 We now present a Python script for performing DMFT calculation with the NRG
 as the impurity solver. The script is fairly complete and suitable for production runs.

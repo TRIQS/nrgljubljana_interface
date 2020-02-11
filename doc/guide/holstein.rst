@@ -1,7 +1,7 @@
 .. _holstein:
 
-Example: the Anderson-Holstein impurity model
-=============================================
+Anderson-Holstein impurity model
+================================
 
 Here we consider an impurity model with electron-phonon coupling, to wit the Anderson-Holstein impurity model. 
 The interacting part of the local Hamiltonian of this problem is:
