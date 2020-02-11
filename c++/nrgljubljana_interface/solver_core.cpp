@@ -32,7 +32,7 @@
 #include <fstream>
 #include <utility>
 #include <deque>
-#include <limit>      // max_digits10
+#include <limits>     // max_digits10
 
 #include <boost/lexical_cast.hpp>
 #include <nrg-lib.h>
