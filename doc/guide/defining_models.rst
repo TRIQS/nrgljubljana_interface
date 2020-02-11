@@ -3,8 +3,8 @@
 Generating new templates for custom models
 ==========================================
 
-Here we discuss how new models can be added to the template library.
-As an example, we here consider the case of two-orbital impurity model
+Here we discuss how to add new models to the template library.
+As an example, we consider the case of two-orbital impurity model
 (model ``2orb-UJ``) that comes predefined in the library of default templates.
 The files are located in the directory ``templates/2orb-UJ/QS``.
 
@@ -15,7 +15,7 @@ The model is defined in ``2orb-UJ.m``:
 The first line declares that this is a two-channel problem with two impurity orbitals.
 The second line defines how we label the impurity orbitals. Here we choose consecutively
 numbered ``d[1]`` and ``d[2]``. The main part of the file then defines various parts
-of the Hamiltonian, making use of `sneg http://nrgljubljana.ijs.si/sneg` function
+of the Hamiltonian, making use of `sneg <http://nrgljubljana.ijs.si/sneg>` function
 calls such as ``number``, ``Hubbard``, ``spinspin``, etc. Finally, in the last two lines
 we define the auxiliary operators which are used in the "self-energy trick" to obtain
 a high-quality estimate for the self-energy. They are obtained by taking the commutator
@@ -33,9 +33,9 @@ The last line is mandatory for generating NRGLjubljana_interface template; it in
 the code to generate Hamiltonians which are not scaled in terms of the initial energy
 scale of the problem, as is customarily done in NRG calculations.
 
-The operators of interest are defined in ``customoperators.m``:
+The operators of interest are defined in ``modeloperators.m``:
 
-.. literalinclude:: customoperators.m
+.. literalinclude:: modeloperators.m
 
 Here we again make use of sneg functions, as well as of high-level functions defined
 in ``initial.m`` which is part of the ``nrginit`` Mathematica code.
@@ -44,7 +44,7 @@ The template files are then obtained by running ``nrginit``. This will generate
 ``data.in``, ``ham_*`` and ``op.*`` template files. The log file with some details about
 the generation process is saved as ``mmalog``.
 
-The main template ``data.in`` is lengthy and not listed here (:download:`see it here <data.in>`).
+The main template ``data.in`` is lengthy and not listed here (:download:`see it here <guide/data.in>`).
 The ``ham_*`` contain the symbolic expressions for the Hamiltonian matrices in various invariant subspaces.
 For instance, in the half-filled :math:`Q=0` spin triplet :math:`(2S+1)=3` subspace,
 we have ``ham_0.3``:
@@ -76,7 +76,7 @@ The second performs the discretization:
 
 .. literalinclude:: discretize
 
-Then comes the most complex one which instantiate the input file for NRG calculation, numerical-valued ``data``,
+Then comes the most complex one which instantiates the input file for NRG calculation, numerical-valued ``data``,
 from the symbolic-expression template ``data.in``:
 
 .. literalinclude:: instantiate
