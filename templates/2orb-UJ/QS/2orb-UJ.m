@@ -1,5 +1,5 @@
 def2ch[nrimp=2];
-impuritybasis = {d[2],d[1]};
+impuritybasis = {d[1],d[2]};
 
 Heps1 = eps1 number[d[1]];
 Hint1 = U1 hubbard[d[1]];
