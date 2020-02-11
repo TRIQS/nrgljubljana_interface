@@ -1,8 +1,0 @@
-ops:n_d n_d^2 n_a n_a^2 SaSd n_an_d A_d A_a self_d self_a sigma_d sigma_a
-specs:n_d-n_d n_a-n_a n_a-n_d n_d-n_a
-specd:A_d-A_d A_a-A_a self_d-A_d self_a-A_a
-spect:sigma_d-sigma_d sigma_a-sigma_a sigma_a-sigma_d sigma_d-sigma_a
-specq:
-specot:
-params:U1 U2 eps1 eps2 U12 J12
-polarized:

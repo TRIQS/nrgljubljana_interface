@@ -1,3 +1,0 @@
-#!/bin/bash
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-cp $DIR/data.in $DIR/ham* $DIR/op.* $DIR/discretize $DIR/instantiate $DIR/wilson $DIR/process $DIR/*_struct $DIR/info .
