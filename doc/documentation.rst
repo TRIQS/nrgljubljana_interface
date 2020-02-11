@@ -23,6 +23,7 @@ Model templates
    templates/SIAM_QSZ
    templates/Holstein_QS
    templates/2orb-UJ_QS
+   guide/defining_models
 
 Miscelaneous
 ------------

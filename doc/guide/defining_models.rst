@@ -1,7 +1,7 @@
 .. _defining_models:
 
-Generating template files for new models
-========================================
+Generating new templates for custom models
+==========================================
 
 Here we discuss how new models can be added to the template library.
 As an example, we here consider the case of two-orbital impurity model
