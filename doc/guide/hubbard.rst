@@ -126,7 +126,7 @@ We usually want to suppress the detailed output from the NRG by setting ``verbos
 what this does is to redirect the output to a file named ``log`` in the temporary directory, so that 
 the calculation can still be monitored.)
 
-We extract the mesh and the structure of Green's function objects for creating new objects where needed:
+We define some useful functions for working with BlockGf objects:
 
 .. literalinclude:: hubbard.py
   :lines: 65-68
