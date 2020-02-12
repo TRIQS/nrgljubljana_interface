@@ -12,10 +12,12 @@ The model is defined in ``2orb-UJ.m``:
 
 .. literalinclude:: 2orb-UJ.m
 
+.. _sneg: http://nrgljubljana.ijs.si/sneg
+
 The first line declares that this is a two-channel problem with two impurity orbitals.
 The second line defines how we label the impurity orbitals. Here we choose consecutively
 numbered ``d[1]`` and ``d[2]``. The main part of the file then defines various parts
-of the Hamiltonian, making use of `sneg <http://nrgljubljana.ijs.si/sneg>` function
+of the Hamiltonian, making use of sneg_ function
 calls such as ``number``, ``Hubbard``, ``spinspin``, etc. Finally, in the last two lines
 we define the auxiliary operators which are used in the "self-energy trick" to obtain
 a high-quality estimate for the self-energy. They are obtained by taking the commutator

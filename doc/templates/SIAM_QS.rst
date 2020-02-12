@@ -13,7 +13,7 @@ Hamiltonian
 
   H_\mathrm{imp} = \epsilon_1 n + U_1 n_\uparrow n_\downarrow
 
-where :math:`n_\sigma = d^\dagger_{\sigma} d_{\sigma}` and :math:`n=\sum_\sigma n_\sigma` with `\sigma=\uparrow,\downarrow`.
+where :math:`n_\sigma = d^\dagger_{\sigma} d_{\sigma}` and :math:`n=\sum_\sigma n_\sigma` with :math:`\sigma=\uparrow,\downarrow`.
 
 Parameters
 ----------
