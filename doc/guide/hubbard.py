@@ -49,7 +49,7 @@ checkpoint_filename = "checkpoint.h5"
 observables = ["n_d", "n_d^2"]
 if B is not None:
   observables.extend(["SZd"])
-if model.find("Holstein") != -1:
+if "Holstein" in model:
   observables.extend(["nph", "displ", "displ^2"])
 
 # Run-time global variables
@@ -62,10 +62,10 @@ symtype = ("QS" if B is None else "QSZ")
 S = Solver(model=model, symtype=symtype, mesh_max=mesh_max, mesh_min=mesh_min, mesh_ratio=mesh_ratio)
 S.set_verbosity(verbose_nrg)
 
-mesh = S.G_w.mesh                                             # Mesh
-gf_struct = [[x,S.G_w[x].indices[0]] for x in S.G_w.indices]  # GF structure
-newG = lambda : BlockGf(mesh=mesh, gf_struct=gf_struct)       # Creates a BlockGf object of appropriate structure
-identity = lambda bl : np.identity(len(S.G_w[bl].indices[0])) # Returns the identity matrix in block 'bl'
+newG = lambda : S.G_w.copy()                             # Creates a BlockGf object of appropriate structure
+nr_blocks = lambda bgf : len([bl for bl in bgf.indices]) # Returns the number of blocks in a BlockGf object
+block_size = lambda bl : len(S.G_w[bl].indices[0])       # Matrix size of Green's functions in block 'bl'
+identity = lambda bl : np.identity(block_size(bl))       # Returns the identity matrix in block 'bl'
 
 # Solve Parameters
 sp = { "T": T, "Lambda": 2.0, "Nz": 4, "Tmin": 1e-5, "keep": 10000, "keepenergy": 10.0 }
@@ -80,20 +80,20 @@ sp["model_parameters"] = mp
 def set_mu(new_mu):
     global mu
     mu = new_mu
-    mp["eps1"] = -mu
-    sp["model_parameters"] = mp
+    sp["model_parameters"]["eps1"] = -mu
+
 
 # Low-level NRG Parameters (optional tweaks)
 nrgp = {}
 #nrgp["bandrescale"] = 5.0
 S.set_nrg_params(**nrgp)
 
+
 # Initialize a function ht0 for calculating the Hilbert transform of the DOS
 if (dos == "Bethe"):
-  z_scaled = lambda z: z/Bethe_unit
   ht1 = lambda z: 2*(z-1j*np.sign(z.imag)*np.sqrt(1-z**2)) # Analytical expression for Hilbert transform of Bethe lattice DOS
   global ht0
-  ht0 = lambda z: ht1(z_scaled(z))
+  ht0 = lambda z: ht1(z/Bethe_unit)
 else:
   table = np.loadtxt(dos)
   global dosA
@@ -147,8 +147,8 @@ def self_consistency(Sigma):
   Gloc = newG()
   for bl in Gloc.indices:
     for w in Gloc.mesh:
-      for i in range(len(Gloc[bl].indices[0])):
-        for j in range(len(Gloc[bl].indices[1])):
+      for i in range(block_size(bl)):
+        for j in range(block_size(bl)): # assuming square matrix
           if i == j:
             Gloc[bl][w][i,i] = ht(w + mu - Sigma[bl][w][i,i]) # Hilbert-transform
           else:
@@ -210,25 +210,25 @@ def save_BlockA(fn, bgf):
 # Store the complete set of results
 def store_result(fn, S):
   with HDFArchive(fn, 'w') as arch:
-    # Variables from Solver class
-    arch["A_w"] = S.A_w
-    arch["G_w"] = S.G_w
-    arch["F_w"] = S.F_w
-    arch["Sigma_w"] = S.Sigma_w
-    arch["Delta_w"] = S.Delta_w
-    arch["expv"] = S.expv
+    arch["S"] = S
     # Global variables
     arch["Gself"] = Gself
     arch["Gloc"] = Gloc
     arch["mu"] = mu
 
-# Load the minimal set of stored results for restarting the calculation.
+
+    
+    
+    
+    
+
+# Load the minimal set of stored results for restarting the calculation
 def load_Sigma_mu(fn):
   with HDFArchive(fn, 'r') as arch:
-    Sigma = newG()
-    Sigma << arch["Sigma_w"]
+    Sigma = arch["S"].Sigma_w
     mu = arch["mu"]
   return Sigma, mu
+
 
 # Initial Sigma and mu from a file
 def restart_calculation(fn):
@@ -282,7 +282,7 @@ def fix_hyb_function(Delta, Delta_min):
   Delta_fixed = Delta.copy()
   for bl in Delta.indices:
     for w in Delta.mesh:
-      for n in range(len(Delta[bl].indices[0])): # only diagonal parts
+      for n in range(block_size(bl)): # only diagonal parts
         r = Delta[bl][w][n,n].real
         i = Delta[bl][w][n,n].imag
         Delta_fixed[bl][w][n,n] = r + 1j*(i if i<-Delta_min else -Delta_min)
@@ -369,8 +369,8 @@ def nparray_to_gf(a, gf):
 
 # Extract blocks from linear numpy array to a block GF
 def nparray_to_bgf(a):
-  split = np.split(a, len(gf_struct)) # Here we assume all blocks are equally large
   G = newG()
+  split = np.split(a, nr_blocks(G)) # Here we assume all blocks are equally large
   for i, bl in enumerate(G.indices):
     nparray_to_gf(split[i], G[bl])
   return G

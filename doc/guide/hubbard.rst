@@ -159,7 +159,7 @@ We provide a function for updating the chemical potential. It sets the global va
 as updates the impurity level to :math:`\epsilon_d=-\mu`.
 
 .. literalinclude:: hubbard.py
-  :lines: 80-84
+  :lines: 80-83
   
 If some details of the NRG calculation need to be tweaked, this can be achieve by setting the appropriate
 parameters in ``nrg_params``.
@@ -172,7 +172,7 @@ a given complex value :math:`z`. The analytical expression for the Bethe lattice
 generic case is handled by reading the DOS from a file and doing the Hilbert transform numerically.
 
 .. literalinclude:: hubbard.py
-  :lines: 92-103
+  :lines: 93-103
   
 We wrap this in another function ``ht`` which ensures that in cases of causality violation (imaginary
 part of the self-energy being positive) things do no go terribly wrong. Tiny causality violations in NRG
@@ -250,13 +250,13 @@ object, as well as some additional quantities (self-energy-improved impurity Gre
 chemical potential).
 
 .. literalinclude:: hubbard.py
-  :lines: 211-223
+  :lines: 211-217
   
 When restarting from stored results, we only need to read in the self-energy and the chemical potential, since this
 is sufficient to initialize the DMFT calculation.
 
 .. literalinclude:: hubbard.py
-  :lines: 226-231
+  :lines: 226-230
 
 .. literalinclude:: hubbard.py
   :lines: 234-236
