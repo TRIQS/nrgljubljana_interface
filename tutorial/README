@@ -1,0 +1,8 @@
+Tutorials
+=========
+
+1_AIM: Calculation of the spectral function for the Anderson impurity model.
+Two versions are provided: ipython notebook & simple Python script.
+
+2_DMFT: DMFT solver module and a Hubbard-model example.
+
