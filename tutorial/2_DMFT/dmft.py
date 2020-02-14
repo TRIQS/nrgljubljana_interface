@@ -16,19 +16,17 @@ verbose = True # show info messages
 
 newG = lambda S : S.G_w.copy()                           # Creates a BlockGf object of appropriate structure for the Solver
 nr_blocks = lambda bgf : len([bl for bl in bgf.indices]) # Returns the number of blocks in a BlockGf object
-block_size = lambda G, bl : len(G[bl].indices[0])        # Matrix size of Green's functions in block 'bl'
-identity = lambda G, bl : np.identity(block_size(G,bl))  # Returns the identity matrix in block 'bl'
+block_size = lambda G : len(G.indices[0])                # Matrix size of Green's function G
+index_range = lambda G : range(block_size(G))            # Iterator over matrix indeces
+identity = lambda G : np.identity(block_size(G))         # Returns the identity matrix of appropriate dimension for Green's function G
 
 # Calculate a GF from hybridisation and self-energy
 def calc_G(Delta, Sigma, mu):
   G = Delta.copy() # copy structure
   for bl in G.indices:
     for w in G.mesh:
-      G[bl][w] = np.linalg.inv( (w+mu)*identity(G, bl) - Delta[bl][w] - Sigma[bl][w] ) # !!!
+      G[bl][w] = np.linalg.inv( (w+mu)*identity(G[bl]) - Delta[bl][w] - Sigma[bl][w] ) # !!!
   return G
-
-# Index range of a GF
-index_range = lambda G : range(len(G.indices[0]))
 
 # Return an interpolation-object representation of a spectral function for GF G
 def interp_A(G, normalize_to_one = True):
@@ -56,8 +54,8 @@ def self_consistency(Sigma, mu, ht):
   Gloc = Sigma.copy() # copy structure
   for bl in Gloc.indices:
     for w in Gloc.mesh:
-      for i in range(block_size(Gloc, bl)):
-        for j in range(block_size(Gloc, bl)): # assuming square matrix
+      for i in range(block_size(Gloc[bl])):
+        for j in range(block_size(Gloc[bl])): # assuming square matrix
           if i == j:
             Gloc[bl][w][i,i] = ht(w + mu - Sigma[bl][w][i,i]) # Hilbert-transform
           else:
@@ -67,7 +65,7 @@ def self_consistency(Sigma, mu, ht):
   Delta = Sigma.copy() # copy structure
   for bl in Delta.indices:
     for w in Delta.mesh:
-      Delta[bl][w] = (w+mu)*identity(Delta, bl) - Sigma[bl][w] - Glocinv[bl][w] # !!!
+      Delta[bl][w] = (w+mu)*identity(Delta[bl]) - Sigma[bl][w] - Glocinv[bl][w] # !!!
   return Gloc, Delta
 
 # Update mu towards reaching the occupancy goal
@@ -162,7 +160,7 @@ def fix_hyb_function(Delta, Delta_min):
   Delta_fixed = Delta.copy()
   for bl in Delta.indices:
     for w in Delta.mesh:
-      for n in range(block_size(Delta, bl)): # only diagonal parts
+      for n in range(block_size(Delta[bl])): # only diagonal parts
         r = Delta[bl][w][n,n].real
         i = Delta[bl][w][n,n].imag
         Delta_fixed[bl][w][n,n] = r + 1j*(i if i<-Delta_min else -Delta_min)
