@@ -2,6 +2,7 @@
 # RZ, Feb 2020
 
 import dmft
+from pytriqs.utility import mpi
 
 param = {           # Physical parameters:
   "U": 2.0,         #  Hubbard electron-electron repulsion
@@ -37,7 +38,7 @@ sol_param = {        # Impurity solver parameters:
   "Lambda": 2.0,     #  logarithmic discretization parameter (2.0 is a good choice)
   "Nz": 4,           #  number of interleaved discretization meshes (4 is a good choice for Lambda=2.0)
   "Tmin": 1e-5,      #  lowest temperature/energy scale considered (controls the length of the Wilson chain, choose Tmin<T)
-  "keep": 400,       #  maximum number of states kept in NRG truncation (ensure this number is high enough!)
+  "keep": 10000,     #  maximum number of states kept in NRG truncation (ensure this number is high enough!)
   "keepenergy": 10.0 #  maximum energy of states kept in NRG truncation (10.0 is a good choice)
 }
 
@@ -49,11 +50,11 @@ try:
 
 except dmft.Converged as c:
   if mpi.is_master_node(): 
-    print("Converged: %s" % c.message)
-    save_BlockA("A", solver.Gloc) # converged spectral function for quick plotting
+    print("\nConverged:\n%s" % c.message)
+    dmft.save_BlockA("A", solver.Gloc) # converged spectral function for quick plotting
 
 except dmft.FailedToConverge as c:
   if mpi.is_master_node():
-    print("Failed to converge: %s" % c.message) # ... but restart is possible from the checkpoint file
+    print("\nFailed to converge:\n%s" % c.message) # ... but restart is possible from the checkpoint file
 
 mpi.barrier() # Synchronized exit

@@ -12,8 +12,7 @@ import numpy as np
 from scipy import interpolate, integrate, special, optimize
 from collections import OrderedDict
 
-verbose = True                             # show info messages
-verbose = verbose and mpi.is_master_node() # output is only produced by the master node
+verbose = True # show info messages
 
 newG = lambda S : S.G_w.copy()                           # Creates a BlockGf object of appropriate structure for the Solver
 nr_blocks = lambda bgf : len([bl for bl in bgf.indices]) # Returns the number of blocks in a BlockGf object
@@ -85,7 +84,7 @@ def adjust_mu(Delta_in, Sigma, occupancy_goal, T, old_mu, ht, max_mu_adjust = 10
     mu = update_mu(Delta, Sigma, occupancy_goal, T, mu)
     Gloc, Delta = self_consistency(Sigma, mu, ht)
   new_mu = mu
-  if verbose: print("Adjusted mu from %f to %f" % (old_mu,new_mu))
+  if verbose and mpi.is_master_node(): print("Adjusted mu from %.10f to %.10f" % (old_mu,new_mu))
   return Gloc, Delta, new_mu
 
 # Difference between two Green's functions evaluated as the integrated squared difference between the
@@ -132,7 +131,7 @@ def load_Sigma_mu(fn):
 
 # Initial Sigma and mu from a file
 def restart_calculation(fn):
-  if verbose: print("Starting from stored results in file %s" % fn)
+  if verbose and mpi.is_master_node(): print("Starting from stored results in file %s" % fn)
   return load_Sigma_mu(fn) # Load data from an HDF5 archive
 
 # Exception to raise when convergence is reached
@@ -269,7 +268,7 @@ class DMFT_solver(object):
   # output is a new hybridization function resulting from the application of the DMFT self-consistency equation.
   def dmft_step(self, Delta_in):
     self.itern += 1
-    if verbose:
+    if verbose and mpi.is_master_node():
       print("\nIteration %i min_iter=%i max_iter=%i" % (self.itern, self.dmft_param["min_iter"], self.dmft_param["max_iter"]))
     Delta_in_fixed = fix_hyb_function(Delta_in, self.dmft_param["Delta_min"])
     self.S.Delta_w << Delta_in_fixed
@@ -294,9 +293,9 @@ class DMFT_solver(object):
     if mpi.is_master_node():
       if self.itern == 1: print(header_string, file = self.stats_file)
       print(stats_string, file = self.stats_file)
-    if verbose: 
-      print("stats: %s" % header_string)
-      print("stats: %s" % stats_string)
+      if verbose: 
+        print(header_string)
+        print(stats_string)
 
     if self.dmft_param["store_steps"] and mpi.is_master_node():
       os.mkdir(str(self.itern)) # one subdirectory per iteration
@@ -317,9 +316,9 @@ class DMFT_solver(object):
       if mpi.is_master_node():
         self.store_result(self.solution_filename) # full converged results as an HDF5 file
         os.remove(self.checkpoint_filename)       # checkpoint file is no longer needed
-      raise Converged(stats_string)
+      raise Converged("%s\n%s" % (header_string, stats_string))
     if (self.itern == self.dmft_param["max_iter"]):
-      raise FailedToConverge(stats_string)
+      raise FailedToConverge("%s\n%s" % (header_string, stats_string))
 
     if  self.dmft_param["occup_method"] == "adjust":
       self.Gloc, self.Delta, new_mu = adjust_mu(self.Delta, self.S.Sigma_w, self.occupancy_goal, self.T, self.mu, self.ht) # here we update mu to get closer to target occupancy
@@ -340,7 +339,7 @@ class DMFT_solver(object):
     F = lambda Delta : self.dmft_step(Delta)-Delta
     npF = lambda x : bgf_to_nparray(F(nparray_to_bgf(x, self.S)))
     xin = bgf_to_nparray(self.Delta)
-    optimize.broyden1(npF, xin, alpha=alpha, reduction_method="svd", max_rank=10, verbose=verbose, f_tol=1e-99) # Loop forever (small f_tol!)
+    optimize.broyden1(npF, xin, alpha=alpha, reduction_method="svd", max_rank=10, verbose=verbose and mpi.is_master_node(), f_tol=1e-99) # Loop forever (small f_tol!)
 
   def solve(self):
     if (self.dmft_param["mixing_method"] == "linear"):
@@ -363,11 +362,11 @@ class Hubbard_solver(DMFT_solver):
 
   def set_mu(self, mu):
     self.mu = mu
-    self.sp["model_parameters"]["eps1"] = -mu
+    self.sp["model_parameters"]["eps1"] = -mu # important: update the impurity level!
       
   # Initial Sigma and mu for the Hubbard model when starting from scratch
   def new_calculation(self):
-    if verbose: print("Starting from scratch")
+    if verbose and mpi.is_master_node(): print("Starting from scratch")
     Sigma = newG(self.S)
     for bl in Sigma.indices:
       for w in Sigma.mesh:
