@@ -193,7 +193,7 @@ namespace nrgljubljana_interface {
     for (auto &i : expv) { i.second /= Nz; } // calculate the average over discretization meshes
   }
 
-  inline void call(std::string command, bool verbose = true, bool exit_on_failure = true) {
+  inline void call(const std::string &command, bool verbose = true, bool exit_on_failure = true) {
     std::string s = command + (verbose ? "" : " >/dev/null");
     std::cout << "running " << s << std::endl;
     if (system(s.c_str()) != 0) {
