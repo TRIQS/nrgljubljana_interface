@@ -22,16 +22,48 @@ namespace triqs::gfs {
   // Wrap around GSL integration routines
   class integrator {
   private:
-    size_t limit;                    // size of workspace
-    bool exit_on_error;              // if true, integration error will trigger a hard error
-    gsl_integration_workspace *work; // work space
-    gsl_function F;                  // GSL function struct for evaluation of the integrand
+    size_t limit;                              // size of workspace
+    bool exit_on_error;                        // if true, integration error will trigger a hard error
+    gsl_integration_workspace *work = nullptr; // work space
+    gsl_function F;                            // GSL function struct for evaluation of the integrand
   public:
-    integrator(size_t _limit = 1000, bool _exit_on_error = false) : limit(_limit), exit_on_error(_exit_on_error) {
-      work = gsl_integration_workspace_alloc(limit);
+    void initF() noexcept {
       F.function = &unwrap; // the actual function (lambda expression) will be provided as an argument to operator()
+      F.params = nullptr;
     }
-    ~integrator() { gsl_integration_workspace_free(work); }
+    integrator(size_t _limit = 1000, bool _exit_on_error = false) : limit{_limit}, exit_on_error{_exit_on_error} {
+      work = gsl_integration_workspace_alloc(limit);
+      initF();
+    }
+    integrator(const integrator &X) : limit{X.limit}, exit_on_error{X.exit_on_error} {
+      // keep the same workspace
+      initF();
+    }
+    integrator(integrator &&X) : limit{X.limit}, exit_on_error{X.exit_on_error} {
+      work = X.work; // steal workspace
+      X.work = nullptr;
+      initF();
+    }
+    integrator& operator=(const integrator &X) {
+      if (this==&X) return *this;
+      limit = X.limit;
+      exit_on_error = X.exit_on_error;
+      // keep the same workspace
+      initF();
+      return *this;
+    }
+    integrator& operator=(integrator &&X) { 
+      if (this==&X) return *this;
+      limit = X.limit;
+      exit_on_error = X.exit_on_error;
+      work = X.work; // steal workspace
+      X.work = nullptr;
+      initF();
+      return *this;
+    }
+    ~integrator() { 
+      if (work) { gsl_integration_workspace_free(work); }
+    }
 
     /**
      * Integrate function f on [a:b].
@@ -54,13 +86,14 @@ namespace triqs::gfs {
   // Wrap around GSL interpolation routines
   class interpolator {
   private:
-    gsl_interp_accel *acc; // workspace
-    gsl_spline *spline;    // spline data
-    size_t len;            // number of data points
-    double Xmin, Xmax;     // boundary points
-    double oob_value;      // out-of-boundary value
+    size_t len;                      // number of data points
+    std::vector<double> X, Y;        // X and Y tables
+    double Xmin, Xmax;               // boundary points
+    double oob_value;                // out-of-boundary value
+    gsl_interp_accel *acc = nullptr; // workspace
+    gsl_spline *spline = nullptr;    // spline data
   public:
-    interpolator(std::vector<double> &X, std::vector<double> &Y, double _oob_value = 0.0) : oob_value(_oob_value) {
+    interpolator(std::vector<double> &_X, std::vector<double> &_Y, double _oob_value = 0.0) : X{_X}, Y{_Y}, oob_value{_oob_value} {
       EXPECTS(std::is_sorted(X.begin(), X.end()));
       EXPECTS(X.size() == Y.size());
       acc = gsl_interp_accel_alloc();
@@ -70,9 +103,49 @@ namespace triqs::gfs {
       Xmin = X[0];
       Xmax = X[len-1];
     }
+    interpolator(const interpolator &I) : len{I.len}, X{I.X}, Y{I.Y}, Xmin{I.Xmin}, Xmax{I.Xmax}, oob_value{I.oob_value} {
+      // keep the same accelerator workspace
+      if (spline) { gsl_spline_free(spline); } // we need new spline data object
+      spline = gsl_spline_alloc(gsl_interp_cspline, len);
+      gsl_spline_init(spline, &X[0], &Y[0], len);
+    }
+    interpolator(interpolator &&I) : len{I.len}, X{I.X}, Y{I.Y}, Xmin{I.Xmin}, Xmax{I.Xmax}, oob_value{I.oob_value} {
+      acc = I.acc; // steal workspace
+      I.acc = nullptr;
+      spline = I.spline; // steal spline data
+      I.spline = nullptr;
+    }
+    interpolator& operator=(const interpolator &I) {
+      if (this==&I) return *this;
+      len = I.len;
+      X = I.X;
+      Y = I.Y;
+      Xmin = I.Xmin;
+      Xmax = I.Xmax;
+      oob_value = I.oob_value;
+      // keep the same accelerator workspace
+      if (spline) { gsl_spline_free(spline); }  // we need new spline data object
+      spline = gsl_spline_alloc(gsl_interp_cspline, len);
+      gsl_spline_init(spline, &X[0], &Y[0], len);
+      return *this;
+    }
+    interpolator& operator=(interpolator &&I) {
+      if (this==&I) return *this;
+      len = I.len;
+      X = std::move(I.X);
+      Y = std::move(I.Y);
+      Xmin = I.Xmin;
+      Xmax = I.Xmax;
+      oob_value = I.oob_value;
+      acc = I.acc; // steal workspace
+      I.acc = nullptr;
+      spline = I.spline; // steal spline data
+      I.spline = nullptr;
+      return *this;
+    }
     ~interpolator() {
-      gsl_spline_free(spline);
-      gsl_interp_accel_free(acc);
+      if (spline) { gsl_spline_free(spline); }
+      if (acc) { gsl_interp_accel_free(acc); }
     }
     double operator() (double x) { return (Xmin <= x && x <= Xmax ? gsl_spline_eval(spline, x, acc) : oob_value); }
   };
@@ -281,5 +354,5 @@ namespace triqs::gfs {
     auto l  = [&mesh, eps](G const &Ain) { return hilbert_transform<G, M>(Ain, mesh, eps); };
     return map_block_gf(l, bAin);
   }
-
+  
 } // namespace triqs::gfs
