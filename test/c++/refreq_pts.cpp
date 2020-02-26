@@ -91,11 +91,11 @@ TEST(refreq_pts, block_gf) {
 
 TEST(refreqs_pts, block_gf_scalar) {
   // Construction
-  auto m = gf_mesh<refreq_pts>{-1.0, 0.0, 2.0};
-  auto Gbl = block_gf<refreq_pts>{m, {{"bl1", {}}, {"bl2", {}}}};
+//  auto m = gf_mesh<refreq_pts>{-1.0, 0.0, 2.0};
+//  auto Gbl = block_gf<refreq_pts>{m, {{"bl1", {}}, {"bl2", {}}}};
 
-  for (auto mp : m) {
+//  for (auto mp : m) {
 //    Gbl[0][mp] = double(mp);
 //    Gbl[1][mp] = 2 * double(mp);
-  }
+//  }
 }
