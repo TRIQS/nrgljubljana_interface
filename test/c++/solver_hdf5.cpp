@@ -13,7 +13,6 @@ int main(int argc, char **argv) {
 
   // System Parameters
   double U  = 1.0;
-  double eps = -U / 2;
 
   // Construct Parameters
   constr_params_t cp;

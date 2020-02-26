@@ -10,7 +10,6 @@ TEST(nrgljubljana_interface, siam) { // NOLINT
 
   // System Parameters
   double U  = 1.0;
-  double eps = -U / 2;
 
   // Construct Parameters
   constr_params_t cp;
