@@ -198,6 +198,9 @@ c.add_method("""void solve (**nrgljubljana_interface::solve_params_t)""",
 c.add_method("""triqs::hilbert_space::gf_struct_t read_structure (std::string filename, bool mandatory)""",
              doc = r"""""")
 
+c.add_method("""std::string create_tempdir (std::string tempdir_)""",
+             doc = r"""""")
+
 c.add_method("""void instantiate (double z, std::string taskdir)""",
              doc = r"""""")
 
@@ -416,10 +419,6 @@ c.add_method("""void set_verbosity (bool v)""",
 c.add_method("""std::string hdf5_scheme ()""",
              is_static = True,
              doc = r"""""")
-
-c.add_property(name = "create_tempdir",
-               getter = cfunction("std::string create_tempdir ()"),
-               doc = r"""""")
 
 c.add_property(name = "write_gamma",
                getter = cfunction("void write_gamma ()"),

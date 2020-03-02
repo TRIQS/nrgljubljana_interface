@@ -228,8 +228,7 @@ namespace nrgljubljana_interface {
     std::string tempdir{};
     if (world.rank() == 0) {
       std::cout << "NRGLJUBLJANA_INTERFACE Solver\n";
-      // Create a temporary directory
-      tempdir = create_tempdir();
+      tempdir = create_tempdir("");  // Create a temporary directory for file-based interfacing (RAM disk is best)
     }
     world.barrier(); // Ensures temporary directory is created
     mpi::broadcast(tempdir, world);
@@ -347,8 +346,12 @@ namespace nrgljubljana_interface {
     if (chdir("..") != 0) TRIQS_RUNTIME_ERROR << "failed to return from taskdir " << taskdir;
   }
 
-  std::string solver_core::create_tempdir() {
-    const std::string tempdir_template = "nrg_tempdir_XXXXXX";
+  std::string solver_core::create_tempdir(const std::string &tempdir_ = "") {
+    const std::string default_tempdir = ".";
+    std::string tempdir = default_tempdir;
+    if (const char *env_w = std::getenv("NRG_TEMPDIR")) tempdir = env_w;
+    if (!tempdir_.empty()) tempdir = tempdir_;
+    const std::string tempdir_template = tempdir + "/nrg_tempdir_XXXXXX";
     size_t len = tempdir_template.length()+1;
     auto x = std::make_unique<char[]>(len); // NOLINT
     strncpy(x.get(), tempdir_template.c_str(), len);

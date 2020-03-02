@@ -71,7 +71,7 @@ namespace nrgljubljana_interface {
     gf_struct_t read_structure(const std::string &filename, bool mandatory);
 
     // Create a temporary directory for a series of NRG runs
-    std::string create_tempdir();
+    std::string create_tempdir(const std::string &tempdir_);
 
     // Write Gamma=-Im(Delta_w) to a file
     void write_gamma();
