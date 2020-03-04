@@ -33,6 +33,7 @@ Miscelaneous
 
    install
    parallelization
+   temporary
    issues
    changelog
    about
