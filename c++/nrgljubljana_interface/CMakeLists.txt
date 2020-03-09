@@ -31,7 +31,8 @@ target_compile_definitions(nrgljubljana_interface_c PUBLIC
 target_link_libraries(nrgljubljana_interface_c PRIVATE nrgljubljana_c)
 
 # Link against other libraries
-target_link_libraries(nrgljubljana_interface_c PUBLIC gsl)
+target_link_libraries(nrgljubljana_interface_c PUBLIC gsl blas_lapack)
+# Note: we link against blas_lapack to prevent problem reported in https://software.intel.com/en-us/forums/intel-math-kernel-library/topic/759670
 
 # Add tool dependencies
 add_dependencies(nrgljubljana_interface_c adapt nrgchain matrix diag unitary broaden kk)
