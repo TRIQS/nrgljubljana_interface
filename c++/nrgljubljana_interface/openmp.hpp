@@ -7,6 +7,7 @@
 
 // Report OpenMP parallelization settings
 inline void report_openMP(std::ostream &s = std::cout) {
+  s << std::endl;
   s << "[OpenMP] Max. number of threads: " << omp_get_max_threads() << std::endl;
   s << "[OpenMP] Number of processors: " << omp_get_num_procs() << std::endl;
   s << "[OpenMP] Dynamic thread adjustment: " << omp_get_dynamic() << std::endl;

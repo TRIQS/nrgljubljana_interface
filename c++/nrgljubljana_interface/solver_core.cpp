@@ -33,7 +33,7 @@
 #include <utility>
 #include <deque>
 #include <iomanip>    // setprecision
-#include <limits>     // max_digits10
+#include <limits>     // max_digits10, MAX_PATH
 
 #include <boost/lexical_cast.hpp>
 #include <nrg-lib.h>
@@ -41,7 +41,7 @@
 #include <mpi/mpi.hpp>
 #include <mpi/string.hpp>
 
-#include "openmp.h"
+#include "openmp.hpp"
 
 // std::filesystem is not production-ready as of 2020. As a workaround,
 // we remove temporary files using "rm".
@@ -61,8 +61,8 @@
 namespace nrgljubljana_interface {
 
   solver_core::solver_core(constr_params_t cp) : constr_params(cp) {
-    std::cout << "NRG Ljubljana interface to TRIQS" << std::endl << std::endl;
-    report_openMP(); // important for performance, so we report the settings here for easy inspection by the user
+    if (world.rank() == 0)
+      report_openMP(); // important for performance, so we report the settings here for easy inspection by the user
 
     gf_struct = read_structure("gf_struct", true); // true=mandatory
     chi_struct = read_structure("chi_struct", false); // false=optional
@@ -227,16 +227,22 @@ namespace nrgljubljana_interface {
     }
   }
 
+  inline std::string get_current_dir() {
+    char temp[PATH_MAX]; // on stack, no memory leak
+    return ( getcwd(temp, sizeof(temp)) ? std::string(temp) : std::string("") );
+  }
+   
   void solver_core::solve(solve_params_t const &sp) {
     last_solve_params = sp;
     container_set::operator=(container_set{});  // Reset the results
     std::string tempdir{};
     if (world.rank() == 0) {
-      std::cout << "NRGLJUBLJANA_INTERFACE Solver\n";
+      std::cout << "Starting NRG solver\n";
       tempdir = create_tempdir("");  // Create a temporary directory for file-based interfacing (RAM disk is best)
     }
     world.barrier(); // Ensures temporary directory is created
     mpi::broadcast(tempdir, world);
+    std::string cwd = get_current_dir();
     if (chdir(tempdir.c_str()) != 0) TRIQS_RUNTIME_ERROR << "chdir to tempdir failed.";
     if (world.rank() == 0) {
       write_gamma();
@@ -274,7 +280,7 @@ namespace nrgljubljana_interface {
 
     // Cleanup
     world.barrier(); // Ensures all processes have read the results before cleanup
-    if (chdir("..") != 0) TRIQS_RUNTIME_ERROR << "failed to return from tempdir";
+    if (chdir(cwd.c_str()) != 0) TRIQS_RUNTIME_ERROR << "failed to return from tempdir";
     world.barrier(); // Ensures all processes have chdired from temp dir before it is deleted
     if (world.rank() == 0) {
 #ifdef NDEBUG

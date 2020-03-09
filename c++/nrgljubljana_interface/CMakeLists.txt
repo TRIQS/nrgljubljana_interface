@@ -9,7 +9,7 @@
 #target_link_libraries(gsl INTERFACE ${GSL_LIBRARIES})
 #install(TARGETS gsl EXPORT nrgljubljana_interface-targets)
 
-file(GLOB_RECURSE sources *.cpp)
+file(GLOB_RECURSE sources *.cpp *.hpp)
 add_library(nrgljubljana_interface_c SHARED ${sources})
 
 # Link against triqs and enable warnings
