@@ -75,7 +75,7 @@ namespace nrgljubljana_interface {
 
     // Write Gamma=-Im(Delta_w) to a file
     void write_gamma();
-    
+
     // Prepare input files for an individual NRG calculation. Called from solve()
     void instantiate(double z, const std::string &taskdir);
 
@@ -134,7 +134,7 @@ namespace nrgljubljana_interface {
 
     // Suppress verbose output from the NRG solver
     void be_quiet() { verbose = false; }
-    
+
     // Set verbosity (see also be_quiet)
     void set_verbosity(bool v) { verbose = v; }
 

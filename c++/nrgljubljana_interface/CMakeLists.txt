@@ -10,7 +10,7 @@
 #install(TARGETS gsl EXPORT nrgljubljana_interface-targets)
 
 file(GLOB_RECURSE sources *.cpp)
-add_library(nrgljubljana_interface_c STATIC ${sources})
+add_library(nrgljubljana_interface_c SHARED ${sources})
 
 # Link against triqs and enable warnings
 target_link_libraries(nrgljubljana_interface_c PUBLIC triqs PRIVATE if_project_warnings)

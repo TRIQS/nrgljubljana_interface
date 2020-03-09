@@ -41,6 +41,8 @@
 #include <mpi/mpi.hpp>
 #include <mpi/string.hpp>
 
+#include "openmp.h"
+
 // std::filesystem is not production-ready as of 2020. As a workaround,
 // we remove temporary files using "rm".
 //
@@ -59,6 +61,9 @@
 namespace nrgljubljana_interface {
 
   solver_core::solver_core(constr_params_t cp) : constr_params(cp) {
+    std::cout << "NRG Ljubljana interface to TRIQS" << std::endl << std::endl;
+    report_openMP(); // important for performance, so we report the settings here for easy inspection by the user
+    
     gf_struct = read_structure("gf_struct", true); // true=mandatory
     chi_struct = read_structure("chi_struct", false); // false=optional
 
