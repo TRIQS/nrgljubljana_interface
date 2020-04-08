@@ -1,5 +1,5 @@
 // Numerical renormalization group
-// (c) Rok Zitko, rok.zitko@ijs.si, 2005-2019
+// (c) Rok Zitko, rok.zitko@ijs.si, 2005-2020
 
 #ifndef _nrg_general_h_
 #define _nrg_general_h_
@@ -84,6 +84,7 @@ namespace mpi = boost::mpi;
 #define FN_ENERGIES_DMNRG "energies.dmnrg"
 #define FN_ANNOTATED "annotated.dat"
 #define FN_TD "td"
+#define FN_TDFDM "tdfdm"
 #define FN_CUSTOM "custom"
 #define FN_CUSTOMFDM "customfdm"
 #define FN_UNITARY "unitary"
@@ -91,7 +92,7 @@ namespace mpi = boost::mpi;
 #define FN_RHOFDM "rhofdm"
 #define FN_SUBSPACES "subspaces.dat"
 
-#define HIGHPREC(val) setw(30) << setprecision(std::numeric_limits<double>::max_digits10) << (val)
+#define HIGHPREC(val) setprecision(std::numeric_limits<double>::max_digits10) << (val)
 
 int myrank();
 

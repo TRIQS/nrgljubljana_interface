@@ -92,6 +92,13 @@ target_compile_options(project_warnings
 # ############
 # Dependencies
 
+# Quadmath
+#find_package(Quadmath REQUIRED)
+#add_library(quadmath INTERFACE)
+#target_link_libraries(quadmath INTERFACE ${QUADMATH_LIBRARIES})
+#install(TARGETS quadmath EXPORT nrgljubljana-targets)
+### Commented out. Not fully supported in Clang (as of April 2020). Use GMP instead.
+
 # OpenMP
 find_package(OpenMP REQUIRED)
 add_library(openmp INTERFACE)
@@ -103,6 +110,8 @@ install(TARGETS openmp EXPORT nrgljubljana-targets)
 set(Boost_NO_BOOST_CMAKE ON)
 set(Boost_USE_STATIC_LIBS OFF)
 find_package(Boost 1.53 REQUIRED COMPONENTS serialization)
+# note: header-only libraries such as multiprecision do not need to be listed 
+# as components in find_package()
 add_library(boost INTERFACE)
 target_include_directories(boost SYSTEM INTERFACE ${Boost_INCLUDE_DIRS})
 target_link_libraries(boost INTERFACE ${Boost_LIBRARIES})
@@ -118,6 +127,11 @@ install(TARGETS gsl EXPORT nrgljubljana-targets)
 # GMP
 find_package(GMP REQUIRED)
 install(TARGETS gmp EXPORT nrgljubljana-targets)
+
+# MPFR
+#find_package(MPFR REQUIRED)
+#install(TARGETS mpfr EXPORT nrgljubljana-targets)
+### Not yet. Long-term goal: promote thermodynamic quantities to multiple-precision variables.
 
 # Mathematica (optional)
 find_package(Mathematica)
