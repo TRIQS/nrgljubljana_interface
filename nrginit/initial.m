@@ -506,7 +506,6 @@ called from maketable[] or manually when debugging! *)
 
 addexnames[] := Module[{exnames},
   exnames = Map[StringDrop[#,5]&, Names["extra*"]];
-  MyPrint["exnames=", exnames];
   snegrealconstants @@ Map[Symbol, exnames];
 ];
 
@@ -955,16 +954,18 @@ MyPrint["Hamiltonian generated. ", H];
 
 (* Is Hamiltonian Hermitian? *)
 If[paramdefaultbool["checkHc", True] && Not[option["GENERATE_TEMPLATE"]],
-  Hc = conj[H];
-  Hdiff = Simplify[Expand[H-Hc]];
-  MyPrint["H-conj[H]=", Hdiff];
-  hookfile["Hcsimpl"];
-  If[POL2x2, (* hack *)
-    Hdiff = Hdiff /. coefzeta[4,i_]->coefzeta[3,i];
-  ];
-  Hdiff = Hdiff /. {0. -> 0, Complex[0.,0.] -> 0};
-  If[Hdiff =!= 0,
-    MyError["Non-Hermitian Hamiltonian!"]
+  Module[{Hcheck, Hdiff},
+    Hcheck = conj[H];
+    Hdiff = Simplify[Expand[H-Hcheck]];
+    MyPrint["H-conj[H]=", Hdiff];
+    hookfile["Hcsimpl"];
+    If[POL2x2, (* hack *)
+      Hdiff = Hdiff /. coefzeta[4,i_]->coefzeta[3,i];
+    ];
+    Hdiff = Hdiff /. {0. -> 0, Complex[0.,0.] -> 0};
+    If[Hdiff =!= 0,
+      MyError["Non-Hermitian Hamiltonian!"]
+    ];
   ];
 ];
 
@@ -3605,7 +3606,7 @@ If[DZ,
       tabneg = Sort[tabneg];
       tabneg = Prepend[tabneg, {0, tab[[1,2]]}];
       tabneg = setpr @ tabneg;
-      If[tab[[-1,1]] < 1.0, tab = Append[tab, {1, tab[[-1,2]]}]; ]; (* fix boundary *)
+      If[tabneg[[-1,1]] < 1.0, tabneg = Append[tabneg, {1, tabneg[[-1,2]]}]; ]; (* fix boundary *)
       rhoneg = Interpolation[tabneg, InterpolationOrder -> 1]; (* Linear interpolation!! *)
       intrhoneg[a][omega_] = Integrate[rhoneg[omega], omega];
 
@@ -4226,7 +4227,6 @@ to perform various extra tweaks, log parameters and other debugging info,
 check if parameters make any sense, etc. *) 
 
 maketable[]:=Module[{t},
-  MyPrint["maketable[]"];
   timestart["maketable"];                   
 
   addexnames[]; (* To be on the safe side... *)
@@ -4323,7 +4323,3 @@ makedata[filename_]:=Module[{suffix, fn, tabelca},
   ];
   MyPrint[Export[fn, tabelca, "Table"]];
 ];
-
-MyPrint["--EOF--"];
-
-"initial.m loaded"
