@@ -1,8 +1,6 @@
 # DMFT(NRG) for Hubbard and Hubbard-like models (including Hubbard-Holstein model)
 # RZ, Feb 2020
 
-from __future__ import print_function  # Only needed for Python 2
-
 import os
 import warnings
 from collections import OrderedDict
@@ -24,7 +22,7 @@ be_verbose = True # show info messages
 def newG(S): return S.G_w.copy()                           # Creates a BlockGf object of appropriate structure for the Solver
 def nr_blocks(bgf): return len([bl for bl in bgf.indices]) # Returns the number of blocks in a BlockGf object
 def block_size(G): return len(G.indices[0])                # Matrix size of Green's function G
-def index_range(G): return range(block_size(G))            # Iterator over matrix indeces
+def index_range(G): return list(range(block_size(G)))      # Iterator over matrix indeces
 def identity(G): return np.identity(block_size(G))         # Returns the identity matrix of appropriate dimension for Green's function G
 
 # Calculate a GF from hybridisation and self-energy

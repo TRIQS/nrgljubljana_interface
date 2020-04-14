@@ -50,7 +50,7 @@ semicircle
               else:
                 return (2.0/D**2) * (om - copysign(1,om) * sqrt(om**2 - D**2))
         else:
-            raise TypeError, "This initializer is only correct in frequency"
+            raise TypeError("This initializer is only correct in frequency")
 
         Id = 1. if len(G.target_shape) == 0 else numpy.identity(G.target_shape[0])
         Function(f)(G)
@@ -89,7 +89,7 @@ class Flat (Base):
               else:
                 return -numpy.log(numpy.divide(abs(om-D),abs(om+D)))*Id/(2*D)
         else:
-            raise TypeError, "This initializer is only correct in frequency"
+            raise TypeError("This initializer is only correct in frequency")
 
         # Silence "RuntimeWarning: divide by zero encountered in divide"
         old_err = numpy.seterr(divide='ignore')
@@ -105,7 +105,7 @@ class Omega_(Base):
     def __str__(self): return "Omega"
     def __call__(self,G):
         if G.mesh.__class__.__name__ not in ['MeshImFreq', 'MeshReFreq', 'MeshReFreqPts']:
-            raise TypeError, "This initializer is only correct in frequency"
+            raise TypeError("This initializer is only correct in frequency")
 
         Id = 1. if G.target_rank == 0 else numpy.identity(G.target_shape[0])
 

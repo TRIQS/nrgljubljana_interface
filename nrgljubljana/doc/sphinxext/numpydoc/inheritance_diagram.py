@@ -150,7 +150,7 @@ class InheritanceGraph(object):
         for cls in classes:
             recurse(cls)
 
-        return all_classes.keys()
+        return list(all_classes.keys())
 
     def class_name(self, cls, parts=0):
         """
@@ -380,7 +380,7 @@ def visit_inheritance_diagram(inner_func):
     def visitor(self, node):
         try:
             content = inner_func(self, node)
-        except DotException, e:
+        except DotException as e:
             # Insert the exception as a warning in the document
             warning = self.document.reporter.warning(str(e), line=node.line)
             warning.parent = node

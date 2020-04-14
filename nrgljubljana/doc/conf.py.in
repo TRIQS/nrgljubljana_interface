@@ -17,8 +17,8 @@ extensions = ['sphinx.ext.autodoc',
 
 source_suffix = '.rst'
 
-project = u'NRG Ljubljana - numerical renormalization group code'
-copyright = u'2016-2019 R. Žitko, Jozef Stefan Institute, Ljubljana'
+project = 'NRG Ljubljana - numerical renormalization group code'
+copyright = '2016-2019 R. Žitko, Jozef Stefan Institute, Ljubljana'
 version = '@PROJECT_VERSION@'
 
 mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5"

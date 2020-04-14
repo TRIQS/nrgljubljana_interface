@@ -27,10 +27,10 @@ r"""
 DOC
 
 """
-from solver import Solver
+from .solver import Solver
 from solver_core import SolverCore, hilbert_transform_refreq, hilbert_transform_elementwise
 from mesh_refreq_pts import MeshReFreqPts
-from descriptors import Flat, SemiCircular, Omega
+from .descriptors import Flat, SemiCircular, Omega
 
 __all__ = ['Solver','SolverCore', 'MeshReFreqPts', 'Flat', 'SemiCircular', 'Omega']
 

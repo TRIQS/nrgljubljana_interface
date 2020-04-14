@@ -115,7 +115,7 @@ def calc_G(Delta, Sigma, mu):
   return G
 
 # Index range of a GF
-index_range = lambda G : range(len(G.indices[0]))
+index_range = lambda G : list(range(len(G.indices[0])))
 
 # Return an interpolation-object representation of a spectral function for GF G
 def interp_A(G):
