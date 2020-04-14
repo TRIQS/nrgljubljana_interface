@@ -30,7 +30,7 @@ print("<n^2>=", S.expv["n_d^2"])
 
 def A_to_nparrays(A):
     lx = np.array(list(A.mesh.values()))
-    ly = np.array(A.data[:,0,0].real)
+    ly = A[0,0].data.real
     return lx, ly
 
 # Plot the spectral function

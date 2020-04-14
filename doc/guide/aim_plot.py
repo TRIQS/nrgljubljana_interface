@@ -8,7 +8,7 @@ from nrgljubljana_interface import MeshReFreqPts
 
 def A_to_nparrays(A):
     lx = np.array(list(A.mesh.values()))
-    ly = np.array(A.data[:,0,0].real)
+    ly = A[0,0].data.real
     return lx, ly
 
 with HDFArchive('aim_solution.h5','r') as ar:
