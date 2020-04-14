@@ -87,8 +87,11 @@ target_compile_options(if_project_warnings
     -Wno-unused-variable # rz
     -Wno-attributes # rz
     $<$<CXX_COMPILER_ID:GNU>:-Wshadow=local>
+    $<$<CXX_COMPILER_ID:GNU>:-Wno-attributes>
     $<$<CXX_COMPILER_ID:Clang>:-Wshadow>
     $<$<CXX_COMPILER_ID:Clang>:-Wno-gcc-compat>
+    $<$<CXX_COMPILER_ID:AppleClang>:-Wshadow>
+    $<$<CXX_COMPILER_ID:AppleClang>:-Wno-gcc-compat>
 )
 
 # ################

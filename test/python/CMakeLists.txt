@@ -13,8 +13,8 @@ foreach(test ${all_tests})
   get_filename_component(test_dir ${test} DIRECTORY)
   add_test(NAME Py_${test_name} COMMAND ${TRIQS_PYTHON_INTERPRETER} ${CMAKE_CURRENT_SOURCE_DIR}/${test_dir}/${test_name}.py WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${test_dir})
   set_property(TEST Py_${test_name} APPEND PROPERTY ENVIRONMENT
-    PYTHONPATH=${CMAKE_BINARY_DIR}/python:$ENV{PYTHONPATH}
-    PATH=${CMAKE_BINARY_DIR}/nrgljubljana/tools:$ENV{PATH}
+    PYTHONPATH=${PROJECT_BINARY_DIR}/python:$ENV{PYTHONPATH}
+    PATH=${PROJECT_BINARY_DIR}/nrgljubljana/tools:$ENV{PATH}
     NRGIF_TEMPLATE_DIR=${PROJECT_SOURCE_DIR}/templates
     ${SANITIZER_RT_PRELOAD}
   )
