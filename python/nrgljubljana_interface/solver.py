@@ -19,7 +19,7 @@
 # nrgljubljana_interface. If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from solver_core import SolverCore
+from .solver_core import SolverCore
 
 from triqs.gf import *
 from triqs.utility import mpi

@@ -3,7 +3,7 @@ r""" """
 from triqs.gf.descriptor_base import Base, Function
 from triqs.gf.meshes import MeshImFreq, MeshReFreq
 
-from mesh_refreq_pts import MeshReFreqPts
+from .mesh_refreq_pts import MeshReFreqPts
 
 from math import copysign, pi
 
