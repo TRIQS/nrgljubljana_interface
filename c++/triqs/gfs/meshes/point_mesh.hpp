@@ -130,8 +130,8 @@ namespace triqs::gfs {
 
     friend class boost::serialization::access;
     template <class Archive> void serialize(Archive &ar, const unsigned int version) {
-      ar &TRIQS_MAKE_NVP("domain", _dom);
-      ar &TRIQS_MAKE_NVP("points", _pts);
+      ar &_dom;
+      ar &_pts;
     }
 
     // ------------------------------------------------
