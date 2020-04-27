@@ -59,13 +59,13 @@ TEST(refreq_pts, h5) {
 
   // Store to file
   {
-    auto archive = triqs::h5::file("anderson.out.h5", 'w');
+    auto archive = triqs::h5::file("refreq_pts.out.h5", 'w');
     h5_write(archive, "G", G);
   }
 
   // Load from file
   {
-    auto archive = triqs::h5::file("anderson.out.h5", 'r');
+    auto archive = triqs::h5::file("refreq_pts.out.h5", 'r');
     auto G_h5    = gf<refreq_pts, scalar_valued>{m, {}};
     h5_read(archive, "G", G_h5);
     test_gfs_are_close(G, G_h5);
