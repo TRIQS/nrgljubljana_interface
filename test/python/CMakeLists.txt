@@ -11,7 +11,7 @@ set(all_tests 1_SIAM_QS 2_SIAM_QSZ 3_2orb-UJ_QS 4_mesh_max=10 5_bandrescale 6_so
 foreach(test ${all_tests})
   get_filename_component(test_name ${test} NAME_WE)
   get_filename_component(test_dir ${test} DIRECTORY)
-  add_test(NAME Py_${test_name} COMMAND ${TRIQS_PYTHON_INTERPRETER} ${CMAKE_CURRENT_SOURCE_DIR}/${test_dir}/${test_name}.py WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${test_dir})
+  add_test(NAME Py_${test_name} COMMAND ${TRIQS_PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${test_dir}/${test_name}.py WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${test_dir})
   set_property(TEST Py_${test_name} APPEND PROPERTY ENVIRONMENT
     PYTHONPATH=${PROJECT_BINARY_DIR}/python:$ENV{PYTHONPATH}
     PATH=${PROJECT_BINARY_DIR}/nrgljubljana/tools:$ENV{PATH}
@@ -25,7 +25,7 @@ macro(add_mpi_test TestName NumProc)
   get_filename_component(test_name ${TestName} NAME_WE)
   get_filename_component(test_dir ${TestName} DIRECTORY)
   add_test(NAME ${TestName}_np${NumProc}
-           COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${NumProc} ${MPIEXEC_PREFLAGS} ${TRIQS_PYTHON_INTERPRETER} ${CMAKE_CURRENT_SOURCE_DIR}/${test_dir}/${test_name}.py 
+           COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${NumProc} ${MPIEXEC_PREFLAGS} ${TRIQS_PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${test_dir}/${test_name}.py 
            ${MPIEXEC_POSTFLAGS} WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${test_dir})
   set_property(TEST ${TestName}_np${NumProc} APPEND PROPERTY ENVIRONMENT
       PYTHONPATH=${CMAKE_BINARY_DIR}/python:$ENV{PYTHONPATH}

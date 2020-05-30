@@ -12,10 +12,10 @@ import math
 import numpy as np
 from scipy import interpolate, integrate, special, optimize
 
-from pytriqs.gf import *
-from pytriqs.operators import *
-from pytriqs.archive import *
-from pytriqs.utility import mpi
+from triqs.gf import *
+from triqs.operators import *
+from h5 import *
+from triqs.utility import mpi
 
 from nrgljubljana_interface import Solver, MeshReFreqPts, hilbert_transform_refreq
 

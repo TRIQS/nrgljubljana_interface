@@ -3,8 +3,8 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import math
 
-from pytriqs.gf import *
-from pytriqs.archive import *
+from triqs.gf import *
+from h5 import *
 from nrgljubljana_interface import MeshReFreqPts
 
 def GF_to_nparrays(A):

@@ -520,9 +520,9 @@ namespace nrgljubljana_interface {
 
   // Function that writes a solver object to hdf5 file
 
-  void h5_write(triqs::h5::group h5group, std::string subgroup_name, solver_core const &s) {
+  void h5_write(h5::group h5group, std::string subgroup_name, solver_core const &s) {
     auto grp = h5group.create_group(subgroup_name);
-    h5_write_attribute(grp, "TRIQS_HDF5_data_scheme", solver_core::hdf5_scheme());
+    h5_write_attribute(grp, "Format", solver_core::hdf5_format());
     h5_write_attribute(grp, "TRIQS_GIT_HASH", std::string(AS_STRING(TRIQS_GIT_HASH)));
     h5_write_attribute(grp, "NRGLJUBLJANA_INTERFACE_GIT_HASH", std::string(AS_STRING(NRGLJUBLJANA_INTERFACE_GIT_HASH)));
     h5_write(grp, "", s.result_set());
@@ -533,7 +533,7 @@ namespace nrgljubljana_interface {
   }
 
   // Function that constructs a solver object from an hdf5 file
-  solver_core solver_core::h5_read_construct(triqs::h5::group h5group, std::string subgroup_name) {
+  solver_core solver_core::h5_read_construct(h5::group h5group, std::string subgroup_name) {
     auto grp           = h5group.open_group(subgroup_name);
     auto constr_params = h5_read<constr_params_t>(grp, "constr_params");
     auto s             = solver_core{constr_params};

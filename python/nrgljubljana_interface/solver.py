@@ -21,8 +21,8 @@
 ##############################################################################
 from solver_core import SolverCore
 
-from pytriqs.gf import *
-from pytriqs.utility import mpi
+from triqs.gf import *
+from triqs.utility import mpi
 
 
 # === The SolverCore Wrapper

@@ -90,10 +90,10 @@ namespace nrgljubljana_interface {
     std::string params = "";
 
     /// Write constr_params_t to hdf5
-    friend void h5_write(triqs::h5::group h5group, std::string subgroup_name, constr_params_t const &cp);
+    friend void h5_write(h5::group h5group, std::string subgroup_name, constr_params_t const &cp);
 
     /// Read constr_params_t from hdf5
-    friend void h5_read(triqs::h5::group h5group, std::string subgroup_name, constr_params_t &cp);
+    friend void h5_read(h5::group h5group, std::string subgroup_name, constr_params_t &cp);
   };
 
   /// The parameters for the solve function
@@ -136,10 +136,10 @@ namespace nrgljubljana_interface {
     std::map<std::string, double> model_parameters;
 
     /// Write constr_params_t to hdf5
-    friend void h5_write(triqs::h5::group h5group, std::string subgroup_name, solve_params_t const &sp);
+    friend void h5_write(h5::group h5group, std::string subgroup_name, solve_params_t const &sp);
 
     /// Read constr_params_t from hdf5
-    friend void h5_read(triqs::h5::group h5group, std::string subgroup_name, solve_params_t &sp);
+    friend void h5_read(h5::group h5group, std::string subgroup_name, solve_params_t &sp);
   };
 
   /// NRG low-level parameters
@@ -425,10 +425,10 @@ namespace nrgljubljana_interface {
     bool checkrho = false;
 
     /// Write nrg_params_t to hdf5
-    friend void h5_write(triqs::h5::group h5group, std::string subgroup_name, nrg_params_t const &sp);
+    friend void h5_write(h5::group h5group, std::string subgroup_name, nrg_params_t const &sp);
 
     /// Read nrg_params_t from hdf5
-    friend void h5_read(triqs::h5::group h5group, std::string subgroup_name, nrg_params_t &sp);
+    friend void h5_read(h5::group h5group, std::string subgroup_name, nrg_params_t &sp);
   };
 
 } // namespace nrgljubljana_interface

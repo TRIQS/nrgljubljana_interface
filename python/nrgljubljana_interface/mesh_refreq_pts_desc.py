@@ -3,7 +3,7 @@ import re
 
 module = module_(full_name = "mesh_refreq_pts", doc = "The refreq_pts mesh", app_name="nrgljubljana_interface")
 
-module.add_imports(*['pytriqs.gf']) 
+module.add_imports(*['triqs.gf']) 
 
 module.add_include("<triqs/gfs.hpp>")
 module.add_include("<triqs/gfs/meshes/refreq_pts.hpp>")
@@ -40,7 +40,7 @@ m.add_len(calling_pattern = "int result = self_c.size()", doc = "Size of the mes
 m.add_iterator()
 m.add_method("PyObject * values()",
              calling_pattern = """
-                static auto cls = pyref::get_class("pytriqs.gf", "MeshValueGenerator", /* raise_exception */ true);
+                static auto cls = pyref::get_class("triqs.gf", "MeshValueGenerator", /* raise_exception */ true);
                 pyref args = PyTuple_Pack(1, self);
                 auto result = PyObject_CallObject(cls, args);
              """, doc = "A numpy array of all the values of the mesh points")

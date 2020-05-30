@@ -1,7 +1,7 @@
 #include <nrgljubljana_interface/solver_core.hpp>
 
 #include <triqs/gfs.hpp>
-#include <triqs/h5.hpp>
+#include <h5/h5.hpp>
 #include <triqs/test_tools/gfs.hpp>
 
 using namespace nrgljubljana_interface;

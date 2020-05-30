@@ -2,7 +2,7 @@
 # RZ, Feb 2020
 
 import dmft
-from pytriqs.utility import mpi
+from triqs.utility import mpi
 
 param = {            # Physical parameters:
   "U": 2.0,          #  Hubbard electron-electron repulsion

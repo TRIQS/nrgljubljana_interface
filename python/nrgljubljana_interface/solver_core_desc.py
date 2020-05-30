@@ -1,12 +1,12 @@
 # Generated automatically using the command :
-# c++2py ../../c++/nrgljubljana_interface/solver_core.hpp -p --members_read_only -N nrgljubljana_interface -a nrgljubljana_interface -m solver_core -o solver_core --moduledoc="The nrgljubljana_interface solve_core module" -C pytriqs --cxxflags="-std=c++17 -DNRGIF_TEMPLATE_DIR=\"\"" --target_file_only -I../../c++
+# c++2py ../../c++/nrgljubljana_interface/solver_core.hpp -p --members_read_only -N nrgljubljana_interface -a nrgljubljana_interface -m solver_core -o solver_core --moduledoc="The nrgljubljana_interface solve_core module" -C triqs --cxxflags="-std=c++17 -DNRGIF_TEMPLATE_DIR=\"\"" --target_file_only -I../../c++
 from cpp2py.wrap_generator import *
 
 # The module
 module = module_(full_name = "solver_core", doc = r"The nrgljubljana_interface solve_core module", app_name = "nrgljubljana_interface")
 
 # Imports
-module.add_imports(*['pytriqs.gf'])
+module.add_imports(*['triqs.gf'])
 
 # Add here all includes
 module.add_include("nrgljubljana_interface/solver_core.hpp")
@@ -22,7 +22,6 @@ module.add_preamble("""
 #include <cpp2py/converters/vector.hpp>
 #include <triqs/cpp2py_converters/arrays.hpp>
 #include <triqs/cpp2py_converters/gf.hpp>
-#include <triqs/cpp2py_converters/h5.hpp>
 
 using namespace nrgljubljana_interface;
 """)
@@ -416,7 +415,7 @@ c.add_method("""void readA (std::string name, std::optional<g_w_t> A_w, triqs::h
 c.add_method("""void set_verbosity (bool v)""",
              doc = r"""""")
 
-c.add_method("""std::string hdf5_scheme ()""",
+c.add_method("""std::string hdf5_format ()""",
              is_static = True,
              doc = r"""""")
 

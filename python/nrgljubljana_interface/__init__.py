@@ -34,5 +34,5 @@ from descriptors import Flat, SemiCircular, Omega
 
 __all__ = ['Solver','SolverCore', 'MeshReFreqPts', 'Flat', 'SemiCircular', 'Omega']
 
-import pytriqs.gf.gf
-pytriqs.gf.gf.all_meshes = pytriqs.gf.gf.all_meshes + (MeshReFreqPts,)
+import triqs.gf.gf
+triqs.gf.gf.all_meshes = triqs.gf.gf.all_meshes + (MeshReFreqPts,)

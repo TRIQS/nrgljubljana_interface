@@ -4,8 +4,8 @@ import unittest
 
 from nrgljubljana_interface import Solver, SemiCircular, MeshReFreqPts
 
-from pytriqs.archive import *
-from pytriqs.utility.h5diff import h5diff
+from h5 import *
+from triqs.utility.h5diff import h5diff
 
 
 class test_SIAM(unittest.TestCase):

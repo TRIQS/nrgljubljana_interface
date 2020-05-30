@@ -1,7 +1,7 @@
 #include <nrgljubljana_interface/solver_core.hpp>
 
 #include <triqs/gfs.hpp>
-#include <triqs/h5.hpp>
+#include <h5/h5.hpp>
 #include <triqs/test_tools/gfs.hpp>
 
 using namespace nrgljubljana_interface;
@@ -51,7 +51,7 @@ TEST(nrgljubljana_interface, siam) { // NOLINT
 
   // Store the Result
   {
-    auto arch = triqs::h5::file("siam.out.h5", 'w');
+    auto arch = h5::file("siam.out.h5", 'w');
     h5_write(arch, "S", S);
   }
 

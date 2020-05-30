@@ -42,7 +42,7 @@ namespace nrgljubljana_interface {
   using namespace triqs::arrays;
   using namespace triqs::hilbert_space;
   using namespace triqs::utility;
-  using namespace triqs::h5;
+  using namespace h5;
 
   using namespace itertools;
 

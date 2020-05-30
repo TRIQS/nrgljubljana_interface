@@ -114,14 +114,14 @@ namespace triqs::gfs {
 
     friend void h5_write_impl(h5::group fg, std::string const &subgroup_name, point_mesh const &m, const char *tag) {
       h5::group gr = fg.create_group(subgroup_name);
-      gr.write_hdf5_scheme_as_string(tag);
+      gr.write_hdf5_format_as_string(tag);
       h5_write(gr, "domain", m._dom);
       h5_write(gr, "points", m._pts);
     }
 
     friend void h5_read_impl(h5::group fg, std::string const &subgroup_name, point_mesh &m, const char *tag_expected) {
       h5::group gr = fg.open_group(subgroup_name);
-      gr.assert_hdf5_scheme_as_string(tag_expected, true);
+      gr.assert_hdf5_format_as_string(tag_expected, true);
       h5_read(gr, "domain", m._dom);
       h5_read(gr, "points", m._pts);
     }

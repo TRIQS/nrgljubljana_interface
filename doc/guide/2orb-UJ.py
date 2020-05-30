@@ -1,5 +1,5 @@
 from nrgljubljana_interface import Solver, Flat
-from pytriqs.archive import *
+from h5 import *
 import math
 
 # Parameters

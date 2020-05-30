@@ -52,7 +52,7 @@ namespace nrgljubljana_interface {
     std::optional<g_w_t> chi_SS_w;
 
     /// Function that writes all containers to hdf5 file
-    friend void h5_write(triqs::h5::group h5group, std::string subgroup_name, container_set const &c) {
+    friend void h5_write(h5::group h5group, std::string subgroup_name, container_set const &c) {
       auto grp = h5group.create_group(subgroup_name);
       h5_write(grp, "A_w", c.A_w);
       h5_write(grp, "B_w", c.B_w);
@@ -65,7 +65,7 @@ namespace nrgljubljana_interface {
     }
 
     /// Function that reads all containers from hdf5 file
-    friend void h5_read(triqs::h5::group h5group, std::string subgroup_name, container_set &c) {
+    friend void h5_read(h5::group h5group, std::string subgroup_name, container_set &c) {
       auto grp = h5group.open_group(subgroup_name);
       h5_read(grp, "A_w", c.A_w);
       h5_read(grp, "B_w", c.B_w);

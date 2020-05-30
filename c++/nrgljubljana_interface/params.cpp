@@ -23,7 +23,7 @@
 
 namespace nrgljubljana_interface {
 
-  void h5_write(triqs::h5::group h5group, std::string subgroup_name, constr_params_t const &cp) {
+  void h5_write(h5::group h5group, std::string subgroup_name, constr_params_t const &cp) {
     auto grp = h5group.create_group(subgroup_name);
     h5_write(grp, "templatedir", cp.templatedir);
     h5_write(grp, "model", cp.model);
@@ -45,7 +45,7 @@ namespace nrgljubljana_interface {
     h5_write(grp, "params", cp.params);
   }
 
-  void h5_read(triqs::h5::group h5group, std::string subgroup_name, constr_params_t &cp) {
+  void h5_read(h5::group h5group, std::string subgroup_name, constr_params_t &cp) {
     auto grp = h5group.open_group(subgroup_name);
     h5_read(grp, "templatedir", cp.templatedir);
     h5_read(grp, "model", cp.model);
@@ -67,7 +67,7 @@ namespace nrgljubljana_interface {
     h5_read(grp, "params", cp.params);
   }
 
-  void h5_write(triqs::h5::group h5group, std::string subgroup_name, solve_params_t const &sp) {
+  void h5_write(h5::group h5group, std::string subgroup_name, solve_params_t const &sp) {
     auto grp = h5group.create_group(subgroup_name);
     h5_write(grp, "Lambda", sp.Lambda);
     h5_write(grp, "Nz", sp.Nz);
@@ -83,7 +83,7 @@ namespace nrgljubljana_interface {
     h5_write(grp, "model_parameters", sp.model_parameters);
   }
 
-  void h5_read(triqs::h5::group h5group, std::string subgroup_name, solve_params_t &sp) {
+  void h5_read(h5::group h5group, std::string subgroup_name, solve_params_t &sp) {
     auto grp = h5group.open_group(subgroup_name);
     h5_read(grp, "Lambda", sp.Lambda);
     h5_read(grp, "Nz", sp.Nz);
@@ -99,7 +99,7 @@ namespace nrgljubljana_interface {
     h5_read(grp, "model_parameters", sp.model_parameters);
   }
 
-  void h5_write(triqs::h5::group h5group, std::string subgroup_name, nrg_params_t const &np) {
+  void h5_write(h5::group h5group, std::string subgroup_name, nrg_params_t const &np) {
     auto grp = h5group.create_group(subgroup_name);
     h5_write(grp, "dmnrg", np.dmnrg);
     h5_write(grp, "cfs", np.cfs);
@@ -193,7 +193,7 @@ namespace nrgljubljana_interface {
     h5_write(grp, "checkrho", np.checkrho);
   }
 
-  void h5_read(triqs::h5::group h5group, std::string subgroup_name, nrg_params_t &np) {
+  void h5_read(h5::group h5group, std::string subgroup_name, nrg_params_t &np) {
     auto grp = h5group.open_group(subgroup_name);
     h5_read(grp, "dmnrg", np.dmnrg);
     h5_read(grp, "cfs", np.cfs);

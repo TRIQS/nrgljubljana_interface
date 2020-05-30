@@ -1,5 +1,5 @@
 from nrgljubljana_interface import Solver, Flat
-from pytriqs.archive import *
+from h5 import *
 
 # Parameters
 D, V, U = 1.0, 0.2, 0    # Zero e-e interaction

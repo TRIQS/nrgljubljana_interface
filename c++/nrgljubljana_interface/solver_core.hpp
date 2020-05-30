@@ -138,14 +138,14 @@ namespace nrgljubljana_interface {
     // Set verbosity (see also be_quiet)
     void set_verbosity(bool v) { verbose = v; }
 
-    static std::string hdf5_scheme() { return "NRGLJUBLJANA_INTERFACE_SolverCore"; }
+    static std::string hdf5_format() { return "NRGLJUBLJANA_INTERFACE_SolverCore"; }
 
     // Function that writes a solver object to hdf5 file
-    friend void h5_write(triqs::h5::group h5group, std::string subgroup_name, solver_core const &s);
+    friend void h5_write(h5::group h5group, std::string subgroup_name, solver_core const &s);
 
     // Function that constructs a solver object from an hdf5 file
     CPP2PY_IGNORE
-    static solver_core h5_read_construct(triqs::h5::group h5group, std::string subgroup_name);
+    static solver_core h5_read_construct(h5::group h5group, std::string subgroup_name);
   };
 
   // Hilbert transform for refreq objects (scalar)
