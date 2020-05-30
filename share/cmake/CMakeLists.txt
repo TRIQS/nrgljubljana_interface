@@ -1,10 +1,10 @@
-configure_file(nrgljubljana_interface-config.cmake.in nrgljubljana_interface-config.cmake @ONLY)
-configure_file(nrgljubljana_interface-config-version.cmake.in nrgljubljana_interface-config-version.cmake @ONLY)
+configure_file(${PROJECT_NAME}-config.cmake.in ${PROJECT_NAME}-config.cmake @ONLY)
+configure_file(${PROJECT_NAME}-config-version.cmake.in ${PROJECT_NAME}-config-version.cmake @ONLY)
 install(
   FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/nrgljubljana_interface-config.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/nrgljubljana_interface-config-version.cmake
-  DESTINATION lib/cmake/nrgljubljana_interface
+    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake
+  DESTINATION lib/cmake/${PROJECT_NAME}
 )
 
-install(EXPORT nrgljubljana_interface-targets NAMESPACE nrgljubljana_interface:: DESTINATION lib/cmake/nrgljubljana_interface)
+install(EXPORT ${PROJECT_NAME}-targets NAMESPACE ${PROJECT_NAME}:: DESTINATION lib/cmake/${PROJECT_NAME})

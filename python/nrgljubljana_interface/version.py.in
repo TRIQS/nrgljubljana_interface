@@ -23,10 +23,10 @@
 
 version = "@PROJECT_VERSION@"
 triqs_hash = "@TRIQS_GIT_HASH@"
-nrgljubljana_interface_hash = "@PROJECT_GIT_HASH@"
+@PROJECT_NAME@_hash = "@PROJECT_GIT_HASH@"
 
 def show_version():
-  print "\nYou are using nrgljubljana_interface version %s\n"%version
+  print("\nYou are using @PROJECT_NAME@ version %s\n"%version)
 
 def show_git_hash():
-  print "\nYou are using nrgljubljana_interface git hash %s based on triqs git hash %s\n"%(nrgljubljana_interface_hash, triqs_hash)
+  print("\nYou are using @PROJECT_NAME@ git hash %s based on triqs git hash %s\n"%("@PROJECT_GIT_HASH@", triqs_hash))

@@ -19,20 +19,23 @@
 #
 # ##############################################################################
 
-cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.3.2 FATAL_ERROR)
+cmake_policy(VERSION 3.3.2)
 if(POLICY CMP0074)
   cmake_policy(SET CMP0074 NEW)
+endif()
+if(POLICY CMP0077)
+  cmake_policy(SET CMP0077 NEW)
 endif()
 
 # ############
 # Define Project
-project(NRGLJUBLJANA_INTERFACE VERSION 2.2.0 LANGUAGES C CXX)
+project(nrgljubljana_interface VERSION 3.0.0 LANGUAGES C CXX)
 get_directory_property(IS_SUBPROJECT PARENT_DIRECTORY)
 
 # ############
 # Load TRIQS and CPP2PY
-find_package(TRIQS 2.2 REQUIRED)
-find_package(Cpp2Py 1.6 REQUIRED)
+find_package(TRIQS 3.0 REQUIRED)
 
 # Get the git hash & print status
 triqs_get_git_hash_of_source_dir(PROJECT_GIT_HASH)
@@ -50,7 +53,11 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR (NOT IS_ABSOLUTE ${CMAKE_INSTA
   set(CMAKE_INSTALL_PREFIX ${TRIQS_ROOT} CACHE PATH "default install path" FORCE)
   set(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT FALSE)
 endif()
-message(STATUS "-------- CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX} --------")
+if(NOT IS_SUBPROJECT)
+  message(STATUS "-------- CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX} --------")
+endif()
+set(${PROJECT_NAME}_BINARY_DIR ${PROJECT_BINARY_DIR} CACHE STRING "Binary directory of the ${PROJECT_NAME} Project")
+
 
 # Make additional Find Modules available (we prepend, so that TRIQS bundled modules can be overriden)
 list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/share/cmake/Modules)
@@ -58,27 +65,45 @@ list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/share/cmake/Modules)
 # ############
 # Options
 
+# Make additional Find Modules available
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/share/cmake/Modules)
+
 # Default to Release build type
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Type of build" FORCE)
 endif()
-message(STATUS "-------- BUILD-TYPE: ${CMAKE_BUILD_TYPE} --------")
+if(NOT IS_SUBPROJECT)
+  message(STATUS "-------- BUILD-TYPE: ${CMAKE_BUILD_TYPE} --------")
+endif()
+
+# Python Support
+option(PythonSupport "Build with Python support" ON)
+if(PythonSupport AND NOT TRIQS_WITH_PYTHON_SUPPORT)
+  message(FATAL_ERROR "TRIQS was installed without Python support. Cannot build the Python Interface. Disable the build with -DPythonSupport=OFF")
+endif()
+
+# Documentation
+option(Build_Documentation "Build documentation" OFF)
+
+# Testing
+option(Build_Tests "Build tests" ON)
+if(Build_Tests)
+  enable_testing()
+endif()
 
 # Export the list of compile-commands into compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Global compiler options
+option(BUILD_SHARED_LIBS "Enable compilation of shared libraries" OFF)
 add_compile_options(
   $<$<CONFIG:Debug>:-Og>
   $<$<CONFIG:Debug>:-ggdb3>
 )
 
 # Create an Interface target for compiler warnings
-if(NOT TARGET if_project_warnings)
-  add_library(if_project_warnings INTERFACE)
-endif()
-install(TARGETS if_project_warnings EXPORT nrgljubljana_interface-targets)
-target_compile_options(if_project_warnings
+add_library(${PROJECT_NAME}_warnings INTERFACE)
+target_compile_options(${PROJECT_NAME}_warnings
   INTERFACE
     -Wall
     -Wextra
@@ -128,40 +153,25 @@ message(STATUS "MPIEXEC_POSTFLAGS: ${MPIEXEC_POSTFLAGS}")
 # #############
 # Build Project
 
-# Build and install the nrgljubljana_interface library
-add_subdirectory(c++/nrgljubljana_interface)
+# Find / Build dependencies
+add_subdirectory(deps)
+
+# Build and install the library
+add_subdirectory(c++/${PROJECT_NAME})
 
 # Tests
-option(Build_Tests "Build tests" ON)
-if(Build_Tests AND NOT IS_SUBPROJECT)
-  enable_testing()
+if(Build_Tests)
   add_subdirectory(test)
 endif()
 
-# NRG Ljubljana subproject. Turn off symmetry types that we do not currently require.
-option(SYM_MORE "" OFF)
-option(SYM_ALL "" OFF)
-add_subdirectory(nrgljubljana)
-# Make NRG Ljubljana Targets available without tests (commented out; works only in recent CMake versions)
-#add_subdirectory(nrgljubljana EXCLUDE_FROM_ALL)
-#install(TARGETS adapt nrgchain matrix diag unitary broaden kk EXPORT nrgljubljana_interface-targets RUNTIME DESTINATION bin)
+# Python
+if(PythonSupport)
+  add_subdirectory(python/${PROJECT_NAME})
+endif()
 
-if(TRIQS_WITH_PYTHON_SUPPORT)
-  # Python interface
-  add_subdirectory(python/nrgljubljana_interface)
-
-  # Build the documentation
-  option(Build_Documentation "Build documentation" OFF)
-  if(Build_Documentation AND NOT IS_SUBPROJECT)
-    if(NOT TRIQS_WITH_DOCUMENTATION)
-      message(WARNING "TRIQS was installed without documentation! Cannot build documentation.")
-    else()
-      message(STATUS "Documentation Build enabled")
-      add_subdirectory(doc)
-    endif()
-  endif()
-else()
-  message(WARNING "TRIQS was installed without Python support. Cannot build the Python Interface and Documentation.")
+# Docs
+if(Build_Documentation)
+  add_subdirectory(doc)
 endif()
 
 # Additional configuration files
@@ -175,14 +185,13 @@ if(BUILD_DEBIAN_PACKAGE AND NOT IS_SUBPROJECT)
   if(NOT CMAKE_INSTALL_PREFIX STREQUAL "/usr")
     message(FATAL_ERROR "CMAKE_INSTALL_PREFIX must be /usr for packaging")
   endif()
-  set(CPACK_PACKAGE_NAME nrgljubljana_interface)
+  set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
   set(CPACK_GENERATOR "DEB")
   set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
-  set(CPACK_PACKAGE_CONTACT "https://github.com/TRIQS/nrgljubljana_interface")
+  set(CPACK_PACKAGE_CONTACT "https://github.com/TRIQS/${PROJECT_NAME}")
   execute_process(COMMAND dpkg --print-architecture OUTPUT_VARIABLE CMAKE_DEBIAN_PACKAGE_ARCHITECTURE OUTPUT_STRIP_TRAILING_WHITESPACE)
-  set(CPACK_DEBIAN_PACKAGE_DEPENDS "triqs (>= 2.2)")
+  set(CPACK_DEBIAN_PACKAGE_DEPENDS "triqs (>= 3.0)")
   set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
   set(CPACK_DEBIAN_PACKAGE_GENERATE_SHLIBS ON)
   include(CPack)
 endif()
-
