@@ -6,7 +6,7 @@ from cpp2py.wrap_generator import *
 module = module_(full_name = "solver_core", doc = r"The nrgljubljana_interface solve_core module", app_name = "nrgljubljana_interface")
 
 # Imports
-module.add_imports(*['triqs.gf'])
+module.add_imports(*['triqs.gf', 'h5._h5py'])
 
 # Add here all includes
 module.add_include("nrgljubljana_interface/solver_core.hpp")
