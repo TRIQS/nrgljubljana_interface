@@ -1,24 +1,15 @@
-# ############
-# Dependencies
-
-## GSL
-# Already included in nrgljubljana/tools/CMakeLists.txt. Keep commented out for now.
-#find_package(GSL REQUIRED)
-#add_library(gsl INTERFACE)
-#target_include_directories(gsl SYSTEM INTERFACE ${GSL_INCLUDE_DIRS})
-#target_link_libraries(gsl INTERFACE ${GSL_LIBRARIES})
-#install(TARGETS gsl EXPORT nrgljubljana_interface-targets)
-
-file(GLOB_RECURSE sources *.cpp *.hpp)
-add_library(nrgljubljana_interface_c SHARED ${sources})
+file(GLOB_RECURSE sources *.cpp)
+add_library(${PROJECT_NAME}_c ${sources})
+add_library(${PROJECT_NAME}::${PROJECT_NAME}_c ALIAS ${PROJECT_NAME}_c)
 
 # Link against triqs and enable warnings
-target_link_libraries(nrgljubljana_interface_c PUBLIC triqs PRIVATE if_project_warnings)
+target_link_libraries(${PROJECT_NAME}_c PUBLIC triqs PRIVATE $<BUILD_INTERFACE:${PROJECT_NAME}_warnings>)
 
-# Configure compilation
-target_compile_options(nrgljubljana_interface_c PUBLIC -fPIC)
-target_include_directories(nrgljubljana_interface_c PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/c++>)
-target_compile_definitions(nrgljubljana_interface_c PUBLIC
+# Configure target and compilation
+set_property(TARGET ${PROJECT_NAME}_c PROPERTY POSITION_INDEPENDENT_CODE ON)
+target_include_directories(${PROJECT_NAME}_c PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/c++>)
+target_include_directories(${PROJECT_NAME}_c SYSTEM INTERFACE $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>)
+target_compile_definitions(${PROJECT_NAME}_c PUBLIC
 				NRGIF_TEMPLATE_DIR="${CMAKE_INSTALL_PREFIX}/templates"
 				NRGLJUBLJANA_INTERFACE_GIT_HASH=${PROJECT_GIT_HASH}
 				TRIQS_GIT_HASH=${TRIQS_GIT_HASH}
@@ -27,29 +18,32 @@ target_compile_definitions(nrgljubljana_interface_c PUBLIC
 				$<$<CONFIG:Debug>:TRIQS_ARRAYS_ENFORCE_BOUNDCHECK>
 			  )
 
+# ############
+# Dependencies
+
 # Link against NRG
-target_link_libraries(nrgljubljana_interface_c PRIVATE nrgljubljana_c)
+target_link_libraries(${PROJECT_NAME}_c PRIVATE nrgljubljana_c)
 
 # Link against other libraries
-target_link_libraries(nrgljubljana_interface_c PUBLIC gsl blas_lapack)
+target_link_libraries(${PROJECT_NAME}_c PUBLIC gsl blas_lapack)
 # Note: we link against blas_lapack to prevent problem reported in https://software.intel.com/en-us/forums/intel-math-kernel-library/topic/759670
 
 # Add tool dependencies
-add_dependencies(nrgljubljana_interface_c adapt nrgchain matrix diag unitary broaden kk)
+add_dependencies(${PROJECT_NAME}_c adapt nrgchain matrix diag unitary broaden kk)
 
 # C++ filesystem library. Currently not used, keep commented out.
 #if((CMAKE_CXX_COMPILER_ID STREQUAL "GNU") AND (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "9.0.0"))
-#  target_link_libraries(nrgljubljana_interface_c PRIVATE stdc++fs)
+#  target_link_libraries(${PROJECT_NAME}_c PRIVATE stdc++fs)
 #  message("[filesystem library] Using stdc++fs")
 #elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-#  target_link_libraries(nrgljubljana_interface_c PRIVATE c++experimental c++fs)
+#  target_link_libraries(${PROJECT_NAME}_c PRIVATE c++experimental c++fs)
 #  message("[filesystem library] Using c++experimenal c++fs")
 #else()
 #  message(FATAL_ERROR "Don't know how to handle filesystem dependency.")
 #endif()
 
 # Install library and headers
-install(TARGETS nrgljubljana_interface_c EXPORT nrgljubljana_interface-targets DESTINATION lib)
+install(TARGETS ${PROJECT_NAME}_c EXPORT ${PROJECT_NAME}-targets DESTINATION lib)
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} DESTINATION include FILES_MATCHING PATTERN "*.hpp" PATTERN "*.h")
 
 
@@ -65,7 +59,7 @@ if(ANALYZE_SOURCES)
   # Run clang-tidy if found
   if(CLANG_TIDY_EXECUTABLE)
     message(STATUS "clang-tidy found: ${CLANG_TIDY_EXECUTABLE}")
-    set_target_properties(nrgljubljana_interface_c PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_EXECUTABLE}")
+    set_target_properties(${PROJECT_NAME}_c PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_EXECUTABLE}")
   else()
     message(STATUS "clang-tidy not found in $PATH. Please consider installing clang-tidy for additional checks!")
   endif()
@@ -74,7 +68,7 @@ if(ANALYZE_SOURCES)
   if(CPPCHECK_EXECUTABLE)
     message(STATUS "cppcheck found: ${CPPCHECK_EXECUTABLE}")
     add_custom_command(
-	TARGET nrgljubljana_interface_c
+	TARGET ${PROJECT_NAME}_c
 	COMMAND ${CPPCHECK_EXECUTABLE}
 	  --enable=warning,style,performance,portability
 	  --std=c++17
@@ -102,13 +96,11 @@ if(ASAN)
   if(NOT TARGET asan)
     find_package(sanitizer REQUIRED "asan")
   endif()
-  target_link_libraries(nrgljubljana_interface_c PUBLIC asan)
-  install(TARGETS asan EXPORT nrgljubljana_interface-targets)
+  target_link_libraries(${PROJECT_NAME}_c PUBLIC $<BUILD_INTERFACE:asan>)
 endif()
 if(UBSAN)
   if(NOT TARGET ubsan)
     find_package(sanitizer REQUIRED "ubsan")
   endif()
-  target_link_libraries(nrgljubljana_interface_c PUBLIC ubsan)
-  install(TARGETS ubsan EXPORT nrgljubljana_interface-targets)
+  target_link_libraries(${PROJECT_NAME}_c PUBLIC $<BUILD_INTERFACE:ubsan>)
 endif()
