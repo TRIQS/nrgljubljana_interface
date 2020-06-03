@@ -5,7 +5,7 @@ ARG APPNAME=nrgljubljana_interface
 COPY requirements.txt /src/$APPNAME/requirements.txt
 RUN pip3 install -r /src/$APPNAME/requirements.txt
 
-RUN apt-get install -y libgsl-dev || yum install -y gsl-devel
+RUN apt-get install -y libgsl-dev || yum install -y gsl-devel perl-Math-Complex
 
 ENV BOOST_ROOT=/opt/boost
 ADD https://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.tar.gz /tmp/boost.tar.gz
