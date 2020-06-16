@@ -65,7 +65,7 @@ Custom CMake options
 
 The compilation of ``nrgljubljana_interface`` can be configured using CMake-options::
 
-    cmake ../nrgljubljana_interface.src -DOPTION1=value1 -DOPTION2=value2 ... ../nrgljubljana_interface.src
+    cmake ../nrgljubljana_interface.src -DOPTION1=value1 -DOPTION2=value2 ...
 
 +-----------------------------------------------------------------+-----------------------------------------------+
 | Options                                                         | Syntax                                        |
