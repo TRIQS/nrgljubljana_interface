@@ -3,9 +3,9 @@
 nrgljubljana_interface
 ======================
 
-.. sidebar:: nrgljubljana_interface 2.2.0
+.. sidebar:: nrgljubljana_interface 3.0.0
 
-   This is the homepage of nrgljubljana_interface v2.2.0. 
+   This is the homepage of nrgljubljana_interface v3.0.0.
    For changes see the :ref:`changelog page <changelog>`.
 
 nrgljubljana_iterface provides C++ and Python interfaces between TRIQS and the NRG Ljubljana solver.
