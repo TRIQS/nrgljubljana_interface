@@ -89,12 +89,12 @@ void validate_parameters() {
   my_assert(P::keep > 1);
   if (P::keepenergy > 0.0) my_assert(P::keepmin <= P::keep);
   if (P::dmnrg || cfs_flags()) P::dm.setvalue(true);
-  if (cfs_flags() && !P::lastalloverride) P::lastall.setvalue(true);
   my_assert(P::Lambda > 1.0);
   P::diagroutine = undefined;
   if (NRG::v == "real") {
     if (string(P::diag) == "default") P::diag.setvalue("dsyev");
-    if (string(P::diag) == "dsyev") P::diagroutine = diagdsyev;
+    if (string(P::diag) == "dsyev")  P::diagroutine = diagdsyev;
+    if (string(P::diag) == "dsyevd") P::diagroutine = diagdsyevd;
     if (string(P::diag) == "dsyevr") P::diagroutine = diagdsyevr;
   }
   if (NRG::v == "complex") {

@@ -83,8 +83,6 @@ class sharedparam {
   // perform diagonalizations).
   dr_value diagroutine{undefined};
   double diagratio{};
-  size_t dsyevrlimit{};
-  size_t zheevrlimit{};
   bool logall{};
   string log;
   void init();
@@ -94,8 +92,6 @@ class sharedparam {
   template <class Archive> void serialize(Archive &ar, const unsigned int version) {
     ar &diagroutine;
     ar &diagratio;
-    ar &dsyevrlimit;
-    ar &zheevrlimit;
     ar &logall;
     ar &log;
   }
@@ -1754,13 +1750,12 @@ void nrg_truncate_prepare(DiagInfo &diag) {
     // Count the number of elements to keep
     size_t count = count_if(begin(EIGEN(is).value), end(EIGEN(is).value), [=](double e) { return e <= Emax; });
     my_assert(count <= nrc);
-    // In CFS=true, we keep all states in the last iteration.
-    if (cfs_flags() && LAST_ITERATION() && !P::lastalloverride) count = nrc;
-    // Exception: in the last iteration of the density-matrix run, we
-    // may override strategy=kept and keep all (computed) states if
-    // lastall=true. This is only relevant if CFS=false and
-    // DMNRG=true.
-    if (dmnrgrun && LAST_ITERATION() && P::lastall) count = nrc;
+    if (LAST_ITERATION()) {  // Overrides
+      // Full Fock space algorithms: keep all states in the last iteration
+      if (cfs_flags() && !P::lastalloverride) count = nrc;
+      // lastall -> Unconditionally keep all states in the last iteration
+      if (P::lastall) count = nrc;
+    }
     if (count == nrc && EIGEN(is).value(nrc - 1) != Emax) {
       /* We determined that all calculated states in this invariant
         subspace will be retained (and that perhaps additional should
@@ -1939,6 +1934,7 @@ void dump_annotated(const DiagInfo &diag, bool scaled = true, bool absolute = fa
       Fannotated << " [" << total_degeneracy << "]" << endl;
     }
   } else {
+    seznam.resize(len); // truncate!
     for (const auto &i : seznam) Fannotated << scaled_energy(i.first, scaled, absolute) << " " << i.second << endl;
   }
   // Consecutive iterations are separated by an empty line
@@ -2388,7 +2384,8 @@ Invar read_from(int source) {
 void nrg_diagonalisations_MPI() {
   nrglog('@', "@ nrg_diagonalisations_MPI()");
   mpi_sync_params(); // Synchronise parameters
-  list<Invar> todo(NRG::tasks); // List of all the remaining tasks
+  list<Invar> todo; // List of all the tasks to handle
+  copy(begin(NRG::tasks), end(NRG::tasks), back_inserter(todo));
   list<Invar> done; // List of finished tasks.
   // List of the available computation nodes (including the master,
   // which is always at the very beginnig of the deque).
@@ -2906,7 +2903,7 @@ void finalize_nrg() {
   // last iteration. All other states (incl. from previous shells)
   // obviously have higher energies.
   STAT::GS_energy = STAT::total_energy;
-  calc_TKW();
+  calc_TKW(); // deprecated
   if (P::fdm) {
     shift_abs_energies(dm);
     calc_ZnD(dm);
@@ -2964,7 +2961,11 @@ void start_calculation(IterInfo &iterinfo) {
   finalize_nrg();
   if (string(P::stopafter) == "nrg") exit1("*** Stopped after the first sweep.");
   if (!P::dm) return;
-  init_rho(diagprev, rho);
+  if (P::calc_rho_after_truncation) { // relevant if lastall=false
+    init_rho(diag, rho);
+  } else {
+    init_rho(diagprev, rho);
+  }
   if (P::fdm) init_rho_FDM(rhoFDM, STAT::N);
   if (!P::ZBW) {
     calc_densitymatrix(rho);
@@ -2984,7 +2985,6 @@ void start_calculation(IterInfo &iterinfo) {
 void sharedparam::init() {
   diagroutine = P::diagroutine;
   diagratio   = NRG::diagratio;
-  dsyevrlimit = P::dsyevrlimit;
   logall      = P::logall;
   log         = P::log;
 }
@@ -3065,8 +3065,6 @@ void slave_diag() {
 }
 
 void run_nrg_slave() {
-  set_new_handler(outOfMemory);
-  cout << "MPI slave rank " << mpiw->rank() << endl;
   const int MASTER = 0;
   bool done        = false;
   while (!done) {
@@ -3092,7 +3090,9 @@ void run_nrg_slave() {
           mpidebug("sync");
           mpi_sync_params();
           break;
-        default: cout << "MPI error: unknown tag on " << mpiw->rank() << endl; break;
+        default: 
+          cout << "MPI error: unknown tag on " << mpiw->rank() << endl; 
+          break;
       } // switch
     } else {
       // No message received. We sleep for a while to reduce the
