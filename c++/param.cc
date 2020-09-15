@@ -59,7 +59,25 @@ template <class T> class param : public parambase {
   void setvalue(T newdata) { data = newdata; }
 };
 
-enum dr_value { undefined, diagdsyev, diagdsyevr, diagzheev, diagzheevr };
+enum dr_value { undefined, diagdsyev, diagdsyevd, diagdsyevr, diagzheev, diagzheevr };
+
+string dr_to_string(dr_value dr)
+{
+  switch (dr) {
+  case diagdsyev:
+    return "dsyev";
+  case diagdsyevd:
+    return "dsyevd";
+  case diagdsyevr:
+    return "dsyevr";
+  case diagzheev:
+    return "zheev";
+  case diagzheevr:
+    return "zheevr";
+  default:
+    return "UNDEFINED";
+  }
+}
 
 // CONVENTION: parameters that are user configurable are declared as
 // param<T>, other parameters (set at runtime) are defined as basic
@@ -126,13 +144,11 @@ namespace P {
   // ************************
   // NRG iteration parameters
 
-  param<string> diag("diag", "Eigensolver routine (dsyev|dsyevr|zheev|zheevr|default)", "default"); // N
+  param<string> diag("diag", "Eigensolver routine (dsyev|dsyevd|dsyevr|zheev|zheevr|default)", "default"); // N
 
   // For partial diagonalisation routines (dsyevr, zheevr), diagratio controls the fraction
   // of eigenspectrum that we compute.
   param<double> diagratio("diagratio", "Ratio of eigenstates computed in partial diagonalisation", "1.0"); // N
-  param<size_t> dsyevrlimit("dsyevrlimit", "Minimal matrix size for dsyevr", "100");                       // N
-  param<size_t> zheevrlimit("zheevrlimit", "Minimal matrix size for zheevr", "100");                       // N
 
   // If an insufficient number of states is computed during an
   // iteration with partial diagonalisations, diagratio can be
@@ -434,12 +450,15 @@ namespace P {
 
   param<bool> done("done", "Create DONE file?", "true");                         // N
   param<bool> calc0("calc0", "Perform calculations at 0-th iteration?", "true"); // N
+   
+  // Evaluate rho with full or truncated spectrum of states. This is different from the
+  // number of states used in the evaluation of spectra (cf. lastall). Relevant for calculations 
+  // where only the DMNRG algorithm is enabled.
+  param<bool> calc_rho_after_truncation("calc_rho_after_truncation", "Calculation mode for DMNRG", "false");
 
   // If dmnrg=true, cfs=false, fdm=false, setting lastall=true will
   // enforce "keeping" all states in the last step of the NRG
-  // iteration. For cfs=true and/or fdm=true, lastall is
-  // automatically enable (unless this is overriden by setting
-  // lastalloverride=true).
+  // iteration.
   param<bool> lastall("lastall", "Keep all states in the last iteratio for DMNRG", "false"); // N
 
   // If lastalloverride=true, then "lastall" is not set to true
