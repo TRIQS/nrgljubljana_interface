@@ -1,2 +1,2 @@
-install(DIRECTORY SIAM Holstein 2orb-UJ
+install(DIRECTORY SIAM CLEAN Holstein 2orb-UJ 2orb-UJt
   DESTINATION templates USE_SOURCE_PERMISSIONS)
