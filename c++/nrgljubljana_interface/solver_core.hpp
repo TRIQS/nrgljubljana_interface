@@ -113,6 +113,9 @@ namespace nrgljubljana_interface {
     /// The Green function structure object
     gf_struct_t gf_struct;
 
+    /// The hybridization function structure object.
+    gf_struct_t Delta_struct;
+
     /// The susceptibility structure object
     gf_struct_t chi_struct;
 

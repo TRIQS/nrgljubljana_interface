@@ -73,6 +73,10 @@ namespace nrgljubljana_interface {
       report_openMP(); // important for performance, so we report the settings here for easy inspection by the user
 
     gf_struct = read_structure("gf_struct", true); // true=mandatory
+    Delta_struct = read_structure("Delta_struct", false); // false=optional
+    if (!has_struct(Delta_struct))
+      Delta_struct = gf_struct; // default to equal structure of Delta and G
+    TRIQS_ASSERT2(has_struct(Delta_struct), "Delta_struct must be defined. template corrupted?");
     chi_struct = read_structure("chi_struct", false); // false=optional
 
     // Read model-specific template info file
@@ -104,8 +108,9 @@ namespace nrgljubljana_interface {
     }
     std::sort(begin(mesh_points), end(mesh_points));
     log_mesh = gf_mesh<refreq_pts>{mesh_points};
-    Delta_w  = g_w_t{log_mesh, gf_struct};
-    // We also construct G_w and Sigma_w here to enable their initialization in DMFT loops
+    // Note: Delta may have a different structure from G.
+    Delta_w  = g_w_t{log_mesh, Delta_struct};
+    // We also construct G_w and Sigma_w here to enable their initialization in the DMFT loops
     // prior to solver calls.
     if (has_struct(gf_struct)) {
       G_w = g_w_t{log_mesh, gf_struct};
@@ -250,7 +255,7 @@ namespace nrgljubljana_interface {
 
   // Write Gamma=-Im(Delta_w) to a file
   void solver_core::write_gamma() {
-    for (int bl_idx : range(gf_struct.size())) {
+    for (int bl_idx : range(Delta_struct.size())) {
       long bl_size = Delta_w[bl_idx].target_shape()[0];
       auto bl_name = Delta_w.block_names()[bl_idx];
       for (auto [i, j] : product_range(bl_size, bl_size)) {
@@ -302,13 +307,14 @@ namespace nrgljubljana_interface {
     world.barrier(); // Ensures all subcalculations are completed
     // Post-Processing in perl script
     if (world.rank() == 0) {
-      std::cout << "Post-processing" << std::endl;
+      std::cout << "Post-processing results" << std::endl;
       call("./process", verbose);
     }
 
     world.barrier(); // Ensures post-processing is completed
     // Read Results into TRIQS Containers
-    std::cout << "Reading results" << std::endl;
+    if (world.rank() == 0)
+      std::cout << "Reading results from files" << std::endl;
     readexpv(sp.Nz);
     readtdfdm(sp.Nz);
     readGF("G", G_w, gf_struct);
