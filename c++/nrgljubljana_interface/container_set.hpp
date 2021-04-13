@@ -45,6 +45,9 @@ namespace nrgljubljana_interface {
     /// Expectation values of local impurity operators
     std::map<std::string, double> expv;
 
+    /// Thermodynamic variables (FDM algorithm)
+    std::map<std::string, double> tdfdm;
+
     /// Charge susceptibility
     std::optional<g_w_t> chi_NN_w;
 
@@ -60,6 +63,7 @@ namespace nrgljubljana_interface {
       h5_write(grp, "F_w", c.F_w);
       h5_write(grp, "Sigma_w", c.Sigma_w);
       h5_write(grp, "expv", c.expv);
+      h5_write(grp, "tdfdm", c.tdfdm);
       h5_write(grp, "chi_NN_w", c.chi_NN_w);
       h5_write(grp, "chi_SS_w", c.chi_SS_w);
     }
@@ -73,6 +77,7 @@ namespace nrgljubljana_interface {
       h5_read(grp, "F_w", c.F_w);
       h5_read(grp, "Sigma_w", c.Sigma_w);
       h5_read(grp, "expv", c.expv);
+      h5_read(grp, "tdfdm", c.tdfdm);
       h5_read(grp, "chi_NN_w", c.chi_NN_w);
       h5_read(grp, "chi_SS_w", c.chi_SS_w);
     }

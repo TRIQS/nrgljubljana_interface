@@ -65,6 +65,11 @@ c.add_member(c_name = "expv",
              read_only= True,
              doc = r"""Expectation values of local impurity operators""")
 
+c.add_member(c_name = "tdfdm",
+             c_type = "std::map<std::string, double>",
+             read_only= True,
+             doc = r"""Thermodynamic variables (FDM algorithm)""")
+
 c.add_member(c_name = "chi_NN_w",
              c_type = "std::optional<g_w_t>",
              read_only= True,
@@ -431,7 +436,7 @@ module.add_class(c)
 
 module.add_function ("std::complex<double> nrgljubljana_interface::hilbert_transform_refreq (nrgljubljana_interface::c_w_cvt gf, std::complex<double> z)", doc = r"""""")
 
-module.add_function ("matrix<std::complex<double>> nrgljubljana_interface::hilbert_transform_elementwise (nrgljubljana_interface::m_w_cvt gf, std::complex<double> z)", doc = r"""""")
+module.add_function ("matrix<std::complex<double> > nrgljubljana_interface::hilbert_transform_elementwise (nrgljubljana_interface::m_w_cvt gf, std::complex<double> z)", doc = r"""""")
 
 
 # Converter for solve_params_t

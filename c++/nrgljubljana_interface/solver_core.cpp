@@ -60,6 +60,14 @@
 
 namespace nrgljubljana_interface {
 
+  // Returns true if the GF structure is non-trivial, i.e., it has any elements at all.
+  bool has_struct(const gf_struct_t &s) {
+    unsigned int len = 0;
+    for(const auto &[name, lst] : s)
+      len += lst.size();
+    return len > 0;
+  }
+
   solver_core::solver_core(constr_params_t cp) : constr_params(cp) {
     if (world.rank() == 0)
       report_openMP(); // important for performance, so we report the settings here for easy inspection by the user
@@ -99,8 +107,10 @@ namespace nrgljubljana_interface {
     Delta_w  = g_w_t{log_mesh, gf_struct};
     // We also construct G_w and Sigma_w here to enable their initialization in DMFT loops
     // prior to solver calls.
-    G_w = g_w_t{log_mesh, gf_struct};
-    Sigma_w = g_w_t{log_mesh, gf_struct};
+    if (has_struct(gf_struct)) {
+      G_w = g_w_t{log_mesh, gf_struct};
+      Sigma_w = g_w_t{log_mesh, gf_struct};
+    }
   }
 
   // -------------------------------------------------------------------------------
@@ -122,6 +132,8 @@ namespace nrgljubljana_interface {
   }
 
   void solver_core::readGF(const std::string &name, std::optional<g_w_t> &G_w, gf_struct_t &_gf_struct) {
+    if (!has_struct(_gf_struct))
+      return;
     G_w = g_w_t{log_mesh, _gf_struct};
     for (int bl_idx : range(_gf_struct.size())) {
       long bl_size = Delta_w[bl_idx].target_shape()[0];
@@ -150,6 +162,8 @@ namespace nrgljubljana_interface {
   }
   
   void solver_core::readA(const std::string &name, std::optional<g_w_t> &A_w, gf_struct_t &_gf_struct) {
+    if (!has_struct(_gf_struct))
+      return;
     A_w = g_w_t{log_mesh, _gf_struct};
     for (int bl_idx : range(_gf_struct.size())) {
       long bl_size = Delta_w[bl_idx].target_shape()[0];
@@ -196,6 +210,31 @@ namespace nrgljubljana_interface {
       for (auto [k, v] : zip(keywords, values)) expv[k] += v; // zeroed by default constructor
     }
     for (auto &i : expv) { i.second /= Nz; } // calculate the average over discretization meshes
+  }
+
+  // Read thermodynamic variables (FDM algorithm) and average over Nz runs
+  void solver_core::readtdfdm(int Nz) {
+    for (int cnt = 1; cnt <= Nz; cnt++) {
+      const std::string tdfdmfilename = std::to_string(cnt) + "/tdfdm";
+      std::ifstream F(tdfdmfilename);
+      if (!F) TRIQS_RUNTIME_ERROR << "Thermodynamic variables output file not found.";
+      std::string skeyword, svalue;
+      getline(F, skeyword);
+      getline(F, svalue);
+      F.close();
+      skeyword.erase(0,1); // drop #
+      std::istringstream sskeyword(skeyword);
+      std::deque<std::string> keywords{std::istream_iterator<std::string>{sskeyword},
+        std::istream_iterator<std::string>{}};
+      std::istringstream ssvalue(svalue);
+      std::deque<double> values{std::istream_iterator<double>{ssvalue},
+        std::istream_iterator<double>{}};
+      TRIQS_ASSERT2(keywords.size() == values.size(), "tdfdm corrupted");
+      keywords.pop_front(); // ignore first column (temperature)
+      values.pop_front();
+      for (auto [k, v] : zip(keywords, values)) tdfdm[k] += v; // zeroed by default constructor
+    }
+    for (auto &i : tdfdm) { i.second /= Nz; } // calculate the average over discretization meshes
   }
 
   inline void call(const std::string &command, bool verbose = true, bool exit_on_failure = true) {
@@ -262,12 +301,16 @@ namespace nrgljubljana_interface {
 
     world.barrier(); // Ensures all subcalculations are completed
     // Post-Processing in perl script
-    if (world.rank() == 0)
+    if (world.rank() == 0) {
+      std::cout << "Post-processing" << std::endl;
       call("./process", verbose);
+    }
 
     world.barrier(); // Ensures post-processing is completed
     // Read Results into TRIQS Containers
+    std::cout << "Reading results" << std::endl;
     readexpv(sp.Nz);
+    readtdfdm(sp.Nz);
     readGF("G", G_w, gf_struct);
     readGF("F", F_w, gf_struct);
     readA("A", A_w, gf_struct);
@@ -276,22 +319,19 @@ namespace nrgljubljana_interface {
     readGF("NN", chi_NN_w, chi_struct);
 
     // Post-Processing in C++ interface
-    Sigma_w = (*F_w) / (*G_w);
+    if (has_struct(gf_struct))
+      Sigma_w = (*F_w) / (*G_w);
 
     // Cleanup
     world.barrier(); // Ensures all processes have read the results before cleanup
     if (chdir(cwd.c_str()) != 0) TRIQS_RUNTIME_ERROR << "failed to return from tempdir";
     world.barrier(); // Ensures all processes have chdired from temp dir before it is deleted
-    if (world.rank() == 0) {
-#ifdef NDEBUG
-      // In production mode, we remove the temporary files.
-      // In debug mode, we keep the temporary files for inspection.
-//      std::error_code ec;
-//      fs::remove_all(tempdir, ec);
-//      if (ec) std::cout << "Warning: failed to remove the temporary directory." << std::endl;
-//    Workaround:
-      call("rm -rf " + tempdir, verbose, false);
-#endif
+    if (world.rank() == 0 && !keep_temp_dir) {
+        //      std::error_code ec;
+        //      fs::remove_all(tempdir, ec);
+        //      if (ec) std::cerr << "Warning: failed to remove the temporary directory." << std::endl;
+        //    Workaround:
+        call("rm -rf " + tempdir, verbose, false);
     }
   }
 

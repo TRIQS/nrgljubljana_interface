@@ -107,6 +107,9 @@ namespace nrgljubljana_interface {
     // If set true, detailed output from NRG Ljubljana and tools will be sent to stdout
     bool verbose = false;
 
+    // Keep temporary directories
+    bool keep_temp_dir = false;
+
     /// The Green function structure object
     gf_struct_t gf_struct;
 
@@ -121,6 +124,9 @@ namespace nrgljubljana_interface {
 
     /// Read expectation values
     void readexpv(int Nz);
+
+    /// Read thermodynamic variables (FDM algorithm)
+    void readtdfdm(int Nz);
 
     /// Read a block Green's function (im/re)name-block-ij.dat
     void readGF(const std::string &name, std::optional<g_w_t> &G_w, gf_struct_t &_gf_struct);
