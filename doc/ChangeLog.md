@@ -9,19 +9,16 @@ We provide a more detailed description of the changes below.
 
 General
 -------
-* Update nrgljubljana to commit f015aa7
-* Be sure to import 'h5._h5py' in solver_core module initialization
+* Update nrgljubljana to release 2020.09
 * Link cpp2py_module against triqs_py library
 * Minor cleaning in doc/guide/hubbard.py
 * Rename h5 output file for refreq_pts test
 * Do not use TRIQS_MAKE_NVP macro in serialization function of point_mesh
 * improved handling of chdir to temp dir (and return); libmkl_rt
-* name fix
 * report OpenMP settings
 * add blas/lapack dependency
 * Note on temporary storage, NRG_WORKDIR and NRG_TEMPDIR environment variables
 * temporary directory configurable via env variable NRG_TEMPDIR.. it's best to set it to a RAM disk, e.g. /dev/shm/ on Linux systems
-* formating fix
 * update DMFT code
 * comment out unused section of code
 * remove unused variables
