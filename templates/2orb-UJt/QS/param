@@ -1,0 +1,16 @@
+[extra]
+U1=
+U2=
+eps1=
+eps2=
+U12=
+J12=
+t12=
+
+[param]
+options=GENERATE_TEMPLATE
+model=2orb-UJt.m
+symtype=QS
+ops=n_d1 n_d1^2 n_d2 n_d2^2 hop12 S_d1S_d2 n_d1n_d2 A_d1 A_d2 self_d1 self_d2 sigma_d1 sigma_d2
+
+data_has_rescaled_energies=false
