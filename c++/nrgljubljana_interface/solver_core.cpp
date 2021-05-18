@@ -63,8 +63,7 @@ namespace nrgljubljana_interface {
   // Returns true if the GF structure is non-trivial, i.e., it has any elements at all.
   bool has_struct(const gf_struct_t &s) {
     unsigned int len = 0;
-    for(const auto &[name, lst] : s)
-      len += lst.size();
+    for (const auto &[bl_name, bl_size] : s) len += bl_size;
     return len > 0;
   }
 
@@ -127,11 +126,7 @@ namespace nrgljubljana_interface {
     if (F) {
       std::string bl_name;
       int bl_size;
-      while (F >> bl_name >> bl_size) {
-        indices_t idx_lst;
-        for (int i : range(bl_size)) idx_lst.push_back(i);
-        _gf_struct.emplace_back(bl_name, idx_lst);
-      }
+      while (F >> bl_name >> bl_size) { _gf_struct.emplace_back(bl_name, bl_size); }
     }
     return _gf_struct;
   }

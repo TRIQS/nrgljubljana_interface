@@ -6,7 +6,7 @@ module = module_(full_name = "mesh_refreq_pts", doc = "The refreq_pts mesh", app
 module.add_imports(*['triqs.gf']) 
 
 module.add_include("<triqs/gfs.hpp>")
-module.add_include("<triqs/gfs/meshes/refreq_pts.hpp>")
+module.add_include("<triqs/mesh/refreq_pts.hpp>")
 
 module.add_include("<cpp2py/converters/string.hpp>")
 module.add_include("<cpp2py/converters/vector.hpp>")
@@ -17,6 +17,7 @@ module.add_include("<triqs/cpp2py_converters.hpp>")
 
 module.add_using("namespace nda")
 module.add_using("namespace triqs::gfs")
+module.add_using("namespace triqs::mesh")
 module.add_using("std::array")
 module.add_preamble("""
 """)
@@ -26,15 +27,15 @@ module.add_preamble("""
 ########################
 
 m = class_( py_type = "MeshReFreqPts",
-        c_type = "gf_mesh<refreq_pts>",
-        c_type_absolute = "triqs::gfs::gf_mesh<triqs::gfs::refreq_pts>",
+        c_type = "refreq_pts",
+        c_type_absolute = "triqs::gfs::refreq_pts",
         hdf5 = True,
         serializable= "tuple",
         is_printable= True,
         comparisons = "== !="
        )
 
-m.add_constructor(signature = "(std::vector<gf_mesh<refreq_pts>::domain_pt_t> pts)")
+m.add_constructor(signature = "(std::vector<refreq_pts::domain_pt_t> pts)")
 m.add_method("long index_to_linear(long i)", doc = "index -> linear index")
 m.add_len(calling_pattern = "int result = self_c.size()", doc = "Size of the mesh")
 m.add_iterator()

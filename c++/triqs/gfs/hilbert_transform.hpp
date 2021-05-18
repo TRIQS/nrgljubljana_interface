@@ -3,7 +3,7 @@
 #include <triqs/gfs.hpp>
 #include <triqs/mesh.hpp>
 #include <itertools/itertools.hpp>
-#include "./meshes/refreq_pts.hpp"
+#include "../mesh/refreq_pts.hpp"
 
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_integration.h>
@@ -183,7 +183,7 @@ namespace triqs::gfs {
   template <typename G> dcomplex hilbert_transform(G const &Ain, dcomplex z, double lim_direct = 1e-3) REQUIRES(is_gf_v<G>) {
     static_assert(std::is_same_v<typename G::target_t, scalar_valued>,
                   "Hilbert transform only implemented for (complex) scalar-valued spectral functions");
-    static_assert(std::is_same_v<typename G::variable_t, refreq> or std::is_same_v<typename G::variable_t, refreq_pts>,
+    static_assert(std::is_same_v<typename G::mesh_t, mesh::refreq> or std::is_same_v<typename G::mesh_t, mesh::refreq_pts>,
                   "Hilbert transform only implemented for refreq and refreq_pts meshes");
     // Copy the input data for GSL interpolation routines.
     using DVEC = std::vector<double>;
@@ -284,7 +284,8 @@ namespace triqs::gfs {
    * @tparam M The mesh type
    */
   template <typename G, typename M>
-  typename G::regular_type hilbert_transform(G const &Ain, M const &mesh, double eps = 1e-16) REQUIRES(is_gf_v<G> and is_instantiation_of_v<gf_mesh, M>) {
+  typename G::regular_type hilbert_transform(G const &Ain, M const &mesh, double eps = 1e-16)
+     REQUIRES(is_gf_v<G> and mesh::models_mesh_concept_v<M>) {
     auto gout = gf<typename M::var_t, typename G::target_t>{mesh, Ain.target_shape()};
     for (const auto mp : mesh) gout[mp] = hilbert_transform(Ain, dcomplex{mp,eps});
     return gout;
@@ -321,7 +322,7 @@ namespace triqs::gfs {
     long size2 = Ain.target_shape()[1];
     auto mat = matrix<dcomplex>(size1, size2);
     for (auto [i, j] : itertools::product_range(size1, size2)) {
-      auto gtemp = gf<typename G::variable_t, scalar_valued>{Ain.mesh(), {}};
+      auto gtemp = gf<typename G::mesh_t, scalar_valued>{Ain.mesh(), {}};
       for (const auto &mp : Ain.mesh()) gtemp[mp] = Ain[mp](i,j);
       mat(i,j) = hilbert_transform(gtemp, z);
     }
@@ -350,10 +351,10 @@ namespace triqs::gfs {
    * @tparam M The mesh type
    */
   template <typename BG, typename M>
-  auto hilbert_transform(BG const &bAin, M const &mesh, double eps = 1e-16) REQUIRES(is_block_gf_v<BG> and is_instantiation_of_v<gf_mesh, M>) {
+  auto hilbert_transform(BG const &bAin, M const &mesh, double eps = 1e-16) REQUIRES(is_block_gf_v<BG> and mesh::models_mesh_concept_v<M>) {
     using G = typename BG::g_t;
     auto l  = [&mesh, eps](G const &Ain) { return hilbert_transform<G, M>(Ain, mesh, eps); };
     return map_block_gf(l, bAin);
   }
-  
+
 } // namespace triqs::gfs

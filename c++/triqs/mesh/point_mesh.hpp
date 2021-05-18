@@ -1,17 +1,17 @@
 #include <triqs/mesh.hpp>
-#include <triqs/mesh/mesh_tools.hpp>
+#include <triqs/mesh/details/mesh_tools.hpp>
 
 #include <vector>
 #include <string>
 #include <algorithm>
 #include <initializer_list>
 
-namespace triqs::gfs {
+namespace triqs::mesh {
 
   /**
    * A generic mesh of points on a sortable domain
    */
-  template <typename Domain> class point_mesh {
+  template <typename Domain> class point_mesh : tag::mesh {
 
     public:
     /// The domain where the values live
@@ -53,7 +53,7 @@ namespace triqs::gfs {
     /// The number of points in the mesh
     [[nodiscard]] size_t size() const noexcept { return _pts.size(); }
 
-    [[nodiscard]] utility::std::array<size_t, 1> size_of_components() const noexcept { return {size()}; }
+    [[nodiscard]] std::array<size_t, 1> size_of_components() const noexcept { return {size()}; }
 
     // -------------------- utility -------------------
 
@@ -83,7 +83,7 @@ namespace triqs::gfs {
 
     // -------------- Evaluation of a function on the domain --------------------------
 
-    [[nodiscard]] interpol_data_lin_t<index_t, 2> get_interpolation_data(domain_pt_t x) const noexcept {
+    [[nodiscard]] std::array<std::pair<index_t, double>, 2> get_interpolation_data(domain_pt_t x) const noexcept {
       // indices to the left and right
       index_t i_r = std::distance(_pts.begin(), std::lower_bound(_pts.begin(), _pts.end(), x));
       index_t i_l = i_r - 1;
@@ -94,16 +94,16 @@ namespace triqs::gfs {
       auto del        = _pts[i_r] - _pts[i_l];
 
       // The interpolation weights
-      auto w_r = (x - x_l) / del;
-      auto w_l = (x_r - x) / del;
+      double w_r = (x - x_l) / del;
+      double w_l = (x_r - x) / del;
 
       ASSERT(x_l <= x && x <= x_r);
       ASSERT(w_l + w_r - 1 < 1e-15);
 
-      return {{i_l, i_r}, {w_l, w_r}};
+      return {std::make_pair(i_l, w_l), std::make_pair(i_r, w_r)};
     }
 
-    template <typename F>[[nodiscard]] auto evaluate(F const &f, domain_pt_t x) const noexcept {
+    template <typename F> [[nodiscard]] auto evaluate(F const &f, domain_pt_t x) const noexcept {
       EXPECTS(is_within_boundary(x));
       if (x == _pts.front()) return f[0]; // special case
       auto id = get_interpolation_data(x);
@@ -191,4 +191,4 @@ namespace triqs::gfs {
     void advance() noexcept { ++_index; }
   };
 
-} // namespace triqs::gfs
+} // namespace triqs::mesh

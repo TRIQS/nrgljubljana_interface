@@ -78,7 +78,7 @@ TEST(refreq_pts, block_gf) {
 
   // Construction
   auto m   = gf_mesh<refreq_pts>{-1.0, 0.0, 2.0};
-  auto Gbl = block_gf<refreq_pts>{m, {{"bl1", {0, 1}}, {"bl2", {0, 1}}}};
+  auto Gbl = block_gf<refreq_pts>{m, {{"bl1", 2}, {"bl2", 2}}};
 
   // Mesh Loop Initialization
   for (auto mp : m) {
