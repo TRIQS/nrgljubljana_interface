@@ -23,10 +23,11 @@
 #pragma once
 
 #include <triqs/gfs.hpp>
+#include <triqs/mesh.hpp>
 #include <triqs/hilbert_space/fundamental_operator_set.hpp>
 #include <triqs/utility/macros.hpp>
 
-#include <triqs/gfs/meshes/refreq_pts.hpp>
+#include <triqs/mesh/refreq_pts.hpp>
 
 #include <itertools/itertools.hpp>
 #include <mpi/mpi.hpp>
@@ -39,7 +40,8 @@ namespace nrgljubljana_interface {
 
   using namespace std::complex_literals; // Complex Unity 1i
   using namespace triqs::gfs;
-  using namespace triqs::arrays;
+  using namespace triqs::mesh;
+  using namespace nda;
   using namespace triqs::hilbert_space;
   using namespace triqs::utility;
   using namespace h5;
@@ -88,9 +90,9 @@ namespace nrgljubljana_interface {
   // Declare some placeholders for the rest of the code. Use anonymous namespace for proper linkage
   // in this code, all variables with trailing _ are placeholders by convention.
   namespace {
-    triqs::clef::placeholder<0> i_;
-    triqs::clef::placeholder<1> j_;
-    triqs::clef::placeholder<2> w_;
+    nda::clef::placeholder<0> i_;
+    nda::clef::placeholder<1> j_;
+    nda::clef::placeholder<2> w_;
   } // anonymous namespace
 
 } // namespace nrgljubljana_interface

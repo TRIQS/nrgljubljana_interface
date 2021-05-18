@@ -15,9 +15,9 @@ module.add_include("<cpp2py/converters/optional.hpp>")
 
 module.add_include("<triqs/cpp2py_converters.hpp>")
 
-module.add_using("namespace triqs::arrays")
+module.add_using("namespace nda")
 module.add_using("namespace triqs::gfs")
-module.add_using("triqs::utility::mini_vector")
+module.add_using("std::array")
 module.add_preamble("""
 """)
 

@@ -5,15 +5,16 @@
 #include <triqs/hilbert_space/fundamental_operator_set.hpp>
 
 #include <triqs/gfs/hilbert_transform.hpp>
-#include <triqs/gfs/meshes/refreq_pts.hpp>
+#include <triqs/mesh/refreq_pts.hpp>
 
 #include <triqs/test_tools/gfs.hpp>
 
 #include <cmath>
 
 using namespace triqs::gfs;
-using namespace triqs::arrays;
-using namespace triqs::clef;
+using namespace triqs::mesh;
+using namespace nda;
+using namespace nda::clef;
 
 using namespace std::literals::complex_literals;
 

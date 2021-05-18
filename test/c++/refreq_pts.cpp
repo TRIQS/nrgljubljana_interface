@@ -2,12 +2,14 @@
 
 #include <h5/h5.hpp>
 #include <triqs/gfs.hpp>
+#include <triqs/mesh.hpp>
 #include <triqs/test_tools/gfs.hpp>
 
-#include <triqs/gfs/meshes/refreq_pts.hpp>
+#include <triqs/mesh/refreq_pts.hpp>
 
 using namespace triqs::gfs;
-using namespace triqs::arrays;
+using namespace triqs::mesh;
+using namespace nda;
 
 TEST(refreq_pts, Base) {
 
@@ -21,7 +23,7 @@ TEST(refreq_pts, Base) {
   EXPECT_EQ(G.data(), (array<double, 1>{-1.0, 0.0, 2.0}));
 
   // Placeholder Initialization
-  triqs::clef::placeholder<0> om_;
+  nda::clef::placeholder<0> om_;
   G[om_] << 2.0 * om_;
   EXPECT_EQ(G.data(), (array<double, 1>{-2.0, 0.0, 4.0}));
 

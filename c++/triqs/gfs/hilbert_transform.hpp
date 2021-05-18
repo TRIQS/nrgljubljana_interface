@@ -1,6 +1,7 @@
 // Rok Zitko, Nils Wentzell, Dec 2019
 
 #include <triqs/gfs.hpp>
+#include <triqs/mesh.hpp>
 #include <itertools/itertools.hpp>
 #include "./meshes/refreq_pts.hpp"
 

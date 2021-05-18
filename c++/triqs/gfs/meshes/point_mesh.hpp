@@ -1,5 +1,5 @@
-#include <triqs/gfs/meshes.hpp>
-#include <triqs/gfs/meshes/mesh_tools.hpp>
+#include <triqs/mesh.hpp>
+#include <triqs/mesh/mesh_tools.hpp>
 
 #include <vector>
 #include <string>
@@ -53,7 +53,7 @@ namespace triqs::gfs {
     /// The number of points in the mesh
     [[nodiscard]] size_t size() const noexcept { return _pts.size(); }
 
-    [[nodiscard]] utility::mini_vector<size_t, 1> size_of_components() const noexcept { return {size()}; }
+    [[nodiscard]] utility::std::array<size_t, 1> size_of_components() const noexcept { return {size()}; }
 
     // -------------------- utility -------------------
 
