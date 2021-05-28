@@ -84,9 +84,14 @@ namespace triqs::mesh {
     // -------------- Evaluation of a function on the domain --------------------------
 
     [[nodiscard]] std::array<std::pair<index_t, double>, 2> get_interpolation_data(domain_pt_t x) const noexcept {
+      EXPECTS(is_within_boundary(x) && _pts.size() >= 2);
+
+      // special case
+      if (x == _pts.front()) return {std::make_pair(linear_index_t{0}, 1.0), std::make_pair(linear_index_t{1}, 0.0)};
+
       // indices to the left and right
-      index_t i_r = std::distance(_pts.begin(), std::lower_bound(_pts.begin(), _pts.end(), x));
-      index_t i_l = i_r - 1;
+      linear_index_t i_r = std::distance(_pts.begin(), std::lower_bound(_pts.begin(), _pts.end(), x));
+      linear_index_t i_l = i_r - 1;
 
       // Points to the left and right
       domain_pt_t x_l = _pts[i_l];
@@ -104,8 +109,6 @@ namespace triqs::mesh {
     }
 
     template <typename F> [[nodiscard]] auto evaluate(F const &f, domain_pt_t x) const noexcept {
-      EXPECTS(is_within_boundary(x));
-      if (x == _pts.front()) return f[0]; // special case
       auto id = get_interpolation_data(x);
       return id.w[0] * f[id.idx[0]] + id.w[1] * f[id.idx[1]];
     }
