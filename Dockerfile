@@ -9,7 +9,7 @@ RUN apt-get install -y libgsl-dev || yum install -y gsl-devel perl-Math-Complex
 
 ENV BOOST_ROOT=/opt/boost
 ENV LD_LIBRARY_PATH=/opt/boost/lib:$LD_LIBRARY_PATH
-ADD https://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.tar.gz /tmp/boost.tar.gz
+ADD https://boostorg.jfrog.io/artifactory/main/release/1.72.0/source/boost_1_72_0.tar.gz /tmp/boost.tar.gz
 RUN chown build /tmp/boost.tar.gz
 USER build
 RUN tar -C /tmp -xf /tmp/boost.tar.gz && \
