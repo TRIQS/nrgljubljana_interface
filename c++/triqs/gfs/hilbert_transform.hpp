@@ -180,7 +180,7 @@ namespace triqs::gfs {
    * @param lim_direct value of y=Im(z) above which rho(E)/(x+Iy-E) is directly integrated, and below which the singularity is removed
    * @tparam G The Green function type of Ain
    */
-  template <typename G> dcomplex hilbert_transform(G const &Ain, dcomplex z, double lim_direct = 1e-3) REQUIRES(is_gf_v<G>) {
+  template <typename G> dcomplex hilbert_transform(G const &Ain, dcomplex z, double lim_direct = 1e-3) requires(is_gf_v<G>) {
     static_assert(std::is_same_v<typename G::target_t, scalar_valued>,
                   "Hilbert transform only implemented for (complex) scalar-valued spectral functions");
     static_assert(std::is_same_v<typename G::mesh_t, mesh::refreq> or std::is_same_v<typename G::mesh_t, mesh::refreq_pts>,
@@ -285,7 +285,7 @@ namespace triqs::gfs {
    */
   template <typename G, typename M>
   typename G::regular_type hilbert_transform(G const &Ain, M const &mesh, double eps = 1e-16)
-     REQUIRES(is_gf_v<G> and mesh::models_mesh_concept_v<M>) {
+     requires(is_gf_v<G> and mesh::models_mesh_concept_v<M>) {
     auto gout = gf<typename M::var_t, typename G::target_t>{mesh, Ain.target_shape()};
     for (const auto mp : mesh) gout[mp] = hilbert_transform(Ain, dcomplex{mp,eps});
     return gout;
@@ -301,7 +301,7 @@ namespace triqs::gfs {
    * @tparam G The Green function type of Ain and gin.
    */
   template <typename G>
-  typename G::regular_type hilbert_transform(G const &Ain, G const &gin) REQUIRES(is_gf_v<G>) {
+  typename G::regular_type hilbert_transform(G const &Ain, G const &gin) requires(is_gf_v<G>) {
     auto gout = gin;
     for (const auto &mp : gin.mesh()) gout[mp] = hilbert_transform(Ain, gin[mp]);
     return gout;
@@ -315,7 +315,7 @@ namespace triqs::gfs {
    * @param z The complex value for which to evaluate the Hilbert transform
    * @tparam G The Green function type of Ain
    */
-  template <typename G> matrix<dcomplex> hilbert_transform_elementwise(G const &Ain, dcomplex z) REQUIRES(is_gf_v<G>) {
+  template <typename G> matrix<dcomplex> hilbert_transform_elementwise(G const &Ain, dcomplex z) requires(is_gf_v<G>) {
     static_assert(std::is_same_v<typename G::target_t, matrix_valued>,
                   "Hilbert transform only implemented for matrix-valued spectral functions");
     long size1 = Ain.target_shape()[0];
@@ -336,7 +336,7 @@ namespace triqs::gfs {
    * @param z The complex value for which to evaluate the Hilbert transform
    * @tparam BG The block Green function type
    */
-  template <typename BG> auto hilbert_transform(BG const &bAin, dcomplex z) REQUIRES(is_block_gf_v<BG>) {
+  template <typename BG> auto hilbert_transform(BG const &bAin, dcomplex z) requires(is_block_gf_v<BG>) {
     using G = typename BG::g_t;
     auto l  = [z](G const &Ain) { return hilbert_transform<G>(Ain, z); };
     return map_block_gf(l, bAin);
@@ -351,7 +351,7 @@ namespace triqs::gfs {
    * @tparam M The mesh type
    */
   template <typename BG, typename M>
-  auto hilbert_transform(BG const &bAin, M const &mesh, double eps = 1e-16) REQUIRES(is_block_gf_v<BG> and mesh::models_mesh_concept_v<M>) {
+  auto hilbert_transform(BG const &bAin, M const &mesh, double eps = 1e-16) requires(is_block_gf_v<BG> and mesh::models_mesh_concept_v<M>) {
     using G = typename BG::g_t;
     auto l  = [&mesh, eps](G const &Ain) { return hilbert_transform<G, M>(Ain, mesh, eps); };
     return map_block_gf(l, bAin);
