@@ -1,5 +1,8 @@
-Version 3.0.0
-=============
+(changelog)=
+
+# Changelog
+
+## Version 3.0.0
 
 nrgljubljana_interface version 3.0.0 is a compatibility
 release for TRIQS version 3.0.0 that introduces compatibility
@@ -53,8 +56,7 @@ py3
 Contributors: Philipp Dumitrescu, Dylan Simon, Nils Wentzell, Rok Zitko
 
 
-Version 2.2.0
-=============
+## Version 2.2.0
 
 nrgljubljana_interface provides a C++ and Python
 interfaces between "NRG Ljubljana" numerical

@@ -1,7 +1,7 @@
 .. _documentation:
 
 Documentation
-=============
+*************
 
 Examples
 --------
@@ -39,7 +39,7 @@ Miscelaneous
    about
 
 C++ reference manual
---------------------
+====================
 
 .. toctree::
    :maxdepth: 5
@@ -47,7 +47,7 @@ C++ reference manual
    cpp2rst_generated/contents
 
 Python reference manual
------------------------
+=======================
 
 .. automodule:: nrgljubljana_interface
    :members:

@@ -1,7 +1,7 @@
 .. _about:
 
 About nrgljubljana_interface
-============================
+****************************
 
 nrgljubljana_interface provides a C++ and Python
 interfaces between "NRG Ljubljana" numerical
