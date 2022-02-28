@@ -1,0 +1,60 @@
+easyblock = 'CMakeMake'
+
+name = 'TRIQS-nrgljubljana_interface'
+version = '3.1.0'
+
+homepage = 'https://triqs.github.io/nrgljubljana_interface/'
+description = """
+ PROVIDE HERE A DESCRIPTION OF YOUR APPLICATION
+"""
+
+docurls = ['https://triqs.github.io/nrgljubljana_interface/%(version_major_minor)s.x/']
+software_license = 'LicenseGPLv3'
+
+toolchain = {'name': 'foss', 'version': '2021b'}
+toolchainopts = {'pic': True, 'usempi': True}
+
+source_urls = ['https://github.com/TRIQS/nrgljubljana_interface/releases/download/%(version)s/']
+sources = ['nrgljubljana_interface-%(version)s.tar.gz']
+checksums = ['PUT HERE THE SHA256 OF THE RELEASE TARBALL']
+
+dependencies = [
+    ('Python', '3.9.6'),
+    ('SciPy-bundle', '2021.10'),
+    ('Boost', '1.77.0'),
+    ('Clang', '13.0.1'),
+    ('Clang-Python-bindings', '13.0.1'),
+    ('GMP', '6.2.1'),
+    ('HDF5', '1.10.7'),
+    ('Mako', '1.1.4'),
+    ('TRIQS', '3.1.0'),
+    ('NFFT', '3.5.2')
+]
+
+builddependencies = [
+    ('CMake', '3.22.1')
+]
+
+separate_build_dir = True
+
+runtest = 'test'
+
+sanity_check_paths = {
+    'files': ['lib/libnrgljubljana_interface_c.a'],
+    'dirs': ['include/nrgljubljana_interface', 'lib', 'share',
+             'lib/python%(pyshortver)s/site-packages/nrgljubljana_interface'],
+}
+
+sanity_check_commands = ["python -c 'import nrgljubljana_interface'"]
+
+modextrapaths = {
+    'CPLUS_INCLUDE_PATH': 'include',
+    'PYTHONPATH': 'lib/python%(pyshortver)s/site-packages',
+    'CMAKE_PREFIX_PATH': 'lib/cmake/nrgljubljana_interface',
+}
+modextravars = {
+    'NRGLJUBLJANA_INTERFACE_ROOT': '%(installdir)s',
+    'NRGLJUBLJANA_INTERFACE_VERSION': '%(version)s',
+}
+
+moduleclass = 'phys'
