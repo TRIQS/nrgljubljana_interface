@@ -6,6 +6,27 @@
 
 nrgljubljana_interface version 3.1.0 is a compatibility
 release for TRIQS version 3.1.0.
+* uses the latest [app4triqs/3.1.x](https://github.com/TRIQS/app4triqs) skeleton
+* switches documentation to read-the-docs theme
+* improves ghactions and jenkins configuration
+
+We provide a more detailed description of the changes below.
+
+### General
+* C++20 fix: REQUIRES -> requires
+* Disable osx gcc builds due to boost standard library incompatibility
+* Fix get_interpolation_data in point_mesh.hpp for boundary points
+* Porting to triqs 3.1 + nda + meshes
+* Partial implementation of the template 2orb-UJt/QS
+* Support from different structure of GF and Delta
+* CLEAN problem : single-channel no-impurity problem
+* read-in tdfdm (thermodynamics) results ; has_struct() function ; support for no-impurity problems ; keep_temp_dir variable
+
+### jenkins
+* Disable sanitization build due to compilation timeouts
+* Fix link to boost tarball
+
+We thank all contributors: Alexander Hampel, Dylan Simon, Nils Wentzell, Rok Zitko
 
 
 ## Version 3.0.0
