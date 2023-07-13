@@ -116,7 +116,7 @@ namespace triqs::mesh {
     [[nodiscard]] index_t to_index(closest_mesh_point_t<value_t> const &cmp) const noexcept {
       EXPECTS(is_value_valid(cmp.value));
 
-      auto itr_r = std::ranges::lower_bound(_pts, cmp.value);
+      auto itr_r = std::lower_bound(begin(_pts), end(_pts), cmp.value);
       long i_r   = itr_r - _pts.begin();
 
       if (i_r == 0) { return 0; }
@@ -206,7 +206,7 @@ namespace triqs::mesh {
   template <typename Value> auto evaluate(point_mesh<Value> const &m, auto const &f, Value x) {
     EXPECTS(m.is_value_valid(x));
 
-    auto itr_r = std::ranges::lower_bound(m.points(), x);
+    auto itr_r = std::lower_bound(begin(m.points()), end(m.points()), x);
     long i_r   = itr_r - m.points().begin();
 
     if (i_r == 0) { return f(0); }
