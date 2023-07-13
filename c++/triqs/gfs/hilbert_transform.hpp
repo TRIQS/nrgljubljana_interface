@@ -285,8 +285,8 @@ namespace triqs::gfs {
    */
   template <typename G, typename M>
   typename G::regular_type hilbert_transform(G const &Ain, M const &mesh, double eps = 1e-16)
-     requires(is_gf_v<G> and mesh::models_mesh_concept_v<M>) {
-    auto gout = gf<typename M::var_t, typename G::target_t>{mesh, Ain.target_shape()};
+     requires(is_gf_v<G> and mesh::Mesh<M>) {
+    auto gout = gf<M, typename G::target_t>{mesh, Ain.target_shape()};
     for (const auto mp : mesh) gout[mp] = hilbert_transform(Ain, dcomplex{mp,eps});
     return gout;
   }
@@ -322,7 +322,7 @@ namespace triqs::gfs {
     long size2 = Ain.target_shape()[1];
     auto mat = matrix<dcomplex>(size1, size2);
     for (auto [i, j] : itertools::product_range(size1, size2)) {
-      auto gtemp = gf<typename G::mesh_t, scalar_valued>{Ain.mesh(), {}};
+      auto gtemp = gf{Ain.mesh()};
       for (const auto &mp : Ain.mesh()) gtemp[mp] = Ain[mp](i,j);
       mat(i,j) = hilbert_transform(gtemp, z);
     }
@@ -351,7 +351,7 @@ namespace triqs::gfs {
    * @tparam M The mesh type
    */
   template <typename BG, typename M>
-  auto hilbert_transform(BG const &bAin, M const &mesh, double eps = 1e-16) requires(is_block_gf_v<BG> and mesh::models_mesh_concept_v<M>) {
+  auto hilbert_transform(BG const &bAin, M const &mesh, double eps = 1e-16) requires(is_block_gf_v<BG> and mesh::Mesh<M>) {
     using G = typename BG::g_t;
     auto l  = [&mesh, eps](G const &Ain) { return hilbert_transform<G, M>(Ain, mesh, eps); };
     return map_block_gf(l, bAin);

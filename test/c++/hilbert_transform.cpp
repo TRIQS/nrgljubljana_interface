@@ -21,14 +21,14 @@ using namespace std::literals::complex_literals;
 // Common globals
 const auto w_     = placeholder<0>{};
 const auto bl_    = placeholder<1>{};
-const auto w_mesh = gf_mesh<refreq_pts>{-1.0, -0.5, 0, 0.5, 1.0};
+const auto w_mesh = refreq_pts{-1.0, -0.5, 0, 0.5, 1.0};
 
 #define EXPECT_CPLX_EQ(a,b) { dcomplex A = a; dcomplex B = b; EXPECT_DOUBLE_EQ(real(A), real(B)); EXPECT_DOUBLE_EQ(imag(A), imag(B)); }
 
 TEST(hilbert_transform, gf_point) {
 
   // Construction
-  auto rho = gf<refreq_pts, scalar_valued>{w_mesh, {}};
+  auto rho = gf{w_mesh};
   
   if (true) { // flat
     rho[w_] << 1.0;
@@ -134,7 +134,7 @@ TEST(hilbert_transform, gf_point) {
 
   if (true) { // quadratic
     rho[w_] << w_*w_;
-    EXPECT_CPLX_EQ(hilbert_transform(rho, 0.1+0.0001i), dcomplex(-0.1949353971060723,-0.02801896963898113));
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 0.1+0.0001i), dcomplex(-0.19493539710607249,-0.02801896963898113));
     EXPECT_CPLX_EQ(hilbert_transform(rho, 0.3+0.0001i), dcomplex(-0.5544130613827618,-0.2667433437990276));
     EXPECT_CPLX_EQ(hilbert_transform(rho, 0.5+0.0001i), dcomplex(-0.7686654163590991,-0.7854361003849807));
     EXPECT_CPLX_EQ(hilbert_transform(rho, 0.9+0.0001i), dcomplex(0.6316789446424058,-2.604504227768861));
@@ -142,8 +142,8 @@ TEST(hilbert_transform, gf_point) {
     EXPECT_CPLX_EQ(hilbert_transform(rho, 1.0+0.0001i), dcomplex(9.903487553786128,-1.570746326794938));
     EXPECT_CPLX_EQ(hilbert_transform(rho, 2.0+0.0001i), dcomplex(0.4017492503722853,-2.774977580331286e-05));
     EXPECT_CPLX_EQ(hilbert_transform(rho, 10.0+0.0001i), dcomplex(0.06826901230949829,-6.909867907756972e-07));
-    EXPECT_CPLX_EQ(hilbert_transform(rho, 100.0+0.0001i), dcomplex(0.006786123243917645,-6.786941217796011e-09));
-    EXPECT_CPLX_EQ(hilbert_transform(rho, 1000.0+0.0001i), dcomplex(0.0006785718375024526,-6.785726553607633e-11));
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 100.0+0.0001i), dcomplex(0.0067861232439176689,-6.7869412177960349e-09));
+    EXPECT_CPLX_EQ(hilbert_transform(rho, 1000.0+0.0001i), dcomplex(0.00067857183750245052,-6.7857265536076113e-11));
 
     EXPECT_CPLX_EQ(hilbert_transform(rho, 0.1+0.01i), dcomplex(-0.1893669676898915,-0.04687736359259637));
     EXPECT_CPLX_EQ(hilbert_transform(rho, 0.3+0.01i), dcomplex(-0.5361892421811076,-0.2819199341519583));
@@ -167,7 +167,7 @@ TEST(hilbert_transform, gf_point) {
 TEST(hilbert_transform, gf_mesh) {
 
   // Construction
-  auto rho = gf<refreq_pts, scalar_valued>{w_mesh, {}};
+  auto rho = gf{w_mesh};
 
   // Initialize
   rho[w_] << 1.0;
@@ -178,16 +178,16 @@ TEST(hilbert_transform, gf_mesh) {
   // Compare against expected values
   EXPECT_CPLX_EQ(g(-1.0), dcomplex(-37.53450866846468,-1.570796326794897));
   EXPECT_CPLX_EQ(g(-0.5), dcomplex(-1.09861228866811,-3.141592653589793));
-  EXPECT_CPLX_EQ(g(0), dcomplex(0,-3.141592653589793));
+  EXPECT_CPLX_EQ(g(0.0), dcomplex(0,-3.141592653589793));
   EXPECT_CPLX_EQ(g(0.5), dcomplex(1.09861228866811,-3.141592653589793));
   EXPECT_CPLX_EQ(g(1.0), dcomplex(37.53450866846468,-1.570796326794897));
 }
 
 TEST(hilbert_transform, gf_gf) {
-  auto rho = gf<refreq_pts, scalar_valued>{w_mesh, {}};
+  auto rho = gf{w_mesh};
   rho[w_] << 1.0;
   
-  auto gin = gf<refreq_pts, scalar_valued>{w_mesh, {}};
+  auto gin = gf{w_mesh};
   gin[w_] << w_ + 1e-16i;
   
   auto g = hilbert_transform(rho, gin);
@@ -195,7 +195,7 @@ TEST(hilbert_transform, gf_gf) {
   // Same as above, since epsdefault=1e-16
   EXPECT_CPLX_EQ(g(-1.0), dcomplex(-37.53450866846468,-1.570796326794897));
   EXPECT_CPLX_EQ(g(-0.5), dcomplex(-1.09861228866811,-3.141592653589793));
-  EXPECT_CPLX_EQ(g(0), dcomplex(0,-3.141592653589793));
+  EXPECT_CPLX_EQ(g(0.0), dcomplex(0,-3.141592653589793));
   EXPECT_CPLX_EQ(g(0.5), dcomplex(1.09861228866811,-3.141592653589793));
   EXPECT_CPLX_EQ(g(1.0), dcomplex(37.53450866846468,-1.570796326794897));
 }

@@ -28,41 +28,37 @@ module.add_preamble("""
 
 m = class_( py_type = "MeshReFreqPts",
         c_type = "refreq_pts",
-        c_type_absolute = "triqs::gfs::refreq_pts",
+        c_type_absolute = "triqs::mesh::refreq_pts",
         hdf5 = True,
-        serializable= "tuple",
+        serializable= "h5",
         is_printable= True,
         comparisons = "== !="
        )
 
-m.add_constructor(signature = "(std::vector<refreq_pts::domain_pt_t> pts)")
-m.add_method("long index_to_linear(long i)", doc = "index -> linear index")
+m.add_method(f"refreq_pts::data_index_t to_data_index(refreq_pts::index_t index)", doc = "Function to convert an index to a data index")
+m.add_method(f"refreq_pts::index_t to_index(refreq_pts::data_index_t data_index)", doc = "Function to convert a data index to an index")
+m.add_getitem(signature = f"refreq_pts::mesh_point_t operator[](refreq_pts::data_index_t data_index)", doc = "Get a mesh-point given the data index")
+m.add_call(signature = f"refreq_pts::mesh_point_t operator()(refreq_pts::index_t index)", calling_pattern = " auto result = self_c(index)", doc = "Get a mesh-point given the index")
 m.add_len(calling_pattern = "int result = self_c.size()", doc = "Size of the mesh")
+m.add_property(name = "mesh_hash",
+           getter = cfunction(calling_pattern="uint64_t result = self_c.mesh_hash()",
+           signature = "uint64_t()",
+           doc = "The hash encoding the mesh configuration"))
+
 m.add_iterator()
+
 m.add_method("PyObject * values()",
              calling_pattern = """
                 static auto cls = pyref::get_class("triqs.gf", "MeshValueGenerator", /* raise_exception */ true);
                 pyref args = PyTuple_Pack(1, self);
                 auto result = PyObject_CallObject(cls, args);
              """, doc = "A numpy array of all the values of the mesh points")
+m.add_method(f"refreq_pts::value_t to_value(refreq_pts::index_t index)", doc = "index -> value")
 
 m.add_method_copy()
 m.add_method_copy_from()
 
-# m.add_property(name = "omega_min",
-               # getter = cfunction(calling_pattern="double result = self_c.x_min()",
-               # signature = "double()",
-               # doc = "Inverse temperature"))
-
-# m.add_property(name = "omega_max",
-               # getter = cfunction(calling_pattern="double result = self_c.x_max()",
-               # signature = "double()",
-               # doc = "Inverse temperature"))
-
-# m.add_property(name = "delta",
-               # getter = cfunction(calling_pattern="double result = self_c.delta()",
-               # signature = "double()",
-               # doc = "The mesh-spacing"))
+m.add_constructor(signature = "(std::vector<refreq_pts::value_t> pts)")
 
 module.add_class(m)
 

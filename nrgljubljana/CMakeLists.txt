@@ -183,7 +183,6 @@ if(Mathematica_FOUND)
   message(STATUS "Mathematica executable ${Mathematica_KERNEL_EXECUTABLE}")
 endif()
 
-list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMake/BLAS_LAPACK)
 # BLAS/Lapack
 find_package(LAPACK REQUIRED) # also looks up BLAS
 add_library(blas_lapack INTERFACE)

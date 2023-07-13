@@ -120,7 +120,7 @@ namespace nrgljubljana_interface {
     gf_struct_t chi_struct;
 
     /// Logarithmic mesh
-    gf_mesh<refreq_pts> log_mesh;
+    refreq_pts log_mesh;
 
     /// The hybridization function in real frequencies
     g_w_t Delta_w;

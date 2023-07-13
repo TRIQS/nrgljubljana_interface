@@ -1,5 +1,5 @@
 #include <triqs/mesh.hpp>
-#include <triqs/mesh/details/mesh_tools.hpp>
+#include <triqs/mesh/utils.hpp>
 
 #include <vector>
 #include <string>
@@ -9,189 +9,223 @@
 namespace triqs::mesh {
 
   /**
-   * A generic mesh of points on a sortable domain
+   * A generic mesh of points with sortable values 
    */
-  template <typename Domain> class point_mesh : tag::mesh {
+  template <typename Value> class point_mesh {
+    static_assert(std::totally_ordered<Value>);
 
     public:
-    /// The domain where the values live
-    using domain_t = Domain;
+    using value_t      = Value;
+    using index_t      = long;
+    using data_index_t = long;
 
-    /// Type of the points in the domain
-    using domain_pt_t = typename domain_t::point_t;
-
-    /// Discrete index that uniquely identifies points
-    using index_t = long;
-
-    /// Linear index is the position in the flattened mesh
-    using linear_index_t = long;
-
-    /// The type of the mesh points
-    using mesh_point_t = mesh_point<point_mesh>;
+    // --  data
+    private:
+    std::vector<value_t> _pts;
+    size_t _mesh_hash = 0;
 
     // -------------------- Constructors -------------------
-
+    public:
     /// Construct from a vector of points
-    point_mesh(std::vector<domain_pt_t> pts) : _pts(pts) {
-      if (not std::is_sorted(pts.begin(), pts.end())) TRIQS_RUNTIME_ERROR << "Point mesh must be constructed with a sorted list of points";
+    point_mesh(std::vector<value_t> pts) : _pts(std::move(pts)), _mesh_hash(std::accumulate(_pts.begin(), _pts.end(), value_t{0})) {
+      if (not std::is_sorted(_pts.begin(), _pts.end())) TRIQS_RUNTIME_ERROR << "Point mesh must be constructed with a sorted list of points";
     }
 
     /// Initializer list constructor
-    point_mesh(std::initializer_list<domain_pt_t> l) : point_mesh(std::vector(l)) {}
+    point_mesh(std::initializer_list<value_t> l) : point_mesh(std::vector<value_t>(l)) {}
 
     /// Default constructor
     point_mesh() = default;
 
+    // -------------------- Comparison -------------------
+
+    /// Mesh comparison
+    bool operator==(point_mesh const &) const = default;
+    bool operator!=(point_mesh const &) const = default;
+
+    // --------------------  Mesh Point -------------------
+
+    struct mesh_point_t {
+      using mesh_t = point_mesh;
+
+      public:
+      long _index         = 0;
+      long _data_index    = 0;
+      uint64_t _mesh_hash = 0;
+      value_t _value      = {};
+
+      public:
+      mesh_point_t() = default;
+      mesh_point_t(long index, long data_index, uint64_t mesh_hash, double value)
+         : _index(index), _data_index(data_index), _mesh_hash(mesh_hash), _value(value) {}
+
+      /// The index of the mesh point
+      [[nodiscard]] long index() const { return _index; }
+
+      /// The data index of the mesh point
+      [[nodiscard]] long data_index() const { return _data_index; }
+
+      /// The value of the mesh point
+      [[nodiscard]] value_t value() const { return _value; }
+
+      /// The Hash for the mesh configuration
+      [[nodiscard]] uint64_t mesh_hash() const noexcept { return _mesh_hash; }
+
+      operator value_t() const { return _value; }
+
+      // https://godbolt.org/z/xoYP3vTW4
+#define IMPL_OP(OP)                                                                                                                                  \
+  template <typename T> friend auto operator OP(mesh_point_t const &mp, T &&y) { return mp.value() OP std::forward<T>(y); }                          \
+  template <typename T>                                                                                                                              \
+  friend auto operator OP(T &&x, mesh_point_t const &mp)                                                                                             \
+    requires(not std::is_same_v<std::decay_t<T>, mesh_point_t>)                                                                                      \
+  {                                                                                                                                                  \
+    return std::forward<T>(x) OP mp.value();                                                                                                         \
+  }
+      IMPL_OP(+)
+      IMPL_OP(-)
+      IMPL_OP(*)
+      IMPL_OP(/)
+#undef IMPL_OP
+    };
+
+    // -------------------- checks -------------------
+
+    [[nodiscard]] bool is_index_valid(index_t index) const noexcept { return 0 <= index and index < size(); }
+
+    [[nodiscard]] bool is_value_valid(value_t x) const noexcept { return _pts.front() <= x and x <= _pts.back(); }
+
+    // -------------------- to_data_index ------------------
+    [[nodiscard]] data_index_t to_data_index(index_t index) const noexcept {
+      EXPECTS(is_index_valid(index));
+      return index;
+    }
+
+    [[nodiscard]] index_t to_data_index(closest_mesh_point_t<value_t> const &cmp) const noexcept {
+      EXPECTS(is_value_valid(cmp.value));
+      return to_data_index(to_index(cmp));
+    }
+
+    // ------------------ to_index -------------------
+
+    [[nodiscard]] index_t to_index(data_index_t data_index) const noexcept {
+      EXPECTS(is_index_valid(data_index));
+      return data_index;
+    }
+
+    [[nodiscard]] index_t to_index(closest_mesh_point_t<value_t> const &cmp) const noexcept {
+      EXPECTS(is_value_valid(cmp.value));
+
+      auto itr_r = std::ranges::lower_bound(_pts, cmp.value);
+      long i_r   = itr_r - _pts.begin();
+
+      if (i_r == 0) { return 0; }
+      if (i_r == size()) { return size() - 1; }
+
+      long i_l = i_r - 1;
+      if (fabs(cmp.value - _pts[i_l]) < fabs(cmp.value - _pts[i_r]))
+        return i_l;
+      else
+        return i_r;
+    }
+
+    // ------------------ operator [] () -------------------
+
+    [[nodiscard]] mesh_point_t operator[](long data_index) const noexcept { return (*this)(data_index); }
+
+    [[nodiscard]] mesh_point_t operator[](closest_mesh_point_t<value_t> const &cmp) const noexcept { return (*this)[this->to_data_index(cmp)]; }
+
+    [[nodiscard]] mesh_point_t operator()(index_t index) const noexcept {
+      EXPECTS(is_index_valid(index));
+      return {index, index, _mesh_hash, to_value(index)};
+    }
+
+    // -------------------- to_value ------------------
+
+    [[nodiscard]] value_t to_value(index_t index) const noexcept {
+      EXPECTS(is_index_valid(index));
+      return _pts[index];
+    }
+
     // -------------------- Accessors -------------------
 
-    /// The corresponding domain
-    [[nodiscard]] domain_t const &domain() const noexcept { return _dom; }
+    /// The Hash for the mesh configuration
+    [[nodiscard]] uint64_t mesh_hash() const noexcept { return _mesh_hash; }
+
+    /// The total number of points in the mesh
+    [[nodiscard]] long size() const noexcept { return _pts.size(); }
+
+    /// First index of the mesh
+    static constexpr long first_index() { return 0; }
+
+    /// Last index of the mesh
+    [[nodiscard]] long last_index() const { return size() - 1; }
 
     /// The vector of points
-    [[nodiscard]] std::vector<domain_pt_t> const &points() const noexcept { return _pts; }
+    [[nodiscard]] std::vector<value_t> const &points() const noexcept { return _pts; }
 
-    /// The number of points in the mesh
-    [[nodiscard]] size_t size() const noexcept { return _pts.size(); }
+    // -------------------------- Range & Iteration --------------------------
 
-    [[nodiscard]] std::array<size_t, 1> size_of_components() const noexcept { return {size()}; }
-
-    // -------------------- utility -------------------
-
-    /// Comparison Operator
-    [[nodiscard]] bool operator==(point_mesh const &m) const noexcept { return _dom == m._dom && _pts == m._pts; }
-    [[nodiscard]] bool operator!=(point_mesh const &m) const noexcept { return !(*this == m); }
-
-    /// Check if points are in the mesh
-    [[nodiscard]] static constexpr bool is_within_boundary(all_t) noexcept { return true; }
-    [[nodiscard]] bool is_within_boundary(domain_pt_t x) const noexcept { return _pts.front() <= x && x <= _pts.back(); }
-    [[nodiscard]] bool is_within_boundary(index_t idx) const noexcept { return idx >= 0 && idx < _pts.size(); }
-
-    /// Return the point in the domain for a given index
-    [[nodiscard]] domain_pt_t index_to_point(index_t idx) const noexcept { return _pts[idx]; }
-
-    /// Return the linear index for a given index
-    [[nodiscard]] linear_index_t index_to_linear(index_t idx) const noexcept { return idx; }
-
-    // -------------- Iterator Interface --------------------------
-
-    using const_iterator = mesh_pt_generator<point_mesh>;
-    mesh_point_t operator[](index_t i) const { return {*this, i}; }
-    [[nodiscard]] const_iterator begin() const { return const_iterator(this); }
-    [[nodiscard]] const_iterator end() const { return const_iterator(this, true); }
-    [[nodiscard]] const_iterator cbegin() const { return const_iterator(this); }
-    [[nodiscard]] const_iterator cend() const { return const_iterator(this, true); }
-
-    // -------------- Evaluation of a function on the domain --------------------------
-
-    [[nodiscard]] std::array<std::pair<index_t, double>, 2> get_interpolation_data(domain_pt_t x) const noexcept {
-      EXPECTS(is_within_boundary(x) && _pts.size() >= 2);
-
-      // special case
-      if (x == _pts.front()) return {std::make_pair(linear_index_t{0}, 1.0), std::make_pair(linear_index_t{1}, 0.0)};
-
-      // indices to the left and right
-      linear_index_t i_r = std::distance(_pts.begin(), std::lower_bound(_pts.begin(), _pts.end(), x));
-      linear_index_t i_l = i_r - 1;
-
-      // Points to the left and right
-      domain_pt_t x_l = _pts[i_l];
-      domain_pt_t x_r = _pts[i_r];
-      auto del        = _pts[i_r] - _pts[i_l];
-
-      // The interpolation weights
-      double w_r = (x - x_l) / del;
-      double w_l = (x_r - x) / del;
-
-      ASSERT(x_l <= x && x <= x_r);
-      ASSERT(w_l + w_r - 1 < 1e-15);
-
-      return {std::make_pair(i_l, w_l), std::make_pair(i_r, w_r)};
+    private:
+    [[nodiscard]] auto r_() const {
+      return itertools::transform(range(size()), [this](long i) { return (*this)[i]; });
     }
 
-    template <typename F> [[nodiscard]] auto evaluate(F const &f, domain_pt_t x) const noexcept {
-      auto id = get_interpolation_data(x);
-      return id.w[0] * f[id.idx[0]] + id.w[1] * f[id.idx[1]];
-    }
+    public:
+    [[nodiscard]] auto begin() const { return r_().begin(); }
+    [[nodiscard]] auto cbegin() const { return r_().cbegin(); }
+    [[nodiscard]] auto end() const { return r_().end(); }
+    [[nodiscard]] auto cend() const { return r_().cend(); }
 
-    // -------------- HDF5  --------------------------
+    // -------------------- print  -------------------
 
-    friend void h5_write_impl(h5::group fg, std::string const &subgroup_name, point_mesh const &m, const char *tag) {
+    friend std::ostream &operator<<(std::ostream &sout, point_mesh const &m) { return sout << "Point mesh of size " << m.size(); }
+
+    //  -------------------------- HDF5  --------------------------
+
+    [[nodiscard]] static std::string hdf5_format() { return "PointMesh"; }
+
+    friend void h5_write(h5::group fg, std::string const &subgroup_name, point_mesh const &m) {
       h5::group gr = fg.create_group(subgroup_name);
-      write_hdf5_format_as_string(gr, tag);
-      h5_write(gr, "domain", m._dom);
-      h5_write(gr, "points", m._pts);
+      write_hdf5_format(gr, m);
+      h5::write(gr, "points", m.points());
     }
 
-    friend void h5_read_impl(h5::group fg, std::string const &subgroup_name, point_mesh &m, const char *tag_expected) {
+    /// Read from HDF5
+    friend void h5_read(h5::group fg, std::string const &subgroup_name, point_mesh &m) {
       h5::group gr = fg.open_group(subgroup_name);
-      assert_hdf5_format_as_string(gr, tag_expected, true);
-      h5_read(gr, "domain", m._dom);
-      h5_read(gr, "points", m._pts);
+      assert_hdf5_format(gr, m);
+
+      auto pts = h5::read<std::vector<value_t>>(gr, "points");
+      m        = point_mesh(pts);
     }
-
-    // -------------------- serialization -------------------
-
-    friend class boost::serialization::access;
-    template <class Archive> void serialize(Archive &ar, const unsigned int version) {
-      ar &_dom;
-      ar &_pts;
-    }
-
-    // ------------------------------------------------
-
-    private:
-    std::vector<domain_pt_t> _pts;
-    domain_t _dom;
   };
 
-  /// Print the mesh
-  template <typename Domain> std::ostream &operator<<(std::ostream &out, point_mesh<Domain> const &m) {
-    return out << "Point mesh of size " << m.size();
+  // ------------------------- evaluation -----------------------------
+
+  template <typename Value> auto evaluate(point_mesh<Value> const &m, auto const &f, Value x) {
+    EXPECTS(m.is_value_valid(x));
+
+    auto itr_r = std::ranges::lower_bound(m.points(), x);
+    long i_r   = itr_r - m.points().begin();
+
+    if (i_r == 0) { return f(0); }
+    if (i_r == m.size()) { return f(m.size() - 1); }
+
+    long i_l = i_r - 1;
+
+    Value x_l = m.points()[i_l];
+    Value x_r = m.points()[i_r];
+    auto del    = x_r - x_l;
+
+    // The interpolation weights
+    double w_r = (x - x_l) / del;
+    double w_l = (x_r - x) / del;
+
+    ASSERT(x_l <= x && x <= x_r);
+    ASSERT(w_l + w_r - 1 < 1e-15);
+
+    return f(i_l) * w_l + f(i_r) * w_r;
   }
-
-  // -------------- Mesh point class --------------------------
-
-  template <typename Domain>
-  class mesh_point<point_mesh<Domain>> : public utility::arithmetic_ops_by_cast<mesh_point<point_mesh<Domain>>, typename Domain::point_t> {
-
-    public:
-    /// The associated mesh
-    using mesh_t = point_mesh<Domain>;
-
-    /// The index type of the associated mesh
-    using index_t = typename mesh_t::index_t;
-
-    /// The linear index type of the associated mesh
-    using linear_index_t = typename mesh_t::index_t;
-
-    /// The value type of the mesh point
-    using value_t = typename mesh_t::domain_pt_t;
-    using cast_t  = value_t;
-
-    private:
-    /// The mesh that we belong to
-    mesh_t const *m = nullptr;
-
-    /// The index in the mesh
-    index_t _index;
-
-    // -------------------- Constructors -------------------
-
-    public:
-    mesh_point() = default;
-    mesh_point(mesh_t const &mesh, index_t const &index) : m(&mesh), _index(index) {}
-    mesh_point(mesh_t const &mesh) : mesh_point(mesh, 0) {}
-
-    // -------------------- Utility -------------------
-
-    operator index_t() const noexcept { return _index; }
-    operator value_t() const noexcept { return m->index_to_point(_index); }
-
-    [[nodiscard]] linear_index_t linear_index() const { return m->index_to_linear(_index); }
-    [[nodiscard]] index_t index() const { return _index; }
-    [[nodiscard]] mesh_t const &mesh() const { return *m; }
-
-    void advance() noexcept { ++_index; }
-  };
 
 } // namespace triqs::mesh
