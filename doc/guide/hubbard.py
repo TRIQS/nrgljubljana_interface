@@ -72,7 +72,7 @@ sp = { "T": T, "Lambda": 2.0, "Nz": 4, "Tmin": 1e-5, "keep": 10000, "keepenergy"
 
 # Model Parameters
 mp = { "U1": U, "B1": B, "omega": omega, "g1": g1, "n1": n1 }
-for k,v in mp.items():
+for k,v in mp.copy().items():
   if v is None: del mp[k] # Remove undefined parameters from the dictionary
 sp["model_parameters"] = mp
 
