@@ -2,9 +2,6 @@
 FROM flatironinstitute/triqs:unstable-ubuntu-clang
 ARG APPNAME=nrgljubljana_interface
 
-COPY requirements.txt /src/$APPNAME/requirements.txt
-RUN pip3 install -r /src/$APPNAME/requirements.txt
-
 RUN apt-get install -y libgsl-dev || yum install -y gsl-devel perl-Math-Complex
 
 ENV BOOST_ROOT=/opt/boost
