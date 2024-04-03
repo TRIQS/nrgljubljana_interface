@@ -27,7 +27,6 @@ jobs:
       matrix:
         include:
           - {os: ubuntu-22.04, cc: gcc-12, cxx: g++-12}
-          - {os: ubuntu-22.04, cc: clang-15, cxx: clang++-15}
 
     runs-on: ${{ matrix.os }}
 
@@ -55,6 +54,7 @@ jobs:
         hdf5-tools
         libblas-dev
         libboost-dev
+        libboost-serialization-dev
         libclang-15-dev
         libc++-15-dev
         libc++abi-15-dev
