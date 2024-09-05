@@ -178,9 +178,11 @@ install(TARGETS gmp EXPORT nrgljubljana-targets)
 ### Not yet. Long-term goal: promote thermodynamic quantities to multiple-precision variables.
 
 # Mathematica (optional)
-find_package(Mathematica)
-if(Mathematica_FOUND)
-  message(STATUS "Mathematica executable ${Mathematica_KERNEL_EXECUTABLE}")
+if(NOT CMAKE_SYSTEM_NAME MATCHES "Darwin")
+  find_package(Mathematica)
+  if(Mathematica_FOUND)
+    message(STATUS "Mathematica executable ${Mathematica_KERNEL_EXECUTABLE}")
+  endif()
 endif()
 
 # BLAS/Lapack
