@@ -130,6 +130,21 @@ target_compile_options(${PROJECT_NAME}_warnings
 # Provide GNU Installation directories
 include(GNUInstallDirs)
 
+# ---------------------------------
+# RPATH setting
+# ---------------------------------
+
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}")
+  set(CMAKE_MACOSX_RPATH 1)
+else()
+  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
+  set(CMAKE_SKIP_BUILD_RPATH FALSE)
+  set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+endif()
+
 # ################
 # Template library
 add_subdirectory(templates)
