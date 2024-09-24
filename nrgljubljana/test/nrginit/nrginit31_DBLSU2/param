@@ -1,6 +1,0 @@
-[param]
-symtype=DBLSU2
-model=ZERO
-
-Nmax=2
-keep=20

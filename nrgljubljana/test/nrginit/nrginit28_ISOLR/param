@@ -1,6 +1,0 @@
-[param]
-symtype=ISOLR
-model=ZERO
-
-Nmax=2
-keep=20
