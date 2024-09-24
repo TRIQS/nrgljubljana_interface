@@ -186,6 +186,7 @@ endif()
 CPMAddPackage(
   NAME nrgljubljana
   GITHUB_REPOSITORY donrolih/nrgljubljana
+  GIT_TAG 2024.09-dev
   OPTIONS
     "SYM_MORE OFF"
     "SYM_ALL OFF"
