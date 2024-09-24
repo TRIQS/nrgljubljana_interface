@@ -175,13 +175,21 @@ if(Build_Tests)
   add_subdirectory(test)
 endif()
 
-# NRG Ljubljana subproject. Turn off symmetry types that we do not currently require.
-option(SYM_MORE "" OFF)
-option(SYM_ALL "" OFF)
-add_subdirectory(nrgljubljana)
+# NRG Ljubljana library
+# Turn off symmetry types that we do not currently require.
+# option(SYM_MORE "" OFF)
+# option(SYM_ALL "" OFF)
+# add_subdirectory(nrgljubljana)
 # Make NRG Ljubljana Targets available without tests (commented out; works only in recent CMake versions)
 #add_subdirectory(nrgljubljana EXCLUDE_FROM_ALL)
 #install(TARGETS adapt nrgchain matrix diag unitary broaden kk EXPORT nrgljubljana_interface-targets RUNTIME DESTINATION bin)
+CPMAddPackage(
+  NAME nrgljubljana
+  GITHUB_REPOSITORY donrolih/nrgljubljana
+  OPTIONS
+    "SYM_MORE OFF"
+    "SYM_ALL OFF"
+)
 
 # Python
 if(PythonSupport)
