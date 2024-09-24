@@ -183,6 +183,10 @@ endif()
 # Make NRG Ljubljana Targets available without tests (commented out; works only in recent CMake versions)
 #add_subdirectory(nrgljubljana EXCLUDE_FROM_ALL)
 #install(TARGETS adapt nrgchain matrix diag unitary broaden kk EXPORT nrgljubljana_interface-targets RUNTIME DESTINATION bin)
+
+# CPM for downloading dependencies
+include(CMake/CPM.cmake)
+
 CPMAddPackage(
   NAME nrgljubljana
   GITHUB_REPOSITORY donrolih/nrgljubljana
