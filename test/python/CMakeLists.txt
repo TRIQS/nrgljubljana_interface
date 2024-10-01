@@ -14,7 +14,7 @@ foreach(test ${all_tests})
   add_test(NAME Py_${test_name} COMMAND ${TRIQS_PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${test_dir}/${test_name}.py WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${test_dir})
   set_property(TEST Py_${test_name} APPEND PROPERTY ENVIRONMENT
     PYTHONPATH=${PROJECT_BINARY_DIR}/python:$ENV{PYTHONPATH}
-    PATH=${PROJECT_BINARY_DIR}/nrgljubljana/tools:$ENV{PATH}
+    PATH=${CMAKE_BINARY_DIR}/_deps/nrgljubljana-build/tools:$ENV{PATH}
     NRGIF_TEMPLATE_DIR=${PROJECT_SOURCE_DIR}/templates
     ${SANITIZER_RT_PRELOAD}
   )
@@ -29,7 +29,7 @@ macro(add_mpi_test TestName NumProc)
            ${MPIEXEC_POSTFLAGS} WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${test_dir})
   set_property(TEST ${TestName}_np${NumProc} APPEND PROPERTY ENVIRONMENT
       PYTHONPATH=${CMAKE_BINARY_DIR}/python:$ENV{PYTHONPATH}
-      PATH=${CMAKE_BINARY_DIR}/nrgljubljana/tools:$ENV{PATH}
+      PATH=${CMAKE_BINARY_DIR}/_deps/nrgljubljana-build/tools:$ENV{PATH}
       NRGIF_TEMPLATE_DIR=${PROJECT_SOURCE_DIR}/templates
       ${SANITIZER_RT_PRELOAD}
   )
