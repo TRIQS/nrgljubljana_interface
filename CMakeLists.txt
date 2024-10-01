@@ -189,8 +189,7 @@ include(CMake/CPM.cmake)
 
 CPMAddPackage(
   NAME nrgljubljana
-  GITHUB_REPOSITORY donrolih/nrgljubljana
-  GIT_TAG 2024.09-dev
+  URL https://github.com/donrolih/nrgljubljana/archive/e3dae873fc90ebac1dc6530c6587279586845f53.tar.gz
   OPTIONS
     "SYM_MORE OFF"
     "SYM_ALL OFF"
