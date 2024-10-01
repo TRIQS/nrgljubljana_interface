@@ -36,7 +36,7 @@
 #include <limits>     // max_digits10, MAX_PATH
 
 #include <boost/lexical_cast.hpp>
-#include <nrg-lib.h>
+#include <nrg-lib.hpp>
 
 #include <mpi/mpi.hpp>
 #include <mpi/string.hpp>
@@ -392,8 +392,8 @@ namespace nrgljubljana_interface {
       if (!log_stream) TRIQS_RUNTIME_ERROR << "failed to open log file";
       std::cout.rdbuf(log_stream.rdbuf()); // redirect stdout to log file
     }
-    set_workdir(""); // Defaults to . but may be overridden by NRG_WORKDIR in the environment
-    run_nrg_master();
+    NRG::set_workdir(""); // Defaults to . but may be overridden by NRG_WORKDIR in the environment
+    NRG::run_nrg_master("");
     if (!verbose) std::cout.rdbuf(old); // restore
     if (chdir("..") != 0) TRIQS_RUNTIME_ERROR << "failed to return from taskdir " << taskdir;
   }
