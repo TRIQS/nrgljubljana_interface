@@ -16,7 +16,7 @@ foreach(test ${all_tests})
   set_property(TARGET ${test_name} PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${test_dir})
   add_test(NAME ${test_name} COMMAND ${test_name} WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${test_dir})
   set_property(TEST ${test_name} APPEND PROPERTY ENVIRONMENT
-    PATH=${CMAKE_BINARY_DIR}/nrgljubljana/tools:$ENV{PATH}
+    PATH=${CMAKE_BINARY_DIR}/_deps/nrgljubljana-build/tools:$ENV{PATH}
     NRGIF_TEMPLATE_DIR=${PROJECT_SOURCE_DIR}/templates
   )
   # Run clang-tidy if found
