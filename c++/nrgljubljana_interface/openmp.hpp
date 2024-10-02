@@ -11,7 +11,7 @@ inline void report_openMP(std::ostream &s = std::cout) {
   s << "[OpenMP] Max. number of threads: " << omp_get_max_threads() << std::endl;
   s << "[OpenMP] Number of processors: " << omp_get_num_procs() << std::endl;
   s << "[OpenMP] Dynamic thread adjustment: " << omp_get_dynamic() << std::endl;
-  s << "[OpenMP] Nested parallelism: " << omp_get_nested() << std::endl << std::endl;
+  s << "[OpenMP] Nested parallelism: " << omp_get_max_active_levels() << std::endl << std::endl;
 #ifdef MKL
   MKLVersion version;
   mkl_get_version(&version);
