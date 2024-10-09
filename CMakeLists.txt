@@ -189,7 +189,7 @@ include(CMake/CPM.cmake)
 
 CPMAddPackage(
   NAME nrgljubljana
-  URL https://github.com/donrolih/nrgljubljana/archive/e3dae873fc90ebac1dc6530c6587279586845f53.tar.gz
+  URL https://github.com/donrolih/nrgljubljana/archive/c6c6a5f551340072625cf707636e0ff78833c1ff.tar.gz
   OPTIONS
     "SYM_MORE OFF"
     "SYM_ALL OFF"
