@@ -314,14 +314,22 @@ namespace nrgljubljana_interface {
     readtdfdm(sp.Nz);
     readGF("G", G_w, gf_struct);
     readGF("F", F_w, gf_struct);
+    readGF("F_l", F_l_w, gf_struct);
+    readGF("F_r", F_r_w, gf_struct);
+    readGF("I", I_w, gf_struct);
+    readGF("SigmaHartree", SigmaHartree_w, gf_struct);
     readA("A", A_w, gf_struct);
     readA("B", B_w, gf_struct);
+    readA("B_l", B_l_w, gf_struct);
+    readA("B_r", B_r_w, gf_struct);
+    readA("C", C_w, gf_struct);
     readGF("SS", chi_SS_w, chi_struct);
     readGF("NN", chi_NN_w, chi_struct);
 
     // Post-Processing in C++ interface
     if (has_struct(gf_struct))
       Sigma_w = (*F_w) / (*G_w);
+      Sigma_IFG_w = (*SigmaHartree_w) + (*I_w) - (*F_l_w) / (*G_w) * (*F_r_w);
 
     // Cleanup
     world.barrier(); // Ensures all processes have read the results before cleanup
