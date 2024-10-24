@@ -175,18 +175,10 @@ if(Build_Tests)
   add_subdirectory(test)
 endif()
 
-# NRG Ljubljana library
-# Turn off symmetry types that we do not currently require.
-# option(SYM_MORE "" OFF)
-# option(SYM_ALL "" OFF)
-# add_subdirectory(nrgljubljana)
-# Make NRG Ljubljana Targets available without tests (commented out; works only in recent CMake versions)
-#add_subdirectory(nrgljubljana EXCLUDE_FROM_ALL)
-#install(TARGETS adapt nrgchain matrix diag unitary broaden kk EXPORT nrgljubljana_interface-targets RUNTIME DESTINATION bin)
-
 # CPM for downloading dependencies
 include(CMake/CPM.cmake)
 
+# NRG Ljubljana library
 CPMAddPackage(
   NAME nrgljubljana
   URL https://github.com/rokzitko/nrgljubljana/archive/736d02a3981d90f175465e2470a1fada3d24fd12.tar.gz
