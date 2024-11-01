@@ -56,6 +56,7 @@ jobs:
         libboost-dev
         libboost-mpi-dev
         libboost-serialization-dev
+        libboost-system-dev
         libclang-15-dev
         libc++-15-dev
         libc++abi-15-dev
