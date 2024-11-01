@@ -54,6 +54,7 @@ jobs:
         hdf5-tools
         libblas-dev
         libboost-dev
+        libboost-mpi-dev
         libboost-serialization-dev
         libclang-15-dev
         libc++-15-dev
