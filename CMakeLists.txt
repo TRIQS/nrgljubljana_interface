@@ -170,22 +170,23 @@ add_subdirectory(deps)
 # Build and install the library
 add_subdirectory(c++/${PROJECT_NAME})
 
-# Tests
-if(Build_Tests)
-  add_subdirectory(test)
-endif()
-
 # CPM for downloading dependencies
 include(CMake/CPM.cmake)
 
 # NRG Ljubljana library
 CPMAddPackage(
   NAME nrgljubljana
-  URL https://github.com/rokzitko/nrgljubljana/archive/736d02a3981d90f175465e2470a1fada3d24fd12.tar.gz
+  GITHUB_REPOSITORY rokzitko/nrgljubljana
+  GIT_TAG 736d02a3981d90f175465e2470a1fada3d24fd12
   OPTIONS
     "SYM_MORE OFF"
     "SYM_ALL OFF"
 )
+
+# Tests
+if(Build_Tests)
+  add_subdirectory(test)
+endif()
 
 # Python
 if(PythonSupport)
