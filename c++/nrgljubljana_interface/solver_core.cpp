@@ -327,10 +327,10 @@ namespace nrgljubljana_interface {
     readGF("NN", chi_NN_w, chi_struct);
 
     // Post-Processing in C++ interface
-    if (has_struct(gf_struct))
+    if (has_struct(gf_struct)) {
       Sigma_w = (*F_w) / (*G_w);
       Sigma_IFG_w = (*SigmaHartree_w) + (*I_w) - (*F_l_w) / (*G_w) * (*F_r_w);
-
+    }
     // Cleanup
     world.barrier(); // Ensures all processes have read the results before cleanup
     if (chdir(cwd.c_str()) != 0) TRIQS_RUNTIME_ERROR << "failed to return from tempdir";

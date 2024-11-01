@@ -18,3 +18,17 @@ H = H0 + Heps + Hint + Hhyb;
 
 selfopd1 = ( Chop @ Expand @ komutator[Hint, d[#1, 1, #2]] )&;
 selfopd2 = ( Chop @ Expand @ komutator[Hint, d[#1, 2, #2]] )&;
+
+SigmaHartree1 = Expand @ antikomutator[ selfopd1[CR, #1], d[AN, 1, #1] ] &;
+SigmaHartree2 = Expand @ antikomutator[ selfopd2[CR, #1], d[AN, 2, #1] ] &;
+
+SigmaHartreeAvg1 := Expand @ (SigmaHartree1[UP] + SigmaHartree1[DO]) / 2;
+SigmaHartreeAvg2 := Expand @ (SigmaHartree2[UP] + SigmaHartree2[DO]) / 2;
+
+Print["SigmaHartree1[UP]=", SigmaHartree1[UP] ];
+Print["SigmaHartree1[DO]=", SigmaHartree1[DO] ];
+Print["SigmaHartree1=", SigmaHartreeAvg1 ];
+
+Print["SigmaHartree2[UP]=", SigmaHartree2[UP] ];
+Print["SigmaHartree2[DO]=", SigmaHartree2[DO] ];
+Print["SigmaHartree2=", SigmaHartreeAvg2 ];

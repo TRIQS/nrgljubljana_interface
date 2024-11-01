@@ -6,9 +6,9 @@ g1=
 n1=
 
 [param]
-options=GENERATE_TEMPLATE Nph=10
+options=GENERATE_TEMPLATE GENERATE_TEMPLATE_ALL Nph=10
 symtype=QS
 model=Holstein.m
-ops=n_d n_d^2 hop0 A_d self_d sigma_d nph displ displ^2 aan
+ops=n_d n_d^2 hop0 A_d self_d sigma_d nph displ displ^2 aan SigmaHartree
 
 data_has_rescaled_energies=false
