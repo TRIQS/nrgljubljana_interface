@@ -33,4 +33,5 @@ Learn how to use nrgljubljana_interface in the :ref:`documentation`.
    documentation
    issues
    ChangeLog.md
+   adding_models.md
    about
