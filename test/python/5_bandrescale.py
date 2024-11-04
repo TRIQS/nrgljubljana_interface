@@ -52,7 +52,9 @@ class test_SIAM(unittest.TestCase):
     with HDFArchive("5_bandrescale.out.h5", 'w') as arch:
         arch["A_w"] = S.A_w
         arch["G_w"] = S.G_w
-        arch["F_w"] = S.F_w
+        arch["F_l_w"] = S.F_l_w
+        arch["F_r_w"] = S.F_r_w
+        arch["I_w"] = S.I_w
         arch["Sigma_w"] = S.Sigma_w
 
     # Compare against reference result
