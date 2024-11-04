@@ -16,8 +16,6 @@ my $pr = "FDM_dens"; # prefix
 
 avg("spec_${pr}_A_d-A_d-u.bin",    "A_up_00");
 avg("spec_${pr}_A_d-A_d-d.bin",    "A_dn_00");
-avg("spec_${pr}_self_d-A_d-u.bin", "B_up_00");
-avg("spec_${pr}_self_d-A_d-d.bin", "B_dn_00");
 avg("spec_${pr}_self_d-A_d-u.bin", "B_l_up_00");
 avg("spec_${pr}_self_d-A_d-d.bin", "B_l_dn_00");
 avg("spec_${pr}_A_d-self_d-u.bin", "B_r_up_00");
@@ -27,8 +25,6 @@ avg("spec_${pr}_self_d-self_d-d.bin", "C_dn_00");
 
 scaley("A_up_00", -$pi, "imG_up_00");
 scaley("A_dn_00", -$pi, "imG_dn_00");
-scaley("B_up_00", -$pi, "imF_up_00");
-scaley("B_dn_00", -$pi, "imF_dn_00");
 scaley("B_l_up_00", -$pi, "imF_l_up_00");
 scaley("B_l_dn_00", -$pi, "imF_l_dn_00");
 scaley("B_r_up_00", -$pi, "imF_r_up_00");
@@ -38,8 +34,6 @@ scaley("C_dn_00", -$pi, "imI_dn_00");
 
 kk("imG_up_00");
 kk("imG_dn_00");
-kk("imF_up_00");
-kk("imF_dn_00");
 kk("imF_l_up_00");
 kk("imF_l_dn_00");
 kk("imF_r_up_00");
@@ -145,15 +139,15 @@ sub extract_expv_one
     close F;
 
     chomp(@lines);
-    my @last_line = split(/\s+/, $lines[-1]);
-    my @second_last_line = split(/\s+/, $lines[-2]);
+    my @expv_values = split(/\s+/, $lines[-1]);
+    my @expv_names = split(/\s+/, $lines[-2]);
 
     # Skip the first element in both arrays
-    shift @last_line;
-    shift @second_last_line;
+    shift @expv_values;
+    shift @expv_names;
 
     my %result;
-    @result{@second_last_line} = @last_line;
+    @result{@expv_names} = @expv_values;
 
     return %result;
 }

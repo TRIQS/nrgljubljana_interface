@@ -38,11 +38,6 @@ c.add_member(c_name = "A_w",
              read_only= True,
              doc = r"""The spectral function""")
 
-c.add_member(c_name = "B_w",
-             c_type = "std::optional<g_w_t>",
-             read_only= True,
-             doc = r"""The spectral function of the auxiliary correlator F_w""")
-
 c.add_member(c_name = "B_l_w",
              c_type = "std::optional<g_w_t>",
              read_only= True,
@@ -62,11 +57,6 @@ c.add_member(c_name = "G_w",
              c_type = "std::optional<g_w_t>",
              read_only= True,
              doc = r"""The retarded Greens function""")
-
-c.add_member(c_name = "F_w",
-             c_type = "std::optional<g_w_t>",
-             read_only= True,
-             doc = r"""The auxiliary Green function F_w = Sigma_w * G_w""")
 
 c.add_member(c_name = "F_l_w",
              c_type = "std::optional<g_w_t>",
@@ -91,12 +81,7 @@ c.add_member(c_name = "SigmaHartree_w",
 c.add_member(c_name = "Sigma_w",
              c_type = "std::optional<g_w_t>",
              read_only= True,
-             doc = r"""The retarded Self energy (computed from F_w and G_w)""")
-
-c.add_member(c_name = "Sigma_IFG_w",
-             c_type = "std::optional<g_w_t>",
-             read_only= True,
-             doc = r"""The retarded Self energy from new estimator (computed from Sigma_H_w, I_w, F_l_w, G_w, F_r_w)""")
+             doc = r"""The retarded Self energy (computed from F_l_w, F_r_w, G_w and I_w)""")
 
 c.add_member(c_name = "expv",
              c_type = "std::map<std::string, double>",
