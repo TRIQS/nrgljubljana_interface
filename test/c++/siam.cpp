@@ -44,7 +44,7 @@ TEST(nrgljubljana_interface, siam) { // NOLINT
   S.set_nrg_params(np);
 
   // Initialize hybridization function
-  for (auto const &w : S.log_mesh)
+  for (auto w : S.log_mesh)
     S.Delta_w[0][w](0,0) = 0.05i;
 
   // Solve the impurity model

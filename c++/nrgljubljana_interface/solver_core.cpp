@@ -106,7 +106,7 @@ namespace nrgljubljana_interface {
       mesh_points.push_back(-w);
     }
     std::sort(begin(mesh_points), end(mesh_points));
-    log_mesh = gf_mesh<refreq_pts>{mesh_points};
+    log_mesh = refreq_pts{mesh_points};
     // Note: Delta may have a different structure from G.
     Delta_w  = g_w_t{log_mesh, Delta_struct};
     // We also construct G_w and Sigma_w here to enable their initialization in the DMFT loops
@@ -146,7 +146,7 @@ namespace nrgljubljana_interface {
         std::ifstream reG(reGfilename);
         if (imG && reG) {
           double w, re, im;
-          for (auto const &mp : log_mesh) {
+          for (auto mp : log_mesh) {
             imG >> w >> im;
             reG >> w >> re;
             TRIQS_ASSERT2(abs(w-double(mp)) < 1e-8*abs(w), "frequency mismatch");
@@ -155,7 +155,7 @@ namespace nrgljubljana_interface {
         } else {
           // If the files cannot be read (do not exist), the corresponding GF matrix component
           // is zero-ed out.
-          for (auto const &mp : log_mesh) (*G_w)[bl_idx][mp](i, j) = 0.0;
+          for (auto mp : log_mesh) (*G_w)[bl_idx][mp](i, j) = 0.0;
         }
       }
     }
@@ -174,13 +174,13 @@ namespace nrgljubljana_interface {
         std::ifstream A(Afilename);
         if (A) {
           double w, re;
-          for (auto const &mp : log_mesh) {
+          for (auto mp : log_mesh) {
             A >> w >> re;
             TRIQS_ASSERT2(abs(w-double(mp)) < 1e-8*abs(w), "frequency mismatch");
             (*A_w)[bl_idx][mp](i, j) = re;
           }
         } else {
-          for (auto const &mp : log_mesh) (*A_w)[bl_idx][mp](i, j) = 0.0;
+          for (auto mp : log_mesh) (*A_w)[bl_idx][mp](i, j) = 0.0;
         }
       }
     }
@@ -257,7 +257,7 @@ namespace nrgljubljana_interface {
         std::ofstream F("Gamma_" + bl_name + "_" + std::to_string(i) + std::to_string(j) + ".dat");
         F << std::setprecision(std::numeric_limits<double>::max_digits10); // number of decimal digits necessary to differentiate all values of this type
         const double cutoff = 1e-8; // ensure hybridisation function is positive
-        for (auto const &w : Delta_w[bl_idx].mesh()) {
+        for (auto w : Delta_w[bl_idx].mesh()) {
           double value = -Delta_w[bl_idx][w](i, j).imag();
           if (value < cutoff) { value = cutoff; }
           F << double(w) << " " << value << std::endl;

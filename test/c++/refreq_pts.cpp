@@ -88,12 +88,12 @@ TEST(refreq_pts, block_gf) {
 
   auto Gprod = gf{Gbl[0] * Gbl[1]};
 
-  EXPECT_EQ(Gprod.data()(range(), 0, 0), (array<double, 1>{2.0, 0.0, 8.0}));
+  EXPECT_EQ(Gprod.data()(range::all, 0, 0), (array<double, 1>{2.0, 0.0, 8.0}));
 }
 
 TEST(refreqs_pts, block_gf_scalar) {
   // Construction
-//  auto m = gf_mesh<refreq_pts>{-1.0, 0.0, 2.0};
+//  auto m = mesh::refreq_pts{-1.0, 0.0, 2.0};
 //  auto Gbl = block_gf<refreq_pts>{m, {{"bl1", {}}, {"bl2", {}}}};
 
 //  for (auto mp : m) {
