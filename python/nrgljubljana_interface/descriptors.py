@@ -1,7 +1,28 @@
+# Copyright (c) 2013-2018 Commissariat à l'énergie atomique et aux énergies alternatives (CEA)
+# Copyright (c) 2013-2018 Centre national de la recherche scientifique (CNRS)
+# Copyright (c) 2018-2020 Simons Foundation
+# Copyright (c) 2014 Igor Krivenko
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You may obtain a copy of the License at
+#     https:#www.gnu.org/licenses/gpl-3.0.txt
+#
+# Authors: DerWeh, Michel Ferrero, Igor Krivenko, Mi-chael, Olivier Parcollet, Nils Wentzell
+
+
 r""" """
 
 from triqs.gf.descriptor_base import Base, Function
-from triqs.gf.meshes import MeshImFreq, MeshReFreq
+from triqs.gf.meshes import MeshImFreq, MeshDLRImFreq, MeshReFreq
 
 from .mesh_refreq_pts import MeshReFreqPts
 
@@ -23,7 +44,7 @@ class SemiCircular (Base):
     (Only works in combination with frequency Green's functions.)
     """
     def __init__ (self, half_bandwidth, chem_potential=0.):
-        """:param half_bandwidth: :math:`D`, the half bandwidth of the
+        r""":param half_bandwidth: :math:`D`, the half bandwidth of the
 semicircular density of states
         :param chem_potential: :math:`\mu`, the chemical potential of the    |
 semicircular density of states, corresponds to minus the center of the
@@ -38,7 +59,7 @@ semicircle
         mu = self.chem_potential
         Id = complex(1,0) if len(G.target_shape) == 0 else numpy.identity(G.target_shape[0],numpy.complex128)
         from cmath import sqrt
-        if type(G.mesh) == MeshImFreq:
+        if type(G.mesh) in [MeshImFreq, MeshDLRImFreq]:
             def f(om_):
                 om = om_ + mu
                 return (om - 1j*copysign(1,om.imag)*sqrt(D*D - om**2))/D/D*2*Id
@@ -80,7 +101,7 @@ class Flat (Base):
         D = self.half_bandwidth
         Id = 1. if len(G.target_shape) == 0 else numpy.identity(G.target_shape[0], numpy.complex128)
 
-        if type(G.mesh) == MeshImFreq:
+        if type(G.mesh) in [MeshImFreq, MeshDLRImFreq]:
             f = lambda om: (-1/(2.0*D)) * numpy.log(numpy.divide(om-D,om+D)) * Id
         elif type(G.mesh) in [MeshReFreq, MeshReFreqPts]:
             def f(om):
