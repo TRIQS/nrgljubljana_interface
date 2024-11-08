@@ -1,6 +1,6 @@
-ops:n_d n_d^2 hop0 A_d self_d SZd
+ops:n_d n_d^2 hop0 A_d self_d SZd n_d_u n_d_d SigmaHartree-u SigmaHartree-d
 specs:n_d-n_d SZd-SZd
-specd:A_d-A_d-u A_d-A_d-d self_d-A_d-u self_d-A_d-d
+specd:A_d-A_d-u A_d-A_d-d self_d-A_d-u self_d-A_d-d A_d-self_d-u A_d-self_d-d self_d-self_d-u self_d-self_d-d
 spect:
 specq:
 specot:

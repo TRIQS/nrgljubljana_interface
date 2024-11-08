@@ -1,15 +1,285 @@
-NRG Ljubljana 2019.11 (c) Rok Zitko, rok.zitko@ijs.si, 2005-2019
-Mathematica version: 11.3.0 for Linux x86 (64-bit) (March 7, 2018)
-sneg version: 1.251
+NRG Ljubljana 2023.05 (c) Rok Zitko, rok.zitko@ijs.si, 2005-2023
+Mathematica version: 14.0.0 for Mac OS X ARM (64-bit) (December 13, 2023)
+sneg version: 2.0.7
 Loading module initialparse.m
-Options: {GENERATE_TEMPLATE, Nph=10}
+Loading module sym.m
+Options: {GENERATE_TEMPLATE, GENERATE_TEMPLATE_ALL, Nph=10}
 Loading module models.m
 models started
 Loading module custommodels.m
-custommodels Rok Zitko
+Can't load custommodels.m. Continuing.
 Loading module Holstein.m
 def1ch, NRDOTS=1
 H0=coefzeta[1, 0]*(-1 + nc[f[0, 0, 0], f[1, 0, 0]] + nc[f[0, 0, 1], f[1, 0, 1]])
+"SigmaHartree[UP]="-(omega*nc[ket[1], bra[1]]) - 2*omega*nc[ket[2], bra[2]] - 3*omega*nc[ket[3], bra[3]] - 4*omega*nc[ket[4], bra[4]] - 5*omega*nc[ket[5], bra[5]] - 6*omega*nc[ket[6], bra[6]] - 7*omega*nc[ket[7], bra[7]] - 
+   8*omega*nc[ket[8], bra[8]] - 9*omega*nc[ket[9], bra[9]] - 10*omega*nc[ket[10], bra[10]] + g1*nc[n1, ket[0], bra[1]] + g1*nc[n1, ket[1], bra[0]] + Sqrt[2]*g1*nc[n1, ket[1], bra[2]] + Sqrt[2]*g1*nc[n1, ket[2], bra[1]] + 
+   Sqrt[3]*g1*nc[n1, ket[2], bra[3]] + Sqrt[3]*g1*nc[n1, ket[3], bra[2]] + 2*g1*nc[n1, ket[3], bra[4]] + 2*g1*nc[n1, ket[4], bra[3]] + Sqrt[5]*g1*nc[n1, ket[4], bra[5]] + Sqrt[5]*g1*nc[n1, ket[5], bra[4]] + 
+   Sqrt[6]*g1*nc[n1, ket[5], bra[6]] + Sqrt[6]*g1*nc[n1, ket[6], bra[5]] + Sqrt[7]*g1*nc[n1, ket[6], bra[7]] + Sqrt[7]*g1*nc[n1, ket[7], bra[6]] + 2*Sqrt[2]*g1*nc[n1, ket[7], bra[8]] + 2*Sqrt[2]*g1*nc[n1, ket[8], bra[7]] + 
+   3*g1*nc[n1, ket[8], bra[9]] + 3*g1*nc[n1, ket[9], bra[8]] + Sqrt[10]*g1*nc[n1, ket[9], bra[10]] + Sqrt[10]*g1*nc[n1, ket[10], bra[9]] + 
+   nc[d[0, 1], d[1, 1], omega*(nc[ket[1], bra[1]] + 2*nc[ket[2], bra[2]] + 3*nc[ket[3], bra[3]] + 4*nc[ket[4], bra[4]] + 5*nc[ket[5], bra[5]] + 6*nc[ket[6], bra[6]] + 7*nc[ket[7], bra[7]] + 8*nc[ket[8], bra[8]] + 9*nc[ket[9], bra[9]] + 
+       10*nc[ket[10], bra[10]])] - nc[d[0, 1], d[1, 1], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]] + 
+   nc[d[0, 1], d[1, 1], g1*(-nc[n1, ket[0], bra[1]] - nc[n1, ket[1], bra[0]] - Sqrt[2]*nc[n1, ket[1], bra[2]] - Sqrt[2]*nc[n1, ket[2], bra[1]] - Sqrt[3]*nc[n1, ket[2], bra[3]] - Sqrt[3]*nc[n1, ket[3], bra[2]] - 2*nc[n1, ket[3], bra[4]] - 
+       2*nc[n1, ket[4], bra[3]] - Sqrt[5]*nc[n1, ket[4], bra[5]] - Sqrt[5]*nc[n1, ket[5], bra[4]] - Sqrt[6]*nc[n1, ket[5], bra[6]] - Sqrt[6]*nc[n1, ket[6], bra[5]] - Sqrt[7]*nc[n1, ket[6], bra[7]] - Sqrt[7]*nc[n1, ket[7], bra[6]] - 
+       2*Sqrt[2]*nc[n1, ket[7], bra[8]] - 2*Sqrt[2]*nc[n1, ket[8], bra[7]] - 3*nc[n1, ket[8], bra[9]] - 3*nc[n1, ket[9], bra[8]] - Sqrt[10]*nc[n1, ket[9], bra[10]] - Sqrt[10]*nc[n1, ket[10], bra[9]] + 
+       nc[d[0, 0], d[1, 0], ket[0], bra[1]] + nc[d[0, 0], d[1, 0], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[1], bra[2]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[2], bra[1]] + Sqrt[3]*nc[d[0, 0], d[1, 0], ket[2], bra[3]] + 
+       Sqrt[3]*nc[d[0, 0], d[1, 0], ket[3], bra[2]] + 2*nc[d[0, 0], d[1, 0], ket[3], bra[4]] + 2*nc[d[0, 0], d[1, 0], ket[4], bra[3]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[4], bra[5]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[5], bra[4]] + 
+       Sqrt[6]*nc[d[0, 0], d[1, 0], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 0], d[1, 0], ket[6], bra[5]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[6], bra[7]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[7], bra[6]] + 
+       2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[8], bra[7]] + 3*nc[d[0, 0], d[1, 0], ket[8], bra[9]] + 3*nc[d[0, 0], d[1, 0], ket[9], bra[8]] + Sqrt[10]*nc[d[0, 0], d[1, 0], ket[9], bra[10]] + 
+       Sqrt[10]*nc[d[0, 0], d[1, 0], ket[10], bra[9]] + nc[d[0, 1], d[1, 1], ket[0], bra[1]] + nc[d[0, 1], d[1, 1], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 1], d[1, 1], ket[1], bra[2]] + Sqrt[2]*nc[d[0, 1], d[1, 1], ket[2], bra[1]] + 
+       Sqrt[3]*nc[d[0, 1], d[1, 1], ket[2], bra[3]] + Sqrt[3]*nc[d[0, 1], d[1, 1], ket[3], bra[2]] + 2*nc[d[0, 1], d[1, 1], ket[3], bra[4]] + 2*nc[d[0, 1], d[1, 1], ket[4], bra[3]] + Sqrt[5]*nc[d[0, 1], d[1, 1], ket[4], bra[5]] + 
+       Sqrt[5]*nc[d[0, 1], d[1, 1], ket[5], bra[4]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[6], bra[5]] + Sqrt[7]*nc[d[0, 1], d[1, 1], ket[6], bra[7]] + 
+       Sqrt[7]*nc[d[0, 1], d[1, 1], ket[7], bra[6]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[8], bra[7]] + 3*nc[d[0, 1], d[1, 1], ket[8], bra[9]] + 3*nc[d[0, 1], d[1, 1], ket[9], bra[8]] + 
+       Sqrt[10]*nc[d[0, 1], d[1, 1], ket[9], bra[10]] + Sqrt[10]*nc[d[0, 1], d[1, 1], ket[10], bra[9]])] - 
+   nc[d[0, 1], omega*(nc[ket[1], bra[1]] + 2*nc[ket[2], bra[2]] + 3*nc[ket[3], bra[3]] + 4*nc[ket[4], bra[4]] + 5*nc[ket[5], bra[5]] + 6*nc[ket[6], bra[6]] + 7*nc[ket[7], bra[7]] + 8*nc[ket[8], bra[8]] + 9*nc[ket[9], bra[9]] + 
+       10*nc[ket[10], bra[10]]), d[1, 1]] + nc[d[0, 1], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[1, 1]] - 
+   nc[d[0, 1], g1*(-nc[n1, ket[0], bra[1]] - nc[n1, ket[1], bra[0]] - Sqrt[2]*nc[n1, ket[1], bra[2]] - Sqrt[2]*nc[n1, ket[2], bra[1]] - Sqrt[3]*nc[n1, ket[2], bra[3]] - Sqrt[3]*nc[n1, ket[3], bra[2]] - 2*nc[n1, ket[3], bra[4]] - 
+       2*nc[n1, ket[4], bra[3]] - Sqrt[5]*nc[n1, ket[4], bra[5]] - Sqrt[5]*nc[n1, ket[5], bra[4]] - Sqrt[6]*nc[n1, ket[5], bra[6]] - Sqrt[6]*nc[n1, ket[6], bra[5]] - Sqrt[7]*nc[n1, ket[6], bra[7]] - Sqrt[7]*nc[n1, ket[7], bra[6]] - 
+       2*Sqrt[2]*nc[n1, ket[7], bra[8]] - 2*Sqrt[2]*nc[n1, ket[8], bra[7]] - 3*nc[n1, ket[8], bra[9]] - 3*nc[n1, ket[9], bra[8]] - Sqrt[10]*nc[n1, ket[9], bra[10]] - Sqrt[10]*nc[n1, ket[10], bra[9]] + 
+       nc[d[0, 0], d[1, 0], ket[0], bra[1]] + nc[d[0, 0], d[1, 0], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[1], bra[2]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[2], bra[1]] + Sqrt[3]*nc[d[0, 0], d[1, 0], ket[2], bra[3]] + 
+       Sqrt[3]*nc[d[0, 0], d[1, 0], ket[3], bra[2]] + 2*nc[d[0, 0], d[1, 0], ket[3], bra[4]] + 2*nc[d[0, 0], d[1, 0], ket[4], bra[3]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[4], bra[5]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[5], bra[4]] + 
+       Sqrt[6]*nc[d[0, 0], d[1, 0], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 0], d[1, 0], ket[6], bra[5]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[6], bra[7]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[7], bra[6]] + 
+       2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[8], bra[7]] + 3*nc[d[0, 0], d[1, 0], ket[8], bra[9]] + 3*nc[d[0, 0], d[1, 0], ket[9], bra[8]] + Sqrt[10]*nc[d[0, 0], d[1, 0], ket[9], bra[10]] + 
+       Sqrt[10]*nc[d[0, 0], d[1, 0], ket[10], bra[9]] + nc[d[0, 1], d[1, 1], ket[0], bra[1]] + nc[d[0, 1], d[1, 1], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 1], d[1, 1], ket[1], bra[2]] + Sqrt[2]*nc[d[0, 1], d[1, 1], ket[2], bra[1]] + 
+       Sqrt[3]*nc[d[0, 1], d[1, 1], ket[2], bra[3]] + Sqrt[3]*nc[d[0, 1], d[1, 1], ket[3], bra[2]] + 2*nc[d[0, 1], d[1, 1], ket[3], bra[4]] + 2*nc[d[0, 1], d[1, 1], ket[4], bra[3]] + Sqrt[5]*nc[d[0, 1], d[1, 1], ket[4], bra[5]] + 
+       Sqrt[5]*nc[d[0, 1], d[1, 1], ket[5], bra[4]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[6], bra[5]] + Sqrt[7]*nc[d[0, 1], d[1, 1], ket[6], bra[7]] + 
+       Sqrt[7]*nc[d[0, 1], d[1, 1], ket[7], bra[6]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[8], bra[7]] + 3*nc[d[0, 1], d[1, 1], ket[8], bra[9]] + 3*nc[d[0, 1], d[1, 1], ket[9], bra[8]] + 
+       Sqrt[10]*nc[d[0, 1], d[1, 1], ket[9], bra[10]] + Sqrt[10]*nc[d[0, 1], d[1, 1], ket[10], bra[9]]), d[1, 1]] + 
+   nc[d[1, 1], omega*(nc[ket[1], bra[1]] + 2*nc[ket[2], bra[2]] + 3*nc[ket[3], bra[3]] + 4*nc[ket[4], bra[4]] + 5*nc[ket[5], bra[5]] + 6*nc[ket[6], bra[6]] + 7*nc[ket[7], bra[7]] + 8*nc[ket[8], bra[8]] + 9*nc[ket[9], bra[9]] + 
+       10*nc[ket[10], bra[10]]), d[0, 1]] - nc[d[1, 1], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[0, 1]] + 
+   nc[d[1, 1], g1*(-nc[n1, ket[0], bra[1]] - nc[n1, ket[1], bra[0]] - Sqrt[2]*nc[n1, ket[1], bra[2]] - Sqrt[2]*nc[n1, ket[2], bra[1]] - Sqrt[3]*nc[n1, ket[2], bra[3]] - Sqrt[3]*nc[n1, ket[3], bra[2]] - 2*nc[n1, ket[3], bra[4]] - 
+       2*nc[n1, ket[4], bra[3]] - Sqrt[5]*nc[n1, ket[4], bra[5]] - Sqrt[5]*nc[n1, ket[5], bra[4]] - Sqrt[6]*nc[n1, ket[5], bra[6]] - Sqrt[6]*nc[n1, ket[6], bra[5]] - Sqrt[7]*nc[n1, ket[6], bra[7]] - Sqrt[7]*nc[n1, ket[7], bra[6]] - 
+       2*Sqrt[2]*nc[n1, ket[7], bra[8]] - 2*Sqrt[2]*nc[n1, ket[8], bra[7]] - 3*nc[n1, ket[8], bra[9]] - 3*nc[n1, ket[9], bra[8]] - Sqrt[10]*nc[n1, ket[9], bra[10]] - Sqrt[10]*nc[n1, ket[10], bra[9]] + 
+       nc[d[0, 0], d[1, 0], ket[0], bra[1]] + nc[d[0, 0], d[1, 0], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[1], bra[2]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[2], bra[1]] + Sqrt[3]*nc[d[0, 0], d[1, 0], ket[2], bra[3]] + 
+       Sqrt[3]*nc[d[0, 0], d[1, 0], ket[3], bra[2]] + 2*nc[d[0, 0], d[1, 0], ket[3], bra[4]] + 2*nc[d[0, 0], d[1, 0], ket[4], bra[3]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[4], bra[5]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[5], bra[4]] + 
+       Sqrt[6]*nc[d[0, 0], d[1, 0], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 0], d[1, 0], ket[6], bra[5]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[6], bra[7]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[7], bra[6]] + 
+       2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[8], bra[7]] + 3*nc[d[0, 0], d[1, 0], ket[8], bra[9]] + 3*nc[d[0, 0], d[1, 0], ket[9], bra[8]] + Sqrt[10]*nc[d[0, 0], d[1, 0], ket[9], bra[10]] + 
+       Sqrt[10]*nc[d[0, 0], d[1, 0], ket[10], bra[9]] + nc[d[0, 1], d[1, 1], ket[0], bra[1]] + nc[d[0, 1], d[1, 1], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 1], d[1, 1], ket[1], bra[2]] + Sqrt[2]*nc[d[0, 1], d[1, 1], ket[2], bra[1]] + 
+       Sqrt[3]*nc[d[0, 1], d[1, 1], ket[2], bra[3]] + Sqrt[3]*nc[d[0, 1], d[1, 1], ket[3], bra[2]] + 2*nc[d[0, 1], d[1, 1], ket[3], bra[4]] + 2*nc[d[0, 1], d[1, 1], ket[4], bra[3]] + Sqrt[5]*nc[d[0, 1], d[1, 1], ket[4], bra[5]] + 
+       Sqrt[5]*nc[d[0, 1], d[1, 1], ket[5], bra[4]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[6], bra[5]] + Sqrt[7]*nc[d[0, 1], d[1, 1], ket[6], bra[7]] + 
+       Sqrt[7]*nc[d[0, 1], d[1, 1], ket[7], bra[6]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[8], bra[7]] + 3*nc[d[0, 1], d[1, 1], ket[8], bra[9]] + 3*nc[d[0, 1], d[1, 1], ket[9], bra[8]] + 
+       Sqrt[10]*nc[d[0, 1], d[1, 1], ket[9], bra[10]] + Sqrt[10]*nc[d[0, 1], d[1, 1], ket[10], bra[9]]), d[0, 1]] + 
+   nc[omega*(nc[ket[1], bra[1]] + 2*nc[ket[2], bra[2]] + 3*nc[ket[3], bra[3]] + 4*nc[ket[4], bra[4]] + 5*nc[ket[5], bra[5]] + 6*nc[ket[6], bra[6]] + 7*nc[ket[7], bra[7]] + 8*nc[ket[8], bra[8]] + 9*nc[ket[9], bra[9]] + 
+       10*nc[ket[10], bra[10]]), d[0, 1], d[1, 1]] - nc[U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[0, 1], d[1, 1]] + 
+   nc[g1*(-nc[n1, ket[0], bra[1]] - nc[n1, ket[1], bra[0]] - Sqrt[2]*nc[n1, ket[1], bra[2]] - Sqrt[2]*nc[n1, ket[2], bra[1]] - Sqrt[3]*nc[n1, ket[2], bra[3]] - Sqrt[3]*nc[n1, ket[3], bra[2]] - 2*nc[n1, ket[3], bra[4]] - 
+       2*nc[n1, ket[4], bra[3]] - Sqrt[5]*nc[n1, ket[4], bra[5]] - Sqrt[5]*nc[n1, ket[5], bra[4]] - Sqrt[6]*nc[n1, ket[5], bra[6]] - Sqrt[6]*nc[n1, ket[6], bra[5]] - Sqrt[7]*nc[n1, ket[6], bra[7]] - Sqrt[7]*nc[n1, ket[7], bra[6]] - 
+       2*Sqrt[2]*nc[n1, ket[7], bra[8]] - 2*Sqrt[2]*nc[n1, ket[8], bra[7]] - 3*nc[n1, ket[8], bra[9]] - 3*nc[n1, ket[9], bra[8]] - Sqrt[10]*nc[n1, ket[9], bra[10]] - Sqrt[10]*nc[n1, ket[10], bra[9]] + 
+       nc[d[0, 0], d[1, 0], ket[0], bra[1]] + nc[d[0, 0], d[1, 0], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[1], bra[2]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[2], bra[1]] + Sqrt[3]*nc[d[0, 0], d[1, 0], ket[2], bra[3]] + 
+       Sqrt[3]*nc[d[0, 0], d[1, 0], ket[3], bra[2]] + 2*nc[d[0, 0], d[1, 0], ket[3], bra[4]] + 2*nc[d[0, 0], d[1, 0], ket[4], bra[3]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[4], bra[5]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[5], bra[4]] + 
+       Sqrt[6]*nc[d[0, 0], d[1, 0], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 0], d[1, 0], ket[6], bra[5]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[6], bra[7]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[7], bra[6]] + 
+       2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[8], bra[7]] + 3*nc[d[0, 0], d[1, 0], ket[8], bra[9]] + 3*nc[d[0, 0], d[1, 0], ket[9], bra[8]] + Sqrt[10]*nc[d[0, 0], d[1, 0], ket[9], bra[10]] + 
+       Sqrt[10]*nc[d[0, 0], d[1, 0], ket[10], bra[9]] + nc[d[0, 1], d[1, 1], ket[0], bra[1]] + nc[d[0, 1], d[1, 1], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 1], d[1, 1], ket[1], bra[2]] + Sqrt[2]*nc[d[0, 1], d[1, 1], ket[2], bra[1]] + 
+       Sqrt[3]*nc[d[0, 1], d[1, 1], ket[2], bra[3]] + Sqrt[3]*nc[d[0, 1], d[1, 1], ket[3], bra[2]] + 2*nc[d[0, 1], d[1, 1], ket[3], bra[4]] + 2*nc[d[0, 1], d[1, 1], ket[4], bra[3]] + Sqrt[5]*nc[d[0, 1], d[1, 1], ket[4], bra[5]] + 
+       Sqrt[5]*nc[d[0, 1], d[1, 1], ket[5], bra[4]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[6], bra[5]] + Sqrt[7]*nc[d[0, 1], d[1, 1], ket[6], bra[7]] + 
+       Sqrt[7]*nc[d[0, 1], d[1, 1], ket[7], bra[6]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[8], bra[7]] + 3*nc[d[0, 1], d[1, 1], ket[8], bra[9]] + 3*nc[d[0, 1], d[1, 1], ket[9], bra[8]] + 
+       Sqrt[10]*nc[d[0, 1], d[1, 1], ket[9], bra[10]] + Sqrt[10]*nc[d[0, 1], d[1, 1], ket[10], bra[9]]), d[0, 1], d[1, 1]] + U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]] - g1*nc[d[0, 0], d[1, 0], ket[0], bra[1]] - 
+   g1*nc[d[0, 0], d[1, 0], ket[1], bra[0]] - Sqrt[2]*g1*nc[d[0, 0], d[1, 0], ket[1], bra[2]] - Sqrt[2]*g1*nc[d[0, 0], d[1, 0], ket[2], bra[1]] - Sqrt[3]*g1*nc[d[0, 0], d[1, 0], ket[2], bra[3]] - 
+   Sqrt[3]*g1*nc[d[0, 0], d[1, 0], ket[3], bra[2]] - 2*g1*nc[d[0, 0], d[1, 0], ket[3], bra[4]] - 2*g1*nc[d[0, 0], d[1, 0], ket[4], bra[3]] - Sqrt[5]*g1*nc[d[0, 0], d[1, 0], ket[4], bra[5]] - 
+   Sqrt[5]*g1*nc[d[0, 0], d[1, 0], ket[5], bra[4]] - Sqrt[6]*g1*nc[d[0, 0], d[1, 0], ket[5], bra[6]] - Sqrt[6]*g1*nc[d[0, 0], d[1, 0], ket[6], bra[5]] - Sqrt[7]*g1*nc[d[0, 0], d[1, 0], ket[6], bra[7]] - 
+   Sqrt[7]*g1*nc[d[0, 0], d[1, 0], ket[7], bra[6]] - 2*Sqrt[2]*g1*nc[d[0, 0], d[1, 0], ket[7], bra[8]] - 2*Sqrt[2]*g1*nc[d[0, 0], d[1, 0], ket[8], bra[7]] - 3*g1*nc[d[0, 0], d[1, 0], ket[8], bra[9]] - 
+   3*g1*nc[d[0, 0], d[1, 0], ket[9], bra[8]] - Sqrt[10]*g1*nc[d[0, 0], d[1, 0], ket[9], bra[10]] - Sqrt[10]*g1*nc[d[0, 0], d[1, 0], ket[10], bra[9]] - g1*nc[d[0, 1], d[1, 1], ket[0], bra[1]] - g1*nc[d[0, 1], d[1, 1], ket[1], bra[0]] - 
+   Sqrt[2]*g1*nc[d[0, 1], d[1, 1], ket[1], bra[2]] - Sqrt[2]*g1*nc[d[0, 1], d[1, 1], ket[2], bra[1]] - Sqrt[3]*g1*nc[d[0, 1], d[1, 1], ket[2], bra[3]] - Sqrt[3]*g1*nc[d[0, 1], d[1, 1], ket[3], bra[2]] - 
+   2*g1*nc[d[0, 1], d[1, 1], ket[3], bra[4]] - 2*g1*nc[d[0, 1], d[1, 1], ket[4], bra[3]] - Sqrt[5]*g1*nc[d[0, 1], d[1, 1], ket[4], bra[5]] - Sqrt[5]*g1*nc[d[0, 1], d[1, 1], ket[5], bra[4]] - 
+   Sqrt[6]*g1*nc[d[0, 1], d[1, 1], ket[5], bra[6]] - Sqrt[6]*g1*nc[d[0, 1], d[1, 1], ket[6], bra[5]] - Sqrt[7]*g1*nc[d[0, 1], d[1, 1], ket[6], bra[7]] - Sqrt[7]*g1*nc[d[0, 1], d[1, 1], ket[7], bra[6]] - 
+   2*Sqrt[2]*g1*nc[d[0, 1], d[1, 1], ket[7], bra[8]] - 2*Sqrt[2]*g1*nc[d[0, 1], d[1, 1], ket[8], bra[7]] - 3*g1*nc[d[0, 1], d[1, 1], ket[8], bra[9]] - 3*g1*nc[d[0, 1], d[1, 1], ket[9], bra[8]] - 
+   Sqrt[10]*g1*nc[d[0, 1], d[1, 1], ket[9], bra[10]] - Sqrt[10]*g1*nc[d[0, 1], d[1, 1], ket[10], bra[9]]
+"SigmaHartree[DO]="-(omega*nc[ket[1], bra[1]]) - 2*omega*nc[ket[2], bra[2]] - 3*omega*nc[ket[3], bra[3]] - 4*omega*nc[ket[4], bra[4]] - 5*omega*nc[ket[5], bra[5]] - 6*omega*nc[ket[6], bra[6]] - 7*omega*nc[ket[7], bra[7]] - 
+   8*omega*nc[ket[8], bra[8]] - 9*omega*nc[ket[9], bra[9]] - 10*omega*nc[ket[10], bra[10]] + g1*nc[n1, ket[0], bra[1]] + g1*nc[n1, ket[1], bra[0]] + Sqrt[2]*g1*nc[n1, ket[1], bra[2]] + Sqrt[2]*g1*nc[n1, ket[2], bra[1]] + 
+   Sqrt[3]*g1*nc[n1, ket[2], bra[3]] + Sqrt[3]*g1*nc[n1, ket[3], bra[2]] + 2*g1*nc[n1, ket[3], bra[4]] + 2*g1*nc[n1, ket[4], bra[3]] + Sqrt[5]*g1*nc[n1, ket[4], bra[5]] + Sqrt[5]*g1*nc[n1, ket[5], bra[4]] + 
+   Sqrt[6]*g1*nc[n1, ket[5], bra[6]] + Sqrt[6]*g1*nc[n1, ket[6], bra[5]] + Sqrt[7]*g1*nc[n1, ket[6], bra[7]] + Sqrt[7]*g1*nc[n1, ket[7], bra[6]] + 2*Sqrt[2]*g1*nc[n1, ket[7], bra[8]] + 2*Sqrt[2]*g1*nc[n1, ket[8], bra[7]] + 
+   3*g1*nc[n1, ket[8], bra[9]] + 3*g1*nc[n1, ket[9], bra[8]] + Sqrt[10]*g1*nc[n1, ket[9], bra[10]] + Sqrt[10]*g1*nc[n1, ket[10], bra[9]] + 
+   nc[d[0, 0], d[1, 0], omega*(nc[ket[1], bra[1]] + 2*nc[ket[2], bra[2]] + 3*nc[ket[3], bra[3]] + 4*nc[ket[4], bra[4]] + 5*nc[ket[5], bra[5]] + 6*nc[ket[6], bra[6]] + 7*nc[ket[7], bra[7]] + 8*nc[ket[8], bra[8]] + 9*nc[ket[9], bra[9]] + 
+       10*nc[ket[10], bra[10]])] - nc[d[0, 0], d[1, 0], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]] + 
+   nc[d[0, 0], d[1, 0], g1*(-nc[n1, ket[0], bra[1]] - nc[n1, ket[1], bra[0]] - Sqrt[2]*nc[n1, ket[1], bra[2]] - Sqrt[2]*nc[n1, ket[2], bra[1]] - Sqrt[3]*nc[n1, ket[2], bra[3]] - Sqrt[3]*nc[n1, ket[3], bra[2]] - 2*nc[n1, ket[3], bra[4]] - 
+       2*nc[n1, ket[4], bra[3]] - Sqrt[5]*nc[n1, ket[4], bra[5]] - Sqrt[5]*nc[n1, ket[5], bra[4]] - Sqrt[6]*nc[n1, ket[5], bra[6]] - Sqrt[6]*nc[n1, ket[6], bra[5]] - Sqrt[7]*nc[n1, ket[6], bra[7]] - Sqrt[7]*nc[n1, ket[7], bra[6]] - 
+       2*Sqrt[2]*nc[n1, ket[7], bra[8]] - 2*Sqrt[2]*nc[n1, ket[8], bra[7]] - 3*nc[n1, ket[8], bra[9]] - 3*nc[n1, ket[9], bra[8]] - Sqrt[10]*nc[n1, ket[9], bra[10]] - Sqrt[10]*nc[n1, ket[10], bra[9]] + 
+       nc[d[0, 0], d[1, 0], ket[0], bra[1]] + nc[d[0, 0], d[1, 0], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[1], bra[2]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[2], bra[1]] + Sqrt[3]*nc[d[0, 0], d[1, 0], ket[2], bra[3]] + 
+       Sqrt[3]*nc[d[0, 0], d[1, 0], ket[3], bra[2]] + 2*nc[d[0, 0], d[1, 0], ket[3], bra[4]] + 2*nc[d[0, 0], d[1, 0], ket[4], bra[3]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[4], bra[5]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[5], bra[4]] + 
+       Sqrt[6]*nc[d[0, 0], d[1, 0], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 0], d[1, 0], ket[6], bra[5]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[6], bra[7]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[7], bra[6]] + 
+       2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[8], bra[7]] + 3*nc[d[0, 0], d[1, 0], ket[8], bra[9]] + 3*nc[d[0, 0], d[1, 0], ket[9], bra[8]] + Sqrt[10]*nc[d[0, 0], d[1, 0], ket[9], bra[10]] + 
+       Sqrt[10]*nc[d[0, 0], d[1, 0], ket[10], bra[9]] + nc[d[0, 1], d[1, 1], ket[0], bra[1]] + nc[d[0, 1], d[1, 1], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 1], d[1, 1], ket[1], bra[2]] + Sqrt[2]*nc[d[0, 1], d[1, 1], ket[2], bra[1]] + 
+       Sqrt[3]*nc[d[0, 1], d[1, 1], ket[2], bra[3]] + Sqrt[3]*nc[d[0, 1], d[1, 1], ket[3], bra[2]] + 2*nc[d[0, 1], d[1, 1], ket[3], bra[4]] + 2*nc[d[0, 1], d[1, 1], ket[4], bra[3]] + Sqrt[5]*nc[d[0, 1], d[1, 1], ket[4], bra[5]] + 
+       Sqrt[5]*nc[d[0, 1], d[1, 1], ket[5], bra[4]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[6], bra[5]] + Sqrt[7]*nc[d[0, 1], d[1, 1], ket[6], bra[7]] + 
+       Sqrt[7]*nc[d[0, 1], d[1, 1], ket[7], bra[6]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[8], bra[7]] + 3*nc[d[0, 1], d[1, 1], ket[8], bra[9]] + 3*nc[d[0, 1], d[1, 1], ket[9], bra[8]] + 
+       Sqrt[10]*nc[d[0, 1], d[1, 1], ket[9], bra[10]] + Sqrt[10]*nc[d[0, 1], d[1, 1], ket[10], bra[9]])] - 
+   nc[d[0, 0], omega*(nc[ket[1], bra[1]] + 2*nc[ket[2], bra[2]] + 3*nc[ket[3], bra[3]] + 4*nc[ket[4], bra[4]] + 5*nc[ket[5], bra[5]] + 6*nc[ket[6], bra[6]] + 7*nc[ket[7], bra[7]] + 8*nc[ket[8], bra[8]] + 9*nc[ket[9], bra[9]] + 
+       10*nc[ket[10], bra[10]]), d[1, 0]] + nc[d[0, 0], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[1, 0]] - 
+   nc[d[0, 0], g1*(-nc[n1, ket[0], bra[1]] - nc[n1, ket[1], bra[0]] - Sqrt[2]*nc[n1, ket[1], bra[2]] - Sqrt[2]*nc[n1, ket[2], bra[1]] - Sqrt[3]*nc[n1, ket[2], bra[3]] - Sqrt[3]*nc[n1, ket[3], bra[2]] - 2*nc[n1, ket[3], bra[4]] - 
+       2*nc[n1, ket[4], bra[3]] - Sqrt[5]*nc[n1, ket[4], bra[5]] - Sqrt[5]*nc[n1, ket[5], bra[4]] - Sqrt[6]*nc[n1, ket[5], bra[6]] - Sqrt[6]*nc[n1, ket[6], bra[5]] - Sqrt[7]*nc[n1, ket[6], bra[7]] - Sqrt[7]*nc[n1, ket[7], bra[6]] - 
+       2*Sqrt[2]*nc[n1, ket[7], bra[8]] - 2*Sqrt[2]*nc[n1, ket[8], bra[7]] - 3*nc[n1, ket[8], bra[9]] - 3*nc[n1, ket[9], bra[8]] - Sqrt[10]*nc[n1, ket[9], bra[10]] - Sqrt[10]*nc[n1, ket[10], bra[9]] + 
+       nc[d[0, 0], d[1, 0], ket[0], bra[1]] + nc[d[0, 0], d[1, 0], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[1], bra[2]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[2], bra[1]] + Sqrt[3]*nc[d[0, 0], d[1, 0], ket[2], bra[3]] + 
+       Sqrt[3]*nc[d[0, 0], d[1, 0], ket[3], bra[2]] + 2*nc[d[0, 0], d[1, 0], ket[3], bra[4]] + 2*nc[d[0, 0], d[1, 0], ket[4], bra[3]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[4], bra[5]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[5], bra[4]] + 
+       Sqrt[6]*nc[d[0, 0], d[1, 0], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 0], d[1, 0], ket[6], bra[5]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[6], bra[7]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[7], bra[6]] + 
+       2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[8], bra[7]] + 3*nc[d[0, 0], d[1, 0], ket[8], bra[9]] + 3*nc[d[0, 0], d[1, 0], ket[9], bra[8]] + Sqrt[10]*nc[d[0, 0], d[1, 0], ket[9], bra[10]] + 
+       Sqrt[10]*nc[d[0, 0], d[1, 0], ket[10], bra[9]] + nc[d[0, 1], d[1, 1], ket[0], bra[1]] + nc[d[0, 1], d[1, 1], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 1], d[1, 1], ket[1], bra[2]] + Sqrt[2]*nc[d[0, 1], d[1, 1], ket[2], bra[1]] + 
+       Sqrt[3]*nc[d[0, 1], d[1, 1], ket[2], bra[3]] + Sqrt[3]*nc[d[0, 1], d[1, 1], ket[3], bra[2]] + 2*nc[d[0, 1], d[1, 1], ket[3], bra[4]] + 2*nc[d[0, 1], d[1, 1], ket[4], bra[3]] + Sqrt[5]*nc[d[0, 1], d[1, 1], ket[4], bra[5]] + 
+       Sqrt[5]*nc[d[0, 1], d[1, 1], ket[5], bra[4]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[6], bra[5]] + Sqrt[7]*nc[d[0, 1], d[1, 1], ket[6], bra[7]] + 
+       Sqrt[7]*nc[d[0, 1], d[1, 1], ket[7], bra[6]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[8], bra[7]] + 3*nc[d[0, 1], d[1, 1], ket[8], bra[9]] + 3*nc[d[0, 1], d[1, 1], ket[9], bra[8]] + 
+       Sqrt[10]*nc[d[0, 1], d[1, 1], ket[9], bra[10]] + Sqrt[10]*nc[d[0, 1], d[1, 1], ket[10], bra[9]]), d[1, 0]] + 
+   nc[d[1, 0], omega*(nc[ket[1], bra[1]] + 2*nc[ket[2], bra[2]] + 3*nc[ket[3], bra[3]] + 4*nc[ket[4], bra[4]] + 5*nc[ket[5], bra[5]] + 6*nc[ket[6], bra[6]] + 7*nc[ket[7], bra[7]] + 8*nc[ket[8], bra[8]] + 9*nc[ket[9], bra[9]] + 
+       10*nc[ket[10], bra[10]]), d[0, 0]] - nc[d[1, 0], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[0, 0]] + 
+   nc[d[1, 0], g1*(-nc[n1, ket[0], bra[1]] - nc[n1, ket[1], bra[0]] - Sqrt[2]*nc[n1, ket[1], bra[2]] - Sqrt[2]*nc[n1, ket[2], bra[1]] - Sqrt[3]*nc[n1, ket[2], bra[3]] - Sqrt[3]*nc[n1, ket[3], bra[2]] - 2*nc[n1, ket[3], bra[4]] - 
+       2*nc[n1, ket[4], bra[3]] - Sqrt[5]*nc[n1, ket[4], bra[5]] - Sqrt[5]*nc[n1, ket[5], bra[4]] - Sqrt[6]*nc[n1, ket[5], bra[6]] - Sqrt[6]*nc[n1, ket[6], bra[5]] - Sqrt[7]*nc[n1, ket[6], bra[7]] - Sqrt[7]*nc[n1, ket[7], bra[6]] - 
+       2*Sqrt[2]*nc[n1, ket[7], bra[8]] - 2*Sqrt[2]*nc[n1, ket[8], bra[7]] - 3*nc[n1, ket[8], bra[9]] - 3*nc[n1, ket[9], bra[8]] - Sqrt[10]*nc[n1, ket[9], bra[10]] - Sqrt[10]*nc[n1, ket[10], bra[9]] + 
+       nc[d[0, 0], d[1, 0], ket[0], bra[1]] + nc[d[0, 0], d[1, 0], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[1], bra[2]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[2], bra[1]] + Sqrt[3]*nc[d[0, 0], d[1, 0], ket[2], bra[3]] + 
+       Sqrt[3]*nc[d[0, 0], d[1, 0], ket[3], bra[2]] + 2*nc[d[0, 0], d[1, 0], ket[3], bra[4]] + 2*nc[d[0, 0], d[1, 0], ket[4], bra[3]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[4], bra[5]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[5], bra[4]] + 
+       Sqrt[6]*nc[d[0, 0], d[1, 0], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 0], d[1, 0], ket[6], bra[5]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[6], bra[7]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[7], bra[6]] + 
+       2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[8], bra[7]] + 3*nc[d[0, 0], d[1, 0], ket[8], bra[9]] + 3*nc[d[0, 0], d[1, 0], ket[9], bra[8]] + Sqrt[10]*nc[d[0, 0], d[1, 0], ket[9], bra[10]] + 
+       Sqrt[10]*nc[d[0, 0], d[1, 0], ket[10], bra[9]] + nc[d[0, 1], d[1, 1], ket[0], bra[1]] + nc[d[0, 1], d[1, 1], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 1], d[1, 1], ket[1], bra[2]] + Sqrt[2]*nc[d[0, 1], d[1, 1], ket[2], bra[1]] + 
+       Sqrt[3]*nc[d[0, 1], d[1, 1], ket[2], bra[3]] + Sqrt[3]*nc[d[0, 1], d[1, 1], ket[3], bra[2]] + 2*nc[d[0, 1], d[1, 1], ket[3], bra[4]] + 2*nc[d[0, 1], d[1, 1], ket[4], bra[3]] + Sqrt[5]*nc[d[0, 1], d[1, 1], ket[4], bra[5]] + 
+       Sqrt[5]*nc[d[0, 1], d[1, 1], ket[5], bra[4]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[6], bra[5]] + Sqrt[7]*nc[d[0, 1], d[1, 1], ket[6], bra[7]] + 
+       Sqrt[7]*nc[d[0, 1], d[1, 1], ket[7], bra[6]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[8], bra[7]] + 3*nc[d[0, 1], d[1, 1], ket[8], bra[9]] + 3*nc[d[0, 1], d[1, 1], ket[9], bra[8]] + 
+       Sqrt[10]*nc[d[0, 1], d[1, 1], ket[9], bra[10]] + Sqrt[10]*nc[d[0, 1], d[1, 1], ket[10], bra[9]]), d[0, 0]] + 
+   nc[omega*(nc[ket[1], bra[1]] + 2*nc[ket[2], bra[2]] + 3*nc[ket[3], bra[3]] + 4*nc[ket[4], bra[4]] + 5*nc[ket[5], bra[5]] + 6*nc[ket[6], bra[6]] + 7*nc[ket[7], bra[7]] + 8*nc[ket[8], bra[8]] + 9*nc[ket[9], bra[9]] + 
+       10*nc[ket[10], bra[10]]), d[0, 0], d[1, 0]] - nc[U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[0, 0], d[1, 0]] + 
+   nc[g1*(-nc[n1, ket[0], bra[1]] - nc[n1, ket[1], bra[0]] - Sqrt[2]*nc[n1, ket[1], bra[2]] - Sqrt[2]*nc[n1, ket[2], bra[1]] - Sqrt[3]*nc[n1, ket[2], bra[3]] - Sqrt[3]*nc[n1, ket[3], bra[2]] - 2*nc[n1, ket[3], bra[4]] - 
+       2*nc[n1, ket[4], bra[3]] - Sqrt[5]*nc[n1, ket[4], bra[5]] - Sqrt[5]*nc[n1, ket[5], bra[4]] - Sqrt[6]*nc[n1, ket[5], bra[6]] - Sqrt[6]*nc[n1, ket[6], bra[5]] - Sqrt[7]*nc[n1, ket[6], bra[7]] - Sqrt[7]*nc[n1, ket[7], bra[6]] - 
+       2*Sqrt[2]*nc[n1, ket[7], bra[8]] - 2*Sqrt[2]*nc[n1, ket[8], bra[7]] - 3*nc[n1, ket[8], bra[9]] - 3*nc[n1, ket[9], bra[8]] - Sqrt[10]*nc[n1, ket[9], bra[10]] - Sqrt[10]*nc[n1, ket[10], bra[9]] + 
+       nc[d[0, 0], d[1, 0], ket[0], bra[1]] + nc[d[0, 0], d[1, 0], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[1], bra[2]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[2], bra[1]] + Sqrt[3]*nc[d[0, 0], d[1, 0], ket[2], bra[3]] + 
+       Sqrt[3]*nc[d[0, 0], d[1, 0], ket[3], bra[2]] + 2*nc[d[0, 0], d[1, 0], ket[3], bra[4]] + 2*nc[d[0, 0], d[1, 0], ket[4], bra[3]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[4], bra[5]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[5], bra[4]] + 
+       Sqrt[6]*nc[d[0, 0], d[1, 0], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 0], d[1, 0], ket[6], bra[5]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[6], bra[7]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[7], bra[6]] + 
+       2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[8], bra[7]] + 3*nc[d[0, 0], d[1, 0], ket[8], bra[9]] + 3*nc[d[0, 0], d[1, 0], ket[9], bra[8]] + Sqrt[10]*nc[d[0, 0], d[1, 0], ket[9], bra[10]] + 
+       Sqrt[10]*nc[d[0, 0], d[1, 0], ket[10], bra[9]] + nc[d[0, 1], d[1, 1], ket[0], bra[1]] + nc[d[0, 1], d[1, 1], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 1], d[1, 1], ket[1], bra[2]] + Sqrt[2]*nc[d[0, 1], d[1, 1], ket[2], bra[1]] + 
+       Sqrt[3]*nc[d[0, 1], d[1, 1], ket[2], bra[3]] + Sqrt[3]*nc[d[0, 1], d[1, 1], ket[3], bra[2]] + 2*nc[d[0, 1], d[1, 1], ket[3], bra[4]] + 2*nc[d[0, 1], d[1, 1], ket[4], bra[3]] + Sqrt[5]*nc[d[0, 1], d[1, 1], ket[4], bra[5]] + 
+       Sqrt[5]*nc[d[0, 1], d[1, 1], ket[5], bra[4]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[6], bra[5]] + Sqrt[7]*nc[d[0, 1], d[1, 1], ket[6], bra[7]] + 
+       Sqrt[7]*nc[d[0, 1], d[1, 1], ket[7], bra[6]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[8], bra[7]] + 3*nc[d[0, 1], d[1, 1], ket[8], bra[9]] + 3*nc[d[0, 1], d[1, 1], ket[9], bra[8]] + 
+       Sqrt[10]*nc[d[0, 1], d[1, 1], ket[9], bra[10]] + Sqrt[10]*nc[d[0, 1], d[1, 1], ket[10], bra[9]]), d[0, 0], d[1, 0]] + U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]] - g1*nc[d[0, 0], d[1, 0], ket[0], bra[1]] - 
+   g1*nc[d[0, 0], d[1, 0], ket[1], bra[0]] - Sqrt[2]*g1*nc[d[0, 0], d[1, 0], ket[1], bra[2]] - Sqrt[2]*g1*nc[d[0, 0], d[1, 0], ket[2], bra[1]] - Sqrt[3]*g1*nc[d[0, 0], d[1, 0], ket[2], bra[3]] - 
+   Sqrt[3]*g1*nc[d[0, 0], d[1, 0], ket[3], bra[2]] - 2*g1*nc[d[0, 0], d[1, 0], ket[3], bra[4]] - 2*g1*nc[d[0, 0], d[1, 0], ket[4], bra[3]] - Sqrt[5]*g1*nc[d[0, 0], d[1, 0], ket[4], bra[5]] - 
+   Sqrt[5]*g1*nc[d[0, 0], d[1, 0], ket[5], bra[4]] - Sqrt[6]*g1*nc[d[0, 0], d[1, 0], ket[5], bra[6]] - Sqrt[6]*g1*nc[d[0, 0], d[1, 0], ket[6], bra[5]] - Sqrt[7]*g1*nc[d[0, 0], d[1, 0], ket[6], bra[7]] - 
+   Sqrt[7]*g1*nc[d[0, 0], d[1, 0], ket[7], bra[6]] - 2*Sqrt[2]*g1*nc[d[0, 0], d[1, 0], ket[7], bra[8]] - 2*Sqrt[2]*g1*nc[d[0, 0], d[1, 0], ket[8], bra[7]] - 3*g1*nc[d[0, 0], d[1, 0], ket[8], bra[9]] - 
+   3*g1*nc[d[0, 0], d[1, 0], ket[9], bra[8]] - Sqrt[10]*g1*nc[d[0, 0], d[1, 0], ket[9], bra[10]] - Sqrt[10]*g1*nc[d[0, 0], d[1, 0], ket[10], bra[9]] - g1*nc[d[0, 1], d[1, 1], ket[0], bra[1]] - g1*nc[d[0, 1], d[1, 1], ket[1], bra[0]] - 
+   Sqrt[2]*g1*nc[d[0, 1], d[1, 1], ket[1], bra[2]] - Sqrt[2]*g1*nc[d[0, 1], d[1, 1], ket[2], bra[1]] - Sqrt[3]*g1*nc[d[0, 1], d[1, 1], ket[2], bra[3]] - Sqrt[3]*g1*nc[d[0, 1], d[1, 1], ket[3], bra[2]] - 
+   2*g1*nc[d[0, 1], d[1, 1], ket[3], bra[4]] - 2*g1*nc[d[0, 1], d[1, 1], ket[4], bra[3]] - Sqrt[5]*g1*nc[d[0, 1], d[1, 1], ket[4], bra[5]] - Sqrt[5]*g1*nc[d[0, 1], d[1, 1], ket[5], bra[4]] - 
+   Sqrt[6]*g1*nc[d[0, 1], d[1, 1], ket[5], bra[6]] - Sqrt[6]*g1*nc[d[0, 1], d[1, 1], ket[6], bra[5]] - Sqrt[7]*g1*nc[d[0, 1], d[1, 1], ket[6], bra[7]] - Sqrt[7]*g1*nc[d[0, 1], d[1, 1], ket[7], bra[6]] - 
+   2*Sqrt[2]*g1*nc[d[0, 1], d[1, 1], ket[7], bra[8]] - 2*Sqrt[2]*g1*nc[d[0, 1], d[1, 1], ket[8], bra[7]] - 3*g1*nc[d[0, 1], d[1, 1], ket[8], bra[9]] - 3*g1*nc[d[0, 1], d[1, 1], ket[9], bra[8]] - 
+   Sqrt[10]*g1*nc[d[0, 1], d[1, 1], ket[9], bra[10]] - Sqrt[10]*g1*nc[d[0, 1], d[1, 1], ket[10], bra[9]]
+"SigmaHartree="(-2*omega*nc[ket[1], bra[1]] - 4*omega*nc[ket[2], bra[2]] - 6*omega*nc[ket[3], bra[3]] - 8*omega*nc[ket[4], bra[4]] - 10*omega*nc[ket[5], bra[5]] - 12*omega*nc[ket[6], bra[6]] - 14*omega*nc[ket[7], bra[7]] - 
+     16*omega*nc[ket[8], bra[8]] - 18*omega*nc[ket[9], bra[9]] - 20*omega*nc[ket[10], bra[10]] + 2*g1*nc[n1, ket[0], bra[1]] + 2*g1*nc[n1, ket[1], bra[0]] + 2*Sqrt[2]*g1*nc[n1, ket[1], bra[2]] + 2*Sqrt[2]*g1*nc[n1, ket[2], bra[1]] + 
+     2*Sqrt[3]*g1*nc[n1, ket[2], bra[3]] + 2*Sqrt[3]*g1*nc[n1, ket[3], bra[2]] + 4*g1*nc[n1, ket[3], bra[4]] + 4*g1*nc[n1, ket[4], bra[3]] + 2*Sqrt[5]*g1*nc[n1, ket[4], bra[5]] + 2*Sqrt[5]*g1*nc[n1, ket[5], bra[4]] + 
+     2*Sqrt[6]*g1*nc[n1, ket[5], bra[6]] + 2*Sqrt[6]*g1*nc[n1, ket[6], bra[5]] + 2*Sqrt[7]*g1*nc[n1, ket[6], bra[7]] + 2*Sqrt[7]*g1*nc[n1, ket[7], bra[6]] + 4*Sqrt[2]*g1*nc[n1, ket[7], bra[8]] + 4*Sqrt[2]*g1*nc[n1, ket[8], bra[7]] + 
+     6*g1*nc[n1, ket[8], bra[9]] + 6*g1*nc[n1, ket[9], bra[8]] + 2*Sqrt[10]*g1*nc[n1, ket[9], bra[10]] + 2*Sqrt[10]*g1*nc[n1, ket[10], bra[9]] + 
+     nc[d[0, 0], d[1, 0], omega*(nc[ket[1], bra[1]] + 2*nc[ket[2], bra[2]] + 3*nc[ket[3], bra[3]] + 4*nc[ket[4], bra[4]] + 5*nc[ket[5], bra[5]] + 6*nc[ket[6], bra[6]] + 7*nc[ket[7], bra[7]] + 8*nc[ket[8], bra[8]] + 9*nc[ket[9], bra[9]] + 
+         10*nc[ket[10], bra[10]])] - nc[d[0, 0], d[1, 0], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]] + 
+     nc[d[0, 0], d[1, 0], g1*(-nc[n1, ket[0], bra[1]] - nc[n1, ket[1], bra[0]] - Sqrt[2]*nc[n1, ket[1], bra[2]] - Sqrt[2]*nc[n1, ket[2], bra[1]] - Sqrt[3]*nc[n1, ket[2], bra[3]] - Sqrt[3]*nc[n1, ket[3], bra[2]] - 
+         2*nc[n1, ket[3], bra[4]] - 2*nc[n1, ket[4], bra[3]] - Sqrt[5]*nc[n1, ket[4], bra[5]] - Sqrt[5]*nc[n1, ket[5], bra[4]] - Sqrt[6]*nc[n1, ket[5], bra[6]] - Sqrt[6]*nc[n1, ket[6], bra[5]] - Sqrt[7]*nc[n1, ket[6], bra[7]] - 
+         Sqrt[7]*nc[n1, ket[7], bra[6]] - 2*Sqrt[2]*nc[n1, ket[7], bra[8]] - 2*Sqrt[2]*nc[n1, ket[8], bra[7]] - 3*nc[n1, ket[8], bra[9]] - 3*nc[n1, ket[9], bra[8]] - Sqrt[10]*nc[n1, ket[9], bra[10]] - Sqrt[10]*nc[n1, ket[10], bra[9]] + 
+         nc[d[0, 0], d[1, 0], ket[0], bra[1]] + nc[d[0, 0], d[1, 0], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[1], bra[2]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[2], bra[1]] + Sqrt[3]*nc[d[0, 0], d[1, 0], ket[2], bra[3]] + 
+         Sqrt[3]*nc[d[0, 0], d[1, 0], ket[3], bra[2]] + 2*nc[d[0, 0], d[1, 0], ket[3], bra[4]] + 2*nc[d[0, 0], d[1, 0], ket[4], bra[3]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[4], bra[5]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[5], bra[4]] + 
+         Sqrt[6]*nc[d[0, 0], d[1, 0], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 0], d[1, 0], ket[6], bra[5]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[6], bra[7]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[7], bra[6]] + 
+         2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[8], bra[7]] + 3*nc[d[0, 0], d[1, 0], ket[8], bra[9]] + 3*nc[d[0, 0], d[1, 0], ket[9], bra[8]] + Sqrt[10]*nc[d[0, 0], d[1, 0], ket[9], bra[10]] + 
+         Sqrt[10]*nc[d[0, 0], d[1, 0], ket[10], bra[9]] + nc[d[0, 1], d[1, 1], ket[0], bra[1]] + nc[d[0, 1], d[1, 1], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 1], d[1, 1], ket[1], bra[2]] + Sqrt[2]*nc[d[0, 1], d[1, 1], ket[2], bra[1]] + 
+         Sqrt[3]*nc[d[0, 1], d[1, 1], ket[2], bra[3]] + Sqrt[3]*nc[d[0, 1], d[1, 1], ket[3], bra[2]] + 2*nc[d[0, 1], d[1, 1], ket[3], bra[4]] + 2*nc[d[0, 1], d[1, 1], ket[4], bra[3]] + Sqrt[5]*nc[d[0, 1], d[1, 1], ket[4], bra[5]] + 
+         Sqrt[5]*nc[d[0, 1], d[1, 1], ket[5], bra[4]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[6], bra[5]] + Sqrt[7]*nc[d[0, 1], d[1, 1], ket[6], bra[7]] + 
+         Sqrt[7]*nc[d[0, 1], d[1, 1], ket[7], bra[6]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[8], bra[7]] + 3*nc[d[0, 1], d[1, 1], ket[8], bra[9]] + 3*nc[d[0, 1], d[1, 1], ket[9], bra[8]] + 
+         Sqrt[10]*nc[d[0, 1], d[1, 1], ket[9], bra[10]] + Sqrt[10]*nc[d[0, 1], d[1, 1], ket[10], bra[9]])] - 
+     nc[d[0, 0], omega*(nc[ket[1], bra[1]] + 2*nc[ket[2], bra[2]] + 3*nc[ket[3], bra[3]] + 4*nc[ket[4], bra[4]] + 5*nc[ket[5], bra[5]] + 6*nc[ket[6], bra[6]] + 7*nc[ket[7], bra[7]] + 8*nc[ket[8], bra[8]] + 9*nc[ket[9], bra[9]] + 
+         10*nc[ket[10], bra[10]]), d[1, 0]] + nc[d[0, 0], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[1, 0]] - 
+     nc[d[0, 0], g1*(-nc[n1, ket[0], bra[1]] - nc[n1, ket[1], bra[0]] - Sqrt[2]*nc[n1, ket[1], bra[2]] - Sqrt[2]*nc[n1, ket[2], bra[1]] - Sqrt[3]*nc[n1, ket[2], bra[3]] - Sqrt[3]*nc[n1, ket[3], bra[2]] - 2*nc[n1, ket[3], bra[4]] - 
+         2*nc[n1, ket[4], bra[3]] - Sqrt[5]*nc[n1, ket[4], bra[5]] - Sqrt[5]*nc[n1, ket[5], bra[4]] - Sqrt[6]*nc[n1, ket[5], bra[6]] - Sqrt[6]*nc[n1, ket[6], bra[5]] - Sqrt[7]*nc[n1, ket[6], bra[7]] - Sqrt[7]*nc[n1, ket[7], bra[6]] - 
+         2*Sqrt[2]*nc[n1, ket[7], bra[8]] - 2*Sqrt[2]*nc[n1, ket[8], bra[7]] - 3*nc[n1, ket[8], bra[9]] - 3*nc[n1, ket[9], bra[8]] - Sqrt[10]*nc[n1, ket[9], bra[10]] - Sqrt[10]*nc[n1, ket[10], bra[9]] + 
+         nc[d[0, 0], d[1, 0], ket[0], bra[1]] + nc[d[0, 0], d[1, 0], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[1], bra[2]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[2], bra[1]] + Sqrt[3]*nc[d[0, 0], d[1, 0], ket[2], bra[3]] + 
+         Sqrt[3]*nc[d[0, 0], d[1, 0], ket[3], bra[2]] + 2*nc[d[0, 0], d[1, 0], ket[3], bra[4]] + 2*nc[d[0, 0], d[1, 0], ket[4], bra[3]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[4], bra[5]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[5], bra[4]] + 
+         Sqrt[6]*nc[d[0, 0], d[1, 0], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 0], d[1, 0], ket[6], bra[5]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[6], bra[7]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[7], bra[6]] + 
+         2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[8], bra[7]] + 3*nc[d[0, 0], d[1, 0], ket[8], bra[9]] + 3*nc[d[0, 0], d[1, 0], ket[9], bra[8]] + 
+         Sqrt[10]*nc[d[0, 0], d[1, 0], ket[9], bra[10]] + Sqrt[10]*nc[d[0, 0], d[1, 0], ket[10], bra[9]] + nc[d[0, 1], d[1, 1], ket[0], bra[1]] + nc[d[0, 1], d[1, 1], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 1], d[1, 1], ket[1], bra[2]] + 
+         Sqrt[2]*nc[d[0, 1], d[1, 1], ket[2], bra[1]] + Sqrt[3]*nc[d[0, 1], d[1, 1], ket[2], bra[3]] + Sqrt[3]*nc[d[0, 1], d[1, 1], ket[3], bra[2]] + 2*nc[d[0, 1], d[1, 1], ket[3], bra[4]] + 2*nc[d[0, 1], d[1, 1], ket[4], bra[3]] + 
+         Sqrt[5]*nc[d[0, 1], d[1, 1], ket[4], bra[5]] + Sqrt[5]*nc[d[0, 1], d[1, 1], ket[5], bra[4]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[6], bra[5]] + 
+         Sqrt[7]*nc[d[0, 1], d[1, 1], ket[6], bra[7]] + Sqrt[7]*nc[d[0, 1], d[1, 1], ket[7], bra[6]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[8], bra[7]] + 
+         3*nc[d[0, 1], d[1, 1], ket[8], bra[9]] + 3*nc[d[0, 1], d[1, 1], ket[9], bra[8]] + Sqrt[10]*nc[d[0, 1], d[1, 1], ket[9], bra[10]] + Sqrt[10]*nc[d[0, 1], d[1, 1], ket[10], bra[9]]), d[1, 0]] + 
+     nc[d[0, 1], d[1, 1], omega*(nc[ket[1], bra[1]] + 2*nc[ket[2], bra[2]] + 3*nc[ket[3], bra[3]] + 4*nc[ket[4], bra[4]] + 5*nc[ket[5], bra[5]] + 6*nc[ket[6], bra[6]] + 7*nc[ket[7], bra[7]] + 8*nc[ket[8], bra[8]] + 9*nc[ket[9], bra[9]] + 
+         10*nc[ket[10], bra[10]])] - nc[d[0, 1], d[1, 1], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]] + 
+     nc[d[0, 1], d[1, 1], g1*(-nc[n1, ket[0], bra[1]] - nc[n1, ket[1], bra[0]] - Sqrt[2]*nc[n1, ket[1], bra[2]] - Sqrt[2]*nc[n1, ket[2], bra[1]] - Sqrt[3]*nc[n1, ket[2], bra[3]] - Sqrt[3]*nc[n1, ket[3], bra[2]] - 
+         2*nc[n1, ket[3], bra[4]] - 2*nc[n1, ket[4], bra[3]] - Sqrt[5]*nc[n1, ket[4], bra[5]] - Sqrt[5]*nc[n1, ket[5], bra[4]] - Sqrt[6]*nc[n1, ket[5], bra[6]] - Sqrt[6]*nc[n1, ket[6], bra[5]] - Sqrt[7]*nc[n1, ket[6], bra[7]] - 
+         Sqrt[7]*nc[n1, ket[7], bra[6]] - 2*Sqrt[2]*nc[n1, ket[7], bra[8]] - 2*Sqrt[2]*nc[n1, ket[8], bra[7]] - 3*nc[n1, ket[8], bra[9]] - 3*nc[n1, ket[9], bra[8]] - Sqrt[10]*nc[n1, ket[9], bra[10]] - Sqrt[10]*nc[n1, ket[10], bra[9]] + 
+         nc[d[0, 0], d[1, 0], ket[0], bra[1]] + nc[d[0, 0], d[1, 0], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[1], bra[2]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[2], bra[1]] + Sqrt[3]*nc[d[0, 0], d[1, 0], ket[2], bra[3]] + 
+         Sqrt[3]*nc[d[0, 0], d[1, 0], ket[3], bra[2]] + 2*nc[d[0, 0], d[1, 0], ket[3], bra[4]] + 2*nc[d[0, 0], d[1, 0], ket[4], bra[3]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[4], bra[5]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[5], bra[4]] + 
+         Sqrt[6]*nc[d[0, 0], d[1, 0], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 0], d[1, 0], ket[6], bra[5]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[6], bra[7]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[7], bra[6]] + 
+         2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[8], bra[7]] + 3*nc[d[0, 0], d[1, 0], ket[8], bra[9]] + 3*nc[d[0, 0], d[1, 0], ket[9], bra[8]] + Sqrt[10]*nc[d[0, 0], d[1, 0], ket[9], bra[10]] + 
+         Sqrt[10]*nc[d[0, 0], d[1, 0], ket[10], bra[9]] + nc[d[0, 1], d[1, 1], ket[0], bra[1]] + nc[d[0, 1], d[1, 1], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 1], d[1, 1], ket[1], bra[2]] + Sqrt[2]*nc[d[0, 1], d[1, 1], ket[2], bra[1]] + 
+         Sqrt[3]*nc[d[0, 1], d[1, 1], ket[2], bra[3]] + Sqrt[3]*nc[d[0, 1], d[1, 1], ket[3], bra[2]] + 2*nc[d[0, 1], d[1, 1], ket[3], bra[4]] + 2*nc[d[0, 1], d[1, 1], ket[4], bra[3]] + Sqrt[5]*nc[d[0, 1], d[1, 1], ket[4], bra[5]] + 
+         Sqrt[5]*nc[d[0, 1], d[1, 1], ket[5], bra[4]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[6], bra[5]] + Sqrt[7]*nc[d[0, 1], d[1, 1], ket[6], bra[7]] + 
+         Sqrt[7]*nc[d[0, 1], d[1, 1], ket[7], bra[6]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[8], bra[7]] + 3*nc[d[0, 1], d[1, 1], ket[8], bra[9]] + 3*nc[d[0, 1], d[1, 1], ket[9], bra[8]] + 
+         Sqrt[10]*nc[d[0, 1], d[1, 1], ket[9], bra[10]] + Sqrt[10]*nc[d[0, 1], d[1, 1], ket[10], bra[9]])] - 
+     nc[d[0, 1], omega*(nc[ket[1], bra[1]] + 2*nc[ket[2], bra[2]] + 3*nc[ket[3], bra[3]] + 4*nc[ket[4], bra[4]] + 5*nc[ket[5], bra[5]] + 6*nc[ket[6], bra[6]] + 7*nc[ket[7], bra[7]] + 8*nc[ket[8], bra[8]] + 9*nc[ket[9], bra[9]] + 
+         10*nc[ket[10], bra[10]]), d[1, 1]] + nc[d[0, 1], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[1, 1]] - 
+     nc[d[0, 1], g1*(-nc[n1, ket[0], bra[1]] - nc[n1, ket[1], bra[0]] - Sqrt[2]*nc[n1, ket[1], bra[2]] - Sqrt[2]*nc[n1, ket[2], bra[1]] - Sqrt[3]*nc[n1, ket[2], bra[3]] - Sqrt[3]*nc[n1, ket[3], bra[2]] - 2*nc[n1, ket[3], bra[4]] - 
+         2*nc[n1, ket[4], bra[3]] - Sqrt[5]*nc[n1, ket[4], bra[5]] - Sqrt[5]*nc[n1, ket[5], bra[4]] - Sqrt[6]*nc[n1, ket[5], bra[6]] - Sqrt[6]*nc[n1, ket[6], bra[5]] - Sqrt[7]*nc[n1, ket[6], bra[7]] - Sqrt[7]*nc[n1, ket[7], bra[6]] - 
+         2*Sqrt[2]*nc[n1, ket[7], bra[8]] - 2*Sqrt[2]*nc[n1, ket[8], bra[7]] - 3*nc[n1, ket[8], bra[9]] - 3*nc[n1, ket[9], bra[8]] - Sqrt[10]*nc[n1, ket[9], bra[10]] - Sqrt[10]*nc[n1, ket[10], bra[9]] + 
+         nc[d[0, 0], d[1, 0], ket[0], bra[1]] + nc[d[0, 0], d[1, 0], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[1], bra[2]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[2], bra[1]] + Sqrt[3]*nc[d[0, 0], d[1, 0], ket[2], bra[3]] + 
+         Sqrt[3]*nc[d[0, 0], d[1, 0], ket[3], bra[2]] + 2*nc[d[0, 0], d[1, 0], ket[3], bra[4]] + 2*nc[d[0, 0], d[1, 0], ket[4], bra[3]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[4], bra[5]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[5], bra[4]] + 
+         Sqrt[6]*nc[d[0, 0], d[1, 0], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 0], d[1, 0], ket[6], bra[5]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[6], bra[7]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[7], bra[6]] + 
+         2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[8], bra[7]] + 3*nc[d[0, 0], d[1, 0], ket[8], bra[9]] + 3*nc[d[0, 0], d[1, 0], ket[9], bra[8]] + 
+         Sqrt[10]*nc[d[0, 0], d[1, 0], ket[9], bra[10]] + Sqrt[10]*nc[d[0, 0], d[1, 0], ket[10], bra[9]] + nc[d[0, 1], d[1, 1], ket[0], bra[1]] + nc[d[0, 1], d[1, 1], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 1], d[1, 1], ket[1], bra[2]] + 
+         Sqrt[2]*nc[d[0, 1], d[1, 1], ket[2], bra[1]] + Sqrt[3]*nc[d[0, 1], d[1, 1], ket[2], bra[3]] + Sqrt[3]*nc[d[0, 1], d[1, 1], ket[3], bra[2]] + 2*nc[d[0, 1], d[1, 1], ket[3], bra[4]] + 2*nc[d[0, 1], d[1, 1], ket[4], bra[3]] + 
+         Sqrt[5]*nc[d[0, 1], d[1, 1], ket[4], bra[5]] + Sqrt[5]*nc[d[0, 1], d[1, 1], ket[5], bra[4]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[6], bra[5]] + 
+         Sqrt[7]*nc[d[0, 1], d[1, 1], ket[6], bra[7]] + Sqrt[7]*nc[d[0, 1], d[1, 1], ket[7], bra[6]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[8], bra[7]] + 
+         3*nc[d[0, 1], d[1, 1], ket[8], bra[9]] + 3*nc[d[0, 1], d[1, 1], ket[9], bra[8]] + Sqrt[10]*nc[d[0, 1], d[1, 1], ket[9], bra[10]] + Sqrt[10]*nc[d[0, 1], d[1, 1], ket[10], bra[9]]), d[1, 1]] + 
+     nc[d[1, 0], omega*(nc[ket[1], bra[1]] + 2*nc[ket[2], bra[2]] + 3*nc[ket[3], bra[3]] + 4*nc[ket[4], bra[4]] + 5*nc[ket[5], bra[5]] + 6*nc[ket[6], bra[6]] + 7*nc[ket[7], bra[7]] + 8*nc[ket[8], bra[8]] + 9*nc[ket[9], bra[9]] + 
+         10*nc[ket[10], bra[10]]), d[0, 0]] - nc[d[1, 0], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[0, 0]] + 
+     nc[d[1, 0], g1*(-nc[n1, ket[0], bra[1]] - nc[n1, ket[1], bra[0]] - Sqrt[2]*nc[n1, ket[1], bra[2]] - Sqrt[2]*nc[n1, ket[2], bra[1]] - Sqrt[3]*nc[n1, ket[2], bra[3]] - Sqrt[3]*nc[n1, ket[3], bra[2]] - 2*nc[n1, ket[3], bra[4]] - 
+         2*nc[n1, ket[4], bra[3]] - Sqrt[5]*nc[n1, ket[4], bra[5]] - Sqrt[5]*nc[n1, ket[5], bra[4]] - Sqrt[6]*nc[n1, ket[5], bra[6]] - Sqrt[6]*nc[n1, ket[6], bra[5]] - Sqrt[7]*nc[n1, ket[6], bra[7]] - Sqrt[7]*nc[n1, ket[7], bra[6]] - 
+         2*Sqrt[2]*nc[n1, ket[7], bra[8]] - 2*Sqrt[2]*nc[n1, ket[8], bra[7]] - 3*nc[n1, ket[8], bra[9]] - 3*nc[n1, ket[9], bra[8]] - Sqrt[10]*nc[n1, ket[9], bra[10]] - Sqrt[10]*nc[n1, ket[10], bra[9]] + 
+         nc[d[0, 0], d[1, 0], ket[0], bra[1]] + nc[d[0, 0], d[1, 0], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[1], bra[2]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[2], bra[1]] + Sqrt[3]*nc[d[0, 0], d[1, 0], ket[2], bra[3]] + 
+         Sqrt[3]*nc[d[0, 0], d[1, 0], ket[3], bra[2]] + 2*nc[d[0, 0], d[1, 0], ket[3], bra[4]] + 2*nc[d[0, 0], d[1, 0], ket[4], bra[3]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[4], bra[5]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[5], bra[4]] + 
+         Sqrt[6]*nc[d[0, 0], d[1, 0], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 0], d[1, 0], ket[6], bra[5]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[6], bra[7]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[7], bra[6]] + 
+         2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[8], bra[7]] + 3*nc[d[0, 0], d[1, 0], ket[8], bra[9]] + 3*nc[d[0, 0], d[1, 0], ket[9], bra[8]] + 
+         Sqrt[10]*nc[d[0, 0], d[1, 0], ket[9], bra[10]] + Sqrt[10]*nc[d[0, 0], d[1, 0], ket[10], bra[9]] + nc[d[0, 1], d[1, 1], ket[0], bra[1]] + nc[d[0, 1], d[1, 1], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 1], d[1, 1], ket[1], bra[2]] + 
+         Sqrt[2]*nc[d[0, 1], d[1, 1], ket[2], bra[1]] + Sqrt[3]*nc[d[0, 1], d[1, 1], ket[2], bra[3]] + Sqrt[3]*nc[d[0, 1], d[1, 1], ket[3], bra[2]] + 2*nc[d[0, 1], d[1, 1], ket[3], bra[4]] + 2*nc[d[0, 1], d[1, 1], ket[4], bra[3]] + 
+         Sqrt[5]*nc[d[0, 1], d[1, 1], ket[4], bra[5]] + Sqrt[5]*nc[d[0, 1], d[1, 1], ket[5], bra[4]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[6], bra[5]] + 
+         Sqrt[7]*nc[d[0, 1], d[1, 1], ket[6], bra[7]] + Sqrt[7]*nc[d[0, 1], d[1, 1], ket[7], bra[6]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[8], bra[7]] + 
+         3*nc[d[0, 1], d[1, 1], ket[8], bra[9]] + 3*nc[d[0, 1], d[1, 1], ket[9], bra[8]] + Sqrt[10]*nc[d[0, 1], d[1, 1], ket[9], bra[10]] + Sqrt[10]*nc[d[0, 1], d[1, 1], ket[10], bra[9]]), d[0, 0]] + 
+     nc[d[1, 1], omega*(nc[ket[1], bra[1]] + 2*nc[ket[2], bra[2]] + 3*nc[ket[3], bra[3]] + 4*nc[ket[4], bra[4]] + 5*nc[ket[5], bra[5]] + 6*nc[ket[6], bra[6]] + 7*nc[ket[7], bra[7]] + 8*nc[ket[8], bra[8]] + 9*nc[ket[9], bra[9]] + 
+         10*nc[ket[10], bra[10]]), d[0, 1]] - nc[d[1, 1], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[0, 1]] + 
+     nc[d[1, 1], g1*(-nc[n1, ket[0], bra[1]] - nc[n1, ket[1], bra[0]] - Sqrt[2]*nc[n1, ket[1], bra[2]] - Sqrt[2]*nc[n1, ket[2], bra[1]] - Sqrt[3]*nc[n1, ket[2], bra[3]] - Sqrt[3]*nc[n1, ket[3], bra[2]] - 2*nc[n1, ket[3], bra[4]] - 
+         2*nc[n1, ket[4], bra[3]] - Sqrt[5]*nc[n1, ket[4], bra[5]] - Sqrt[5]*nc[n1, ket[5], bra[4]] - Sqrt[6]*nc[n1, ket[5], bra[6]] - Sqrt[6]*nc[n1, ket[6], bra[5]] - Sqrt[7]*nc[n1, ket[6], bra[7]] - Sqrt[7]*nc[n1, ket[7], bra[6]] - 
+         2*Sqrt[2]*nc[n1, ket[7], bra[8]] - 2*Sqrt[2]*nc[n1, ket[8], bra[7]] - 3*nc[n1, ket[8], bra[9]] - 3*nc[n1, ket[9], bra[8]] - Sqrt[10]*nc[n1, ket[9], bra[10]] - Sqrt[10]*nc[n1, ket[10], bra[9]] + 
+         nc[d[0, 0], d[1, 0], ket[0], bra[1]] + nc[d[0, 0], d[1, 0], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[1], bra[2]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[2], bra[1]] + Sqrt[3]*nc[d[0, 0], d[1, 0], ket[2], bra[3]] + 
+         Sqrt[3]*nc[d[0, 0], d[1, 0], ket[3], bra[2]] + 2*nc[d[0, 0], d[1, 0], ket[3], bra[4]] + 2*nc[d[0, 0], d[1, 0], ket[4], bra[3]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[4], bra[5]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[5], bra[4]] + 
+         Sqrt[6]*nc[d[0, 0], d[1, 0], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 0], d[1, 0], ket[6], bra[5]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[6], bra[7]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[7], bra[6]] + 
+         2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[8], bra[7]] + 3*nc[d[0, 0], d[1, 0], ket[8], bra[9]] + 3*nc[d[0, 0], d[1, 0], ket[9], bra[8]] + 
+         Sqrt[10]*nc[d[0, 0], d[1, 0], ket[9], bra[10]] + Sqrt[10]*nc[d[0, 0], d[1, 0], ket[10], bra[9]] + nc[d[0, 1], d[1, 1], ket[0], bra[1]] + nc[d[0, 1], d[1, 1], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 1], d[1, 1], ket[1], bra[2]] + 
+         Sqrt[2]*nc[d[0, 1], d[1, 1], ket[2], bra[1]] + Sqrt[3]*nc[d[0, 1], d[1, 1], ket[2], bra[3]] + Sqrt[3]*nc[d[0, 1], d[1, 1], ket[3], bra[2]] + 2*nc[d[0, 1], d[1, 1], ket[3], bra[4]] + 2*nc[d[0, 1], d[1, 1], ket[4], bra[3]] + 
+         Sqrt[5]*nc[d[0, 1], d[1, 1], ket[4], bra[5]] + Sqrt[5]*nc[d[0, 1], d[1, 1], ket[5], bra[4]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[6], bra[5]] + 
+         Sqrt[7]*nc[d[0, 1], d[1, 1], ket[6], bra[7]] + Sqrt[7]*nc[d[0, 1], d[1, 1], ket[7], bra[6]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[8], bra[7]] + 
+         3*nc[d[0, 1], d[1, 1], ket[8], bra[9]] + 3*nc[d[0, 1], d[1, 1], ket[9], bra[8]] + Sqrt[10]*nc[d[0, 1], d[1, 1], ket[9], bra[10]] + Sqrt[10]*nc[d[0, 1], d[1, 1], ket[10], bra[9]]), d[0, 1]] + 
+     nc[omega*(nc[ket[1], bra[1]] + 2*nc[ket[2], bra[2]] + 3*nc[ket[3], bra[3]] + 4*nc[ket[4], bra[4]] + 5*nc[ket[5], bra[5]] + 6*nc[ket[6], bra[6]] + 7*nc[ket[7], bra[7]] + 8*nc[ket[8], bra[8]] + 9*nc[ket[9], bra[9]] + 
+         10*nc[ket[10], bra[10]]), d[0, 0], d[1, 0]] + nc[omega*(nc[ket[1], bra[1]] + 2*nc[ket[2], bra[2]] + 3*nc[ket[3], bra[3]] + 4*nc[ket[4], bra[4]] + 5*nc[ket[5], bra[5]] + 6*nc[ket[6], bra[6]] + 7*nc[ket[7], bra[7]] + 
+         8*nc[ket[8], bra[8]] + 9*nc[ket[9], bra[9]] + 10*nc[ket[10], bra[10]]), d[0, 1], d[1, 1]] - nc[U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[0, 0], d[1, 0]] - nc[U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[0, 1], d[1, 1]] + 
+     nc[g1*(-nc[n1, ket[0], bra[1]] - nc[n1, ket[1], bra[0]] - Sqrt[2]*nc[n1, ket[1], bra[2]] - Sqrt[2]*nc[n1, ket[2], bra[1]] - Sqrt[3]*nc[n1, ket[2], bra[3]] - Sqrt[3]*nc[n1, ket[3], bra[2]] - 2*nc[n1, ket[3], bra[4]] - 
+         2*nc[n1, ket[4], bra[3]] - Sqrt[5]*nc[n1, ket[4], bra[5]] - Sqrt[5]*nc[n1, ket[5], bra[4]] - Sqrt[6]*nc[n1, ket[5], bra[6]] - Sqrt[6]*nc[n1, ket[6], bra[5]] - Sqrt[7]*nc[n1, ket[6], bra[7]] - Sqrt[7]*nc[n1, ket[7], bra[6]] - 
+         2*Sqrt[2]*nc[n1, ket[7], bra[8]] - 2*Sqrt[2]*nc[n1, ket[8], bra[7]] - 3*nc[n1, ket[8], bra[9]] - 3*nc[n1, ket[9], bra[8]] - Sqrt[10]*nc[n1, ket[9], bra[10]] - Sqrt[10]*nc[n1, ket[10], bra[9]] + 
+         nc[d[0, 0], d[1, 0], ket[0], bra[1]] + nc[d[0, 0], d[1, 0], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[1], bra[2]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[2], bra[1]] + Sqrt[3]*nc[d[0, 0], d[1, 0], ket[2], bra[3]] + 
+         Sqrt[3]*nc[d[0, 0], d[1, 0], ket[3], bra[2]] + 2*nc[d[0, 0], d[1, 0], ket[3], bra[4]] + 2*nc[d[0, 0], d[1, 0], ket[4], bra[3]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[4], bra[5]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[5], bra[4]] + 
+         Sqrt[6]*nc[d[0, 0], d[1, 0], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 0], d[1, 0], ket[6], bra[5]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[6], bra[7]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[7], bra[6]] + 
+         2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[8], bra[7]] + 3*nc[d[0, 0], d[1, 0], ket[8], bra[9]] + 3*nc[d[0, 0], d[1, 0], ket[9], bra[8]] + 
+         Sqrt[10]*nc[d[0, 0], d[1, 0], ket[9], bra[10]] + Sqrt[10]*nc[d[0, 0], d[1, 0], ket[10], bra[9]] + nc[d[0, 1], d[1, 1], ket[0], bra[1]] + nc[d[0, 1], d[1, 1], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 1], d[1, 1], ket[1], bra[2]] + 
+         Sqrt[2]*nc[d[0, 1], d[1, 1], ket[2], bra[1]] + Sqrt[3]*nc[d[0, 1], d[1, 1], ket[2], bra[3]] + Sqrt[3]*nc[d[0, 1], d[1, 1], ket[3], bra[2]] + 2*nc[d[0, 1], d[1, 1], ket[3], bra[4]] + 2*nc[d[0, 1], d[1, 1], ket[4], bra[3]] + 
+         Sqrt[5]*nc[d[0, 1], d[1, 1], ket[4], bra[5]] + Sqrt[5]*nc[d[0, 1], d[1, 1], ket[5], bra[4]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[6], bra[5]] + 
+         Sqrt[7]*nc[d[0, 1], d[1, 1], ket[6], bra[7]] + Sqrt[7]*nc[d[0, 1], d[1, 1], ket[7], bra[6]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[8], bra[7]] + 
+         3*nc[d[0, 1], d[1, 1], ket[8], bra[9]] + 3*nc[d[0, 1], d[1, 1], ket[9], bra[8]] + Sqrt[10]*nc[d[0, 1], d[1, 1], ket[9], bra[10]] + Sqrt[10]*nc[d[0, 1], d[1, 1], ket[10], bra[9]]), d[0, 0], d[1, 0]] + 
+     nc[g1*(-nc[n1, ket[0], bra[1]] - nc[n1, ket[1], bra[0]] - Sqrt[2]*nc[n1, ket[1], bra[2]] - Sqrt[2]*nc[n1, ket[2], bra[1]] - Sqrt[3]*nc[n1, ket[2], bra[3]] - Sqrt[3]*nc[n1, ket[3], bra[2]] - 2*nc[n1, ket[3], bra[4]] - 
+         2*nc[n1, ket[4], bra[3]] - Sqrt[5]*nc[n1, ket[4], bra[5]] - Sqrt[5]*nc[n1, ket[5], bra[4]] - Sqrt[6]*nc[n1, ket[5], bra[6]] - Sqrt[6]*nc[n1, ket[6], bra[5]] - Sqrt[7]*nc[n1, ket[6], bra[7]] - Sqrt[7]*nc[n1, ket[7], bra[6]] - 
+         2*Sqrt[2]*nc[n1, ket[7], bra[8]] - 2*Sqrt[2]*nc[n1, ket[8], bra[7]] - 3*nc[n1, ket[8], bra[9]] - 3*nc[n1, ket[9], bra[8]] - Sqrt[10]*nc[n1, ket[9], bra[10]] - Sqrt[10]*nc[n1, ket[10], bra[9]] + 
+         nc[d[0, 0], d[1, 0], ket[0], bra[1]] + nc[d[0, 0], d[1, 0], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[1], bra[2]] + Sqrt[2]*nc[d[0, 0], d[1, 0], ket[2], bra[1]] + Sqrt[3]*nc[d[0, 0], d[1, 0], ket[2], bra[3]] + 
+         Sqrt[3]*nc[d[0, 0], d[1, 0], ket[3], bra[2]] + 2*nc[d[0, 0], d[1, 0], ket[3], bra[4]] + 2*nc[d[0, 0], d[1, 0], ket[4], bra[3]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[4], bra[5]] + Sqrt[5]*nc[d[0, 0], d[1, 0], ket[5], bra[4]] + 
+         Sqrt[6]*nc[d[0, 0], d[1, 0], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 0], d[1, 0], ket[6], bra[5]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[6], bra[7]] + Sqrt[7]*nc[d[0, 0], d[1, 0], ket[7], bra[6]] + 
+         2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 0], d[1, 0], ket[8], bra[7]] + 3*nc[d[0, 0], d[1, 0], ket[8], bra[9]] + 3*nc[d[0, 0], d[1, 0], ket[9], bra[8]] + 
+         Sqrt[10]*nc[d[0, 0], d[1, 0], ket[9], bra[10]] + Sqrt[10]*nc[d[0, 0], d[1, 0], ket[10], bra[9]] + nc[d[0, 1], d[1, 1], ket[0], bra[1]] + nc[d[0, 1], d[1, 1], ket[1], bra[0]] + Sqrt[2]*nc[d[0, 1], d[1, 1], ket[1], bra[2]] + 
+         Sqrt[2]*nc[d[0, 1], d[1, 1], ket[2], bra[1]] + Sqrt[3]*nc[d[0, 1], d[1, 1], ket[2], bra[3]] + Sqrt[3]*nc[d[0, 1], d[1, 1], ket[3], bra[2]] + 2*nc[d[0, 1], d[1, 1], ket[3], bra[4]] + 2*nc[d[0, 1], d[1, 1], ket[4], bra[3]] + 
+         Sqrt[5]*nc[d[0, 1], d[1, 1], ket[4], bra[5]] + Sqrt[5]*nc[d[0, 1], d[1, 1], ket[5], bra[4]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[5], bra[6]] + Sqrt[6]*nc[d[0, 1], d[1, 1], ket[6], bra[5]] + 
+         Sqrt[7]*nc[d[0, 1], d[1, 1], ket[6], bra[7]] + Sqrt[7]*nc[d[0, 1], d[1, 1], ket[7], bra[6]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[7], bra[8]] + 2*Sqrt[2]*nc[d[0, 1], d[1, 1], ket[8], bra[7]] + 
+         3*nc[d[0, 1], d[1, 1], ket[8], bra[9]] + 3*nc[d[0, 1], d[1, 1], ket[9], bra[8]] + Sqrt[10]*nc[d[0, 1], d[1, 1], ket[9], bra[10]] + Sqrt[10]*nc[d[0, 1], d[1, 1], ket[10], bra[9]]), d[0, 1], d[1, 1]] + 
+     2*U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]] - 2*g1*nc[d[0, 0], d[1, 0], ket[0], bra[1]] - 2*g1*nc[d[0, 0], d[1, 0], ket[1], bra[0]] - 2*Sqrt[2]*g1*nc[d[0, 0], d[1, 0], ket[1], bra[2]] - 
+     2*Sqrt[2]*g1*nc[d[0, 0], d[1, 0], ket[2], bra[1]] - 2*Sqrt[3]*g1*nc[d[0, 0], d[1, 0], ket[2], bra[3]] - 2*Sqrt[3]*g1*nc[d[0, 0], d[1, 0], ket[3], bra[2]] - 4*g1*nc[d[0, 0], d[1, 0], ket[3], bra[4]] - 
+     4*g1*nc[d[0, 0], d[1, 0], ket[4], bra[3]] - 2*Sqrt[5]*g1*nc[d[0, 0], d[1, 0], ket[4], bra[5]] - 2*Sqrt[5]*g1*nc[d[0, 0], d[1, 0], ket[5], bra[4]] - 2*Sqrt[6]*g1*nc[d[0, 0], d[1, 0], ket[5], bra[6]] - 
+     2*Sqrt[6]*g1*nc[d[0, 0], d[1, 0], ket[6], bra[5]] - 2*Sqrt[7]*g1*nc[d[0, 0], d[1, 0], ket[6], bra[7]] - 2*Sqrt[7]*g1*nc[d[0, 0], d[1, 0], ket[7], bra[6]] - 4*Sqrt[2]*g1*nc[d[0, 0], d[1, 0], ket[7], bra[8]] - 
+     4*Sqrt[2]*g1*nc[d[0, 0], d[1, 0], ket[8], bra[7]] - 6*g1*nc[d[0, 0], d[1, 0], ket[8], bra[9]] - 6*g1*nc[d[0, 0], d[1, 0], ket[9], bra[8]] - 2*Sqrt[10]*g1*nc[d[0, 0], d[1, 0], ket[9], bra[10]] - 
+     2*Sqrt[10]*g1*nc[d[0, 0], d[1, 0], ket[10], bra[9]] - 2*g1*nc[d[0, 1], d[1, 1], ket[0], bra[1]] - 2*g1*nc[d[0, 1], d[1, 1], ket[1], bra[0]] - 2*Sqrt[2]*g1*nc[d[0, 1], d[1, 1], ket[1], bra[2]] - 
+     2*Sqrt[2]*g1*nc[d[0, 1], d[1, 1], ket[2], bra[1]] - 2*Sqrt[3]*g1*nc[d[0, 1], d[1, 1], ket[2], bra[3]] - 2*Sqrt[3]*g1*nc[d[0, 1], d[1, 1], ket[3], bra[2]] - 4*g1*nc[d[0, 1], d[1, 1], ket[3], bra[4]] - 
+     4*g1*nc[d[0, 1], d[1, 1], ket[4], bra[3]] - 2*Sqrt[5]*g1*nc[d[0, 1], d[1, 1], ket[4], bra[5]] - 2*Sqrt[5]*g1*nc[d[0, 1], d[1, 1], ket[5], bra[4]] - 2*Sqrt[6]*g1*nc[d[0, 1], d[1, 1], ket[5], bra[6]] - 
+     2*Sqrt[6]*g1*nc[d[0, 1], d[1, 1], ket[6], bra[5]] - 2*Sqrt[7]*g1*nc[d[0, 1], d[1, 1], ket[6], bra[7]] - 2*Sqrt[7]*g1*nc[d[0, 1], d[1, 1], ket[7], bra[6]] - 4*Sqrt[2]*g1*nc[d[0, 1], d[1, 1], ket[7], bra[8]] - 
+     4*Sqrt[2]*g1*nc[d[0, 1], d[1, 1], ket[8], bra[7]] - 6*g1*nc[d[0, 1], d[1, 1], ket[8], bra[9]] - 6*g1*nc[d[0, 1], d[1, 1], ket[9], bra[8]] - 2*Sqrt[10]*g1*nc[d[0, 1], d[1, 1], ket[9], bra[10]] - 
+     2*Sqrt[10]*g1*nc[d[0, 1], d[1, 1], ket[10], bra[9]])/2
 NRDOTS:1 CHANNELS:1 COEFCHANNELS:1
 basis:{d[], f[0]}
 Hamiltonian generated. -coefzeta[1, 0] + eps1*nc[d[0, 0], d[1, 0]] + gammaPolCh[1]*nc[d[0, 0], f[1, 0, 0]] + eps1*nc[d[0, 1], d[1, 1]] + gammaPolCh[1]*nc[d[0, 1], f[1, 0, 1]] + gammaPolCh[1]*nc[f[0, 0, 0], d[1, 0]] + 
@@ -43,10 +313,6 @@ dzeta(1.)(0)
 Precision last xi:Infinity
 Precision last zeta: Infinity
 Discretization done.
---EOF--
-maketable[]
-exnames={d, eps1, g, g1, Gamma1, Gamma11, Gamma12, Gamma2, Gamma21, Gamma22, Gamma2to2, Gamma3, Jcharge, Jcharge1, Jcharge2, Jkondo, Jkondo1, Jkondo1ch2, Jkondo1P, Jkondo1Z, Jkondo2, Jkondo2ch2, Jkondo2P, Jkondo2Z, Jkondo3, JkondoP, 
-   JkondoZ, Jspin, n1, omega, U1}
 thetaCh={"2."}
 theta0Ch={"0.2"}
 gammaPolCh={"0.252313252202016"}
@@ -185,15 +451,17 @@ s: displ^2 nc[ket[0], bra[0]] + Sqrt[2]*nc[ket[0], bra[2]] + 3*nc[ket[1], bra[1]
    3*Sqrt[10]*nc[ket[8], bra[10]] + 6*Sqrt[2]*nc[ket[9], bra[7]] + 19*nc[ket[9], bra[9]] + 3*Sqrt[10]*nc[ket[10], bra[8]] + 10*nc[ket[10], bra[10]]
 operators.m done
 Loading module customoperators.m
-"customoperators Rok Zitko"
-Customoperators done.
+Can't load customoperators.m. Continuing.
 Loading module modeloperators.m
-Can't load modeloperators.m. Continuing.
+s: SigmaHartree (U1*nc[d[0, 0], d[1, 0]])/2 + (U1*nc[d[0, 1], d[1, 1]])/2 + g1*nc[ket[0], bra[1]] + g1*nc[ket[1], bra[0]] + Sqrt[2]*g1*nc[ket[1], bra[2]] + Sqrt[2]*g1*nc[ket[2], bra[1]] + Sqrt[3]*g1*nc[ket[2], bra[3]] + 
+   Sqrt[3]*g1*nc[ket[3], bra[2]] + 2*g1*nc[ket[3], bra[4]] + 2*g1*nc[ket[4], bra[3]] + Sqrt[5]*g1*nc[ket[4], bra[5]] + Sqrt[5]*g1*nc[ket[5], bra[4]] + Sqrt[6]*g1*nc[ket[5], bra[6]] + Sqrt[6]*g1*nc[ket[6], bra[5]] + 
+   Sqrt[7]*g1*nc[ket[6], bra[7]] + Sqrt[7]*g1*nc[ket[7], bra[6]] + 2*Sqrt[2]*g1*nc[ket[7], bra[8]] + 2*Sqrt[2]*g1*nc[ket[8], bra[7]] + 3*g1*nc[ket[8], bra[9]] + 3*g1*nc[ket[9], bra[8]] + Sqrt[10]*g1*nc[ket[9], bra[10]] + 
+   Sqrt[10]*g1*nc[ket[10], bra[9]]
 Timing report
-{basis, 0.129066`5.562356844150254}
-{ham, 21.62774`7.008404883133541}
-{maketable, 32.389073`7.961943511844346}
-{xi, 0.00781`4.344196027373275}
+{basis, 0.037996`5.031282872497931}
+{ham, 8.2613410000000000001`6.5904442918407415}
+{maketable, 13.475526`7.581090719817754}
+{xi, 0.001577`3.649376686824876}
 {_, 0}
 data.in
 "Success!"

@@ -30,16 +30,31 @@ namespace nrgljubljana_interface {
     /// The spectral function
     std::optional<g_w_t> A_w;
 
-    /// The spectral function of the auxiliary correlator F_w
-    std::optional<g_w_t> B_w;
+    /// The spectral function of the auxiliary correlator Fl_w
+    std::optional<g_w_t> B_l_w;
+
+    /// The spectral function of the auxiliary correlator Fr_w
+    std::optional<g_w_t> B_r_w;
+
+    /// The spectral function of the auxiliary correlator I_w
+    std::optional<g_w_t> C_w;
 
     /// The retarded Greens function
     std::optional<g_w_t> G_w;
 
-    /// The auxiliary Green function F_w = Sigma_w * G_w
-    std::optional<g_w_t> F_w;
+    /// The auxiliary Green function Fl_w = Sigma_w * G_w
+    std::optional<g_w_t> F_l_w;
 
-    /// The retarded Self energy
+    /// The auxiliary Green function Fr_w = G_w * Sigma_w
+    std::optional<g_w_t> F_r_w;
+
+    /// The auxiliary Green function I_w
+    std::optional<g_w_t> I_w;
+
+    /// Constant Hartree shift to the self-energy, stored as a Green function
+    std::optional<g_w_t> SigmaHartree_w;
+
+    /// The retarded Self energy (computed from F_l_w, F_r_w, G_w and I_w)
     std::optional<g_w_t> Sigma_w;
 
     /// Expectation values of local impurity operators
@@ -58,9 +73,14 @@ namespace nrgljubljana_interface {
     friend void h5_write(h5::group h5group, std::string subgroup_name, container_set const &c) {
       auto grp = h5group.create_group(subgroup_name);
       h5_write(grp, "A_w", c.A_w);
-      h5_write(grp, "B_w", c.B_w);
+      h5_write(grp, "B_l_w", c.B_l_w);
+      h5_write(grp, "B_r_w", c.B_r_w);
+      h5_write(grp, "C_w", c.C_w);
       h5_write(grp, "G_w", c.G_w);
-      h5_write(grp, "F_w", c.F_w);
+      h5_write(grp, "F_l_w", c.F_l_w);
+      h5_write(grp, "F_r_w", c.F_r_w);
+      h5_write(grp, "I_w", c.I_w);
+      h5_write(grp, "SigmaHartree_w", c.SigmaHartree_w);
       h5_write(grp, "Sigma_w", c.Sigma_w);
       h5_write(grp, "expv", c.expv);
       h5_write(grp, "tdfdm", c.tdfdm);
@@ -72,9 +92,14 @@ namespace nrgljubljana_interface {
     friend void h5_read(h5::group h5group, std::string subgroup_name, container_set &c) {
       auto grp = h5group.open_group(subgroup_name);
       h5_read(grp, "A_w", c.A_w);
-      h5_read(grp, "B_w", c.B_w);
+      h5_read(grp, "B_l_w", c.B_l_w);
+      h5_read(grp, "B_r_w", c.B_r_w);
+      h5_read(grp, "C_w", c.C_w);
       h5_read(grp, "G_w", c.G_w);
-      h5_read(grp, "F_w", c.F_w);
+      h5_read(grp, "F_l_w", c.F_l_w);
+      h5_read(grp, "F_r_w", c.F_r_w);
+      h5_read(grp, "I_w", c.I_w);
+      h5_read(grp, "SigmaHartree_w", c.SigmaHartree_w);
       h5_read(grp, "Sigma_w", c.Sigma_w);
       h5_read(grp, "expv", c.expv);
       h5_read(grp, "tdfdm", c.tdfdm);

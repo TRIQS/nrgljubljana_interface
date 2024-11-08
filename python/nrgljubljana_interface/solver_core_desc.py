@@ -1,12 +1,12 @@
 # Generated automatically using the command :
-# c++2py ../../c++/nrgljubljana_interface/solver_core.hpp -p --members_read_only -N nrgljubljana_interface -a nrgljubljana_interface -m solver_core -o solver_core --moduledoc="The nrgljubljana_interface solve_core module" -C triqs --cxxflags="-std=c++17 -DNRGIF_TEMPLATE_DIR=\"\"" --target_file_only -I../../c++
+# c++2py ../../c++/nrgljubljana_interface/solver_core.hpp -p --members_read_only -N nrgljubljana_interface -a nrgljubljana_interface -m solver_core -o solver_core --moduledoc="The nrgljubljana_interface solve_core module" -C triqs --cxxflags="$(triqs++ -cxxflags) -DNRGIF_TEMPLATE_DIR=\"\"" --target_file_only -I../../c++
 from cpp2py.wrap_generator import *
 
 # The module
 module = module_(full_name = "solver_core", doc = r"The nrgljubljana_interface solve_core module", app_name = "nrgljubljana_interface")
 
 # Imports
-module.add_imports(*['triqs.gf', 'h5._h5py'])
+module.add_imports(*['triqs.gf', 'triqs.gf.meshes', 'h5._h5py'])
 
 # Add here all includes
 module.add_include("nrgljubljana_interface/solver_core.hpp")
@@ -18,9 +18,7 @@ module.add_preamble("""
 #include <cpp2py/converters/optional.hpp>
 #include <cpp2py/converters/pair.hpp>
 #include <cpp2py/converters/string.hpp>
-#include <cpp2py/converters/variant.hpp>
 #include <cpp2py/converters/vector.hpp>
-#include <triqs/cpp2py_converters/arrays.hpp>
 #include <triqs/cpp2py_converters/gf.hpp>
 
 using namespace nrgljubljana_interface;
@@ -40,25 +38,50 @@ c.add_member(c_name = "A_w",
              read_only= True,
              doc = r"""The spectral function""")
 
-c.add_member(c_name = "B_w",
+c.add_member(c_name = "B_l_w",
              c_type = "std::optional<g_w_t>",
              read_only= True,
-             doc = r"""The spectral function of the auxiliary correlator F_w""")
+             doc = r"""The spectral function of the auxiliary correlator Fl_w""")
+
+c.add_member(c_name = "B_r_w",
+             c_type = "std::optional<g_w_t>",
+             read_only= True,
+             doc = r"""The spectral function of the auxiliary correlator Fr_w""")
+
+c.add_member(c_name = "C_w",
+             c_type = "std::optional<g_w_t>",
+             read_only= True,
+             doc = r"""The spectral function of the auxiliary correlator I_w""")
 
 c.add_member(c_name = "G_w",
              c_type = "std::optional<g_w_t>",
              read_only= True,
              doc = r"""The retarded Greens function""")
 
-c.add_member(c_name = "F_w",
+c.add_member(c_name = "F_l_w",
              c_type = "std::optional<g_w_t>",
              read_only= True,
-             doc = r"""The auxiliary Green function F_w = Sigma_w * G_w""")
+             doc = r"""The auxiliary Green function Fl_w = Sigma_w * G_w""")
+
+c.add_member(c_name = "F_r_w",
+             c_type = "std::optional<g_w_t>",
+             read_only= True,
+             doc = r"""The auxiliary Green function Fr_w = G_w * Sigma_w""")
+
+c.add_member(c_name = "I_w",
+             c_type = "std::optional<g_w_t>",
+             read_only= True,
+             doc = r"""The auxiliary Green function I_w""")
+
+c.add_member(c_name = "SigmaHartree_w",
+             c_type = "std::optional<g_w_t>",
+             read_only= True,
+             doc = r"""Constant Hartree shift to the self-energy, stored as a Green function""")
 
 c.add_member(c_name = "Sigma_w",
              c_type = "std::optional<g_w_t>",
              read_only= True,
-             doc = r"""The retarded Self energy""")
+             doc = r"""The retarded Self energy (computed from F_l_w, F_r_w, G_w and I_w)""")
 
 c.add_member(c_name = "expv",
              c_type = "std::map<std::string, double>",
@@ -81,12 +104,12 @@ c.add_member(c_name = "chi_SS_w",
              doc = r"""Spin susceptibility""")
 
 c.add_member(c_name = "constr_params",
-             c_type = "nrgljubljana_interface::constr_params_t",
+             c_type = "constr_params_t",
              read_only= True,
              doc = r"""""")
 
 c.add_member(c_name = "nrg_params",
-             c_type = "nrgljubljana_interface::nrg_params_t",
+             c_type = "nrg_params_t",
              read_only= True,
              doc = r"""Low-level NRG parameters""")
 
@@ -100,27 +123,37 @@ c.add_member(c_name = "verbose",
              read_only= True,
              doc = r"""""")
 
+c.add_member(c_name = "keep_temp_dir",
+             c_type = "bool",
+             read_only= True,
+             doc = r"""""")
+
 c.add_member(c_name = "gf_struct",
-             c_type = "triqs::hilbert_space::gf_struct_t",
+             c_type = "gf_struct_t",
              read_only= True,
              doc = r"""The Green function structure object""")
 
+c.add_member(c_name = "Delta_struct",
+             c_type = "gf_struct_t",
+             read_only= True,
+             doc = r"""The hybridization function structure object.""")
+
 c.add_member(c_name = "chi_struct",
-             c_type = "triqs::hilbert_space::gf_struct_t",
+             c_type = "gf_struct_t",
              read_only= True,
              doc = r"""The susceptibility structure object""")
 
 c.add_member(c_name = "log_mesh",
-             c_type = "gf_mesh<triqs::gfs::refreq_pts>",
+             c_type = "refreq_pts",
              read_only= True,
              doc = r"""Logarithmic mesh""")
 
 c.add_member(c_name = "Delta_w",
-             c_type = "nrgljubljana_interface::g_w_t",
+             c_type = "g_w_t",
              read_only= True,
              doc = r"""The hybridization function in real frequencies""")
 
-c.add_constructor("""(**nrgljubljana_interface::constr_params_t)""", doc = r"""Construct a NRGLJUBLJANA_INTERFACE solver
+c.add_constructor("""(**constr_params_t)""", doc = r"""Construct a NRGLJUBLJANA_INTERFACE solver
 
 
 
@@ -165,7 +198,7 @@ c.add_constructor("""(**nrgljubljana_interface::constr_params_t)""", doc = r"""C
 +----------------+-------------+--------------------+--------------------------------------------------------------+
 """)
 
-c.add_method("""void solve (**nrgljubljana_interface::solve_params_t)""",
+c.add_method("""void solve (**solve_params_t)""",
              doc = r"""Solve method that performs NRGLJUBLJANA_INTERFACE calculation
 
 
@@ -199,7 +232,7 @@ c.add_method("""void solve (**nrgljubljana_interface::solve_params_t)""",
 +------------------+-------------------------------+---------+----------------------------------------------------------------------------------+
 """)
 
-c.add_method("""triqs::hilbert_space::gf_struct_t read_structure (std::string filename, bool mandatory)""",
+c.add_method("""gf_struct_t read_structure (std::string filename, bool mandatory)""",
              doc = r"""""")
 
 c.add_method("""std::string create_tempdir (std::string tempdir_)""",
@@ -211,7 +244,7 @@ c.add_method("""void instantiate (double z, std::string taskdir)""",
 c.add_method("""void solve_one (std::string taskdir)""",
              doc = r"""""")
 
-c.add_method("""void set_nrg_params (**nrgljubljana_interface::nrg_params_t)""",
+c.add_method("""void set_nrg_params (**nrg_params_t)""",
              doc = r"""
 
 
@@ -401,7 +434,7 @@ c.add_method("""void set_nrg_params (**nrgljubljana_interface::nrg_params_t)""",
 +---------------------+-------------+-----------+------------------------------------------------------------+
 """)
 
-c.add_method("""void check_model_params (nrgljubljana_interface::solve_params_t sp)""",
+c.add_method("""void check_model_params (solve_params_t sp)""",
              doc = r"""""")
 
 c.add_method("""void generate_param_file (double z)""",
@@ -410,10 +443,13 @@ c.add_method("""void generate_param_file (double z)""",
 c.add_method("""void readexpv (int Nz)""",
              doc = r"""Read expectation values""")
 
-c.add_method("""void readGF (std::string name, std::optional<g_w_t> G_w, triqs::hilbert_space::gf_struct_t _gf_struct)""",
+c.add_method("""void readtdfdm (int Nz)""",
+             doc = r"""Read thermodynamic variables (FDM algorithm)""")
+
+c.add_method("""void readGF (std::string name, std::optional<g_w_t> G_w, gf_struct_t _gf_struct)""",
              doc = r"""Read a block Green's function (im/re)name-block-ij.dat""")
 
-c.add_method("""void readA (std::string name, std::optional<g_w_t> A_w, triqs::hilbert_space::gf_struct_t _gf_struct)""",
+c.add_method("""void readA (std::string name, std::optional<g_w_t> A_w, gf_struct_t _gf_struct)""",
              doc = r"""Read a block spectral function name-block-ij.dat; here we assume that the
      spectral function is purely real.""")
 
@@ -434,9 +470,9 @@ c.add_property(name = "be_quiet",
 
 module.add_class(c)
 
-module.add_function ("std::complex<double> nrgljubljana_interface::hilbert_transform_refreq (nrgljubljana_interface::c_w_cvt gf, std::complex<double> z)", doc = r"""""")
+module.add_function ("std::complex<double> nrgljubljana_interface::hilbert_transform_refreq (c_w_cvt gf, std::complex<double> z)", doc = r"""""")
 
-module.add_function ("matrix<std::complex<double> > nrgljubljana_interface::hilbert_transform_elementwise (nrgljubljana_interface::m_w_cvt gf, std::complex<double> z)", doc = r"""""")
+module.add_function ("matrix<std::complex<double>> nrgljubljana_interface::hilbert_transform_elementwise (m_w_cvt gf, std::complex<double> z)", doc = r"""""")
 
 
 # Converter for solve_params_t

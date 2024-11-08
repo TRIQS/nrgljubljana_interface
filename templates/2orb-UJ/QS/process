@@ -16,18 +16,30 @@ my $pr = "FDM_dens"; # prefix
 
 avg("spec_${pr}_A_d1-A_d1.bin",    "A_imp_00");
 avg("spec_${pr}_A_d2-A_d2.bin",    "A_imp_11");
-avg("spec_${pr}_self_d1-A_d1.bin", "B_imp_00");
-avg("spec_${pr}_self_d2-A_d2.bin", "B_imp_11");
+avg("spec_${pr}_self_d1-A_d1.bin", "B_l_imp_00");
+avg("spec_${pr}_self_d2-A_d2.bin", "B_l_imp_11");
+avg("spec_${pr}_A_d1-self_d1.bin", "B_r_imp_00");
+avg("spec_${pr}_A_d2-self_d2.bin", "B_r_imp_11");
+avg("spec_${pr}_self_d1-self_d1.bin", "C_imp_00");
+avg("spec_${pr}_self_d2-self_d2.bin", "C_imp_11");
 
 scaley("A_imp_00", -$pi, "imG_imp_00");
 scaley("A_imp_11", -$pi, "imG_imp_11");
-scaley("B_imp_00", -$pi, "imF_imp_00");
-scaley("B_imp_11", -$pi, "imF_imp_11");
+scaley("B_l_imp_00", -$pi, "imF_l_imp_00");
+scaley("B_l_imp_11", -$pi, "imF_l_imp_11");
+scaley("B_r_imp_00", -$pi, "imF_r_imp_00");
+scaley("B_r_imp_11", -$pi, "imF_r_imp_11");
+scaley("C_imp_00", -$pi, "imI_imp_00");
+scaley("C_imp_11", -$pi, "imI_imp_11");
 
 kk("imG_imp_00");
 kk("imG_imp_11");
-kk("imF_imp_00");
-kk("imF_imp_11");
+kk("imF_l_imp_00");
+kk("imF_l_imp_11");
+kk("imF_r_imp_00");
+kk("imF_r_imp_11");
+kk("imI_imp_00");
+kk("imI_imp_11");
 
 avg("corr_${pr}_n_d1-n_d1.bin",    "imNN_imp_00");
 avg("corr_${pr}_n_d2-n_d2.bin",    "imNN_imp_11");
@@ -46,6 +58,21 @@ kk("imSS_imp_00");
 kk("imSS_imp_11");
 kk("imSS_imp_01");
 kk("imSS_imp_10");
+
+my %avg_expv = extract_expv_all();
+my @mesh = extract_mesh("A_imp_00");
+
+my $key1 = "SigmaHartree1";
+print "SigmaHartree1 = $avg_expv{$key1}\n";
+
+fillconstant_GF(\@mesh, $avg_expv{$key1}, "reSigmaHartree_imp_00");
+fillconstant_GF(\@mesh, 0., "imSigmaHartree_imp_00");
+
+my $key2 = "SigmaHartree2";
+print "SigmaHartree2 = $avg_expv{$key2}\n";
+
+fillconstant_GF(\@mesh, $avg_expv{$key2}, "reSigmaHartree_imp_11");
+fillconstant_GF(\@mesh, 0., "imSigmaHartree_imp_11");
 
 sub kk {
         my $in = shift;
@@ -111,4 +138,76 @@ sub scaley
     }
     close G;
     close F;
+}
+
+sub extract_expv_one
+{
+    my $filename = shift;
+
+    open(F, "<$filename") or die "Can't open $filename: $!";
+
+    my @lines = <F>;
+    close F;
+
+    chomp(@lines);
+    my @expv_values = split(/\s+/, $lines[-1]);
+    my @expv_names = split(/\s+/, $lines[-2]);
+
+    # Skip the first element in both arrays
+    shift @expv_values;
+    shift @expv_names;
+
+    my %result;
+    @result{@expv_names} = @expv_values;
+
+    return %result;
+}
+
+sub extract_expv_all
+{   
+    my %sum;
+
+    for (my $i = 1; $i <= $Nz; $i++) {
+        my $filename = "$i/customfdm";
+        my %one = extract_expv_one($filename);
+
+        foreach my $key (keys %one) {
+            $sum{$key} += $one{$key};
+        }
+    }
+
+    my %avg;
+    foreach my $key (keys %sum) {
+        $avg{$key} = $sum{$key} / $Nz;
+    }
+
+    return %avg;
+}
+
+sub extract_mesh
+{
+    my $fnin = shift;
+    $fnin .= ".dat";
+    my @mesh;
+    open (F, "<", $fnin) or die "Can't open $fnin for reading: $!\n";
+    while (<F>) {
+        if (!/^#/) {
+            chomp;
+            my @d = split;
+            push @mesh, $d[0];
+        }
+    }
+    close F;
+    return @mesh;
+}
+
+sub fillconstant_GF
+{
+    my($mesh, $value, $fnout) = @_;
+    $fnout .= ".dat";
+    open (G, ">", $fnout) or die "Can't open $fnout for writing: $!\n";
+    foreach my $m (@$mesh) {
+        print G "$m $value\n";
+    }
+    close G;
 }

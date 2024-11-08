@@ -1,15 +1,23 @@
-NRG Ljubljana 2019.11 (c) Rok Zitko, rok.zitko@ijs.si, 2005-2019
-Mathematica version: 11.3.0 for Linux x86 (64-bit) (March 7, 2018)
-sneg version: 1.251
+NRG Ljubljana 2023.05 (c) Rok Zitko, rok.zitko@ijs.si, 2005-2023
+Mathematica version: 14.0.0 for Mac OS X ARM (64-bit) (December 13, 2023)
+sneg version: 2.0.7
 Loading module initialparse.m
-Options: {GENERATE_TEMPLATE}
+Loading module sym.m
+Options: {GENERATE_TEMPLATE, GENERATE_TEMPLATE_ALL}
 Loading module models.m
 models started
 Loading module custommodels.m
-custommodels Rok Zitko
+Can't load custommodels.m. Continuing.
 Loading module SIAM.m
 def1ch, NRDOTS=1
 H0=coefzeta[1, 0]*(-1 + nc[f[0, 0, 0], f[1, 0, 0]] + nc[f[0, 0, 1], f[1, 0, 1]])
+"SigmaHartree[UP]="-nc[d[0, 1], d[1, 1], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]] + nc[d[0, 1], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[1, 1]] - nc[d[1, 1], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[0, 1]] - 
+   nc[U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[0, 1], d[1, 1]] + U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]
+"SigmaHartree[DO]="-nc[d[0, 0], d[1, 0], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]] + nc[d[0, 0], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[1, 0]] - nc[d[1, 0], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[0, 0]] - 
+   nc[U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[0, 0], d[1, 0]] + U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]
+"SigmaHartree="(-nc[d[0, 0], d[1, 0], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]] + nc[d[0, 0], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[1, 0]] - nc[d[0, 1], d[1, 1], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]] + 
+     nc[d[0, 1], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[1, 1]] - nc[d[1, 0], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[0, 0]] - nc[d[1, 1], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[0, 1]] - 
+     nc[U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[0, 0], d[1, 0]] - nc[U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[0, 1], d[1, 1]] + 2*U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]])/2
 NRDOTS:1 CHANNELS:1 COEFCHANNELS:1
 basis:{d[], f[0]}
 Hamiltonian generated. -coefzeta[1, 0] + eps1*nc[d[0, 0], d[1, 0]] + gammaPolCh[1]*nc[d[0, 0], f[1, 0, 0]] + eps1*nc[d[0, 1], d[1, 1]] + gammaPolCh[1]*nc[d[0, 1], f[1, 0, 1]] + gammaPolCh[1]*nc[f[0, 0, 0], d[1, 0]] + 
@@ -28,10 +36,6 @@ dzeta(1.)(0)
 Precision last xi:Infinity
 Precision last zeta: Infinity
 Discretization done.
---EOF--
-maketable[]
-exnames={d, eps1, g, Gamma1, Gamma11, Gamma12, Gamma2, Gamma21, Gamma22, Gamma2to2, Gamma3, Jcharge, Jcharge1, Jcharge2, Jkondo, Jkondo1, Jkondo1ch2, Jkondo1P, Jkondo1Z, Jkondo2, Jkondo2ch2, Jkondo2P, Jkondo2Z, Jkondo3, JkondoP, JkondoZ, 
-   Jspin, U1}
 thetaCh={"2."}
 theta0Ch={"0.2"}
 gammaPolCh={"0.252313252202016"}
@@ -75,15 +79,14 @@ t: sigma_d d[]
 d: self_d Chop[Expand[komutator[Hint, d[#1, #2]]]] & 
 operators.m done
 Loading module customoperators.m
-"customoperators Rok Zitko"
-Customoperators done.
+Can't load customoperators.m. Continuing.
 Loading module modeloperators.m
-Can't load modeloperators.m. Continuing.
+s: SigmaHartree (U1*nc[d[0, 0], d[1, 0]])/2 + (U1*nc[d[0, 1], d[1, 1]])/2
 Timing report
-{basis, 0.017119`4.685023385427865}
-{ham, 0.091541`4.63500939549146}
-{maketable, 0.699447`6.296299805276515}
-{xi, 0.008156`4.3630222106020735}
+{basis, 0.006209`4.244566653341955}
+{ham, 0.026499`4.096623228268898}
+{maketable, 0.200989`5.754717282906383}
+{xi, 0.001713`3.6853023564614857}
 {_, 0}
 data.in
 "Success!"

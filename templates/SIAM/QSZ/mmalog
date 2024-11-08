@@ -1,18 +1,26 @@
-NRG Ljubljana 2019.11 (c) Rok Zitko, rok.zitko@ijs.si, 2005-2019
-Mathematica version: 12.0.0 for Linux x86 (64-bit) (April 7, 2019)
-sneg version: 1.251
+NRG Ljubljana 2023.05 (c) Rok Zitko, rok.zitko@ijs.si, 2005-2023
+Mathematica version: 14.0.0 for Mac OS X ARM (64-bit) (December 13, 2023)
+sneg version: 2.0.7
 Loading module initialparse.m
-Options: {GENERATE_TEMPLATE}
+Loading module sym.m
+Options: {GENERATE_TEMPLATE, GENERATE_TEMPLATE_ALL}
 Loading module models.m
 models started
 Loading module custommodels.m
-custommodels Rok Zitko
+Can't load custommodels.m. Continuing.
 Loading module SIAM.m
 def1ch, NRDOTS=1
 H0=coefzeta[2, 0]*(-1/2 + nc[f[0, 0, 0], f[1, 0, 0]]) + coefzeta[1, 0]*(-1/2 + nc[f[0, 0, 1], f[1, 0, 1]])
+"SigmaHartree[UP]="-nc[d[0, 1], d[1, 1], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]] + nc[d[0, 1], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[1, 1]] - nc[d[1, 1], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[0, 1]] - 
+   nc[U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[0, 1], d[1, 1]] + U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]
+"SigmaHartree[DO]="-nc[d[0, 0], d[1, 0], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]] + nc[d[0, 0], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[1, 0]] - nc[d[1, 0], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[0, 0]] - 
+   nc[U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[0, 0], d[1, 0]] + U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]
+"SigmaHartree="(-nc[d[0, 0], d[1, 0], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]] + nc[d[0, 0], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[1, 0]] - nc[d[0, 1], d[1, 1], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]] + 
+     nc[d[0, 1], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[1, 1]] - nc[d[1, 0], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[0, 0]] - nc[d[1, 1], U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[0, 1]] - 
+     nc[U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[0, 0], d[1, 0]] - nc[U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]], d[0, 1], d[1, 1]] + 2*U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]])/2
 NRDOTS:1 CHANNELS:1 COEFCHANNELS:2
 basis:{d[], f[0]}
-Hamiltonian generated. -coefzeta[1, 0]/2 - coefzeta[2, 0]/2 - (B1*nc[d[0, 0], d[1, 0]])/2 + eps1*nc[d[0, 0], d[1, 0]] + gammaPolCh[1]*nc[d[0, 0], f[1, 0, 0]] + (B1*nc[d[0, 1], d[1, 1]])/2 + eps1*nc[d[0, 1], d[1, 1]] + 
+Hamiltonian generated. -1/2*coefzeta[1, 0] - coefzeta[2, 0]/2 - (B1*nc[d[0, 0], d[1, 0]])/2 + eps1*nc[d[0, 0], d[1, 0]] + gammaPolCh[1]*nc[d[0, 0], f[1, 0, 0]] + (B1*nc[d[0, 1], d[1, 1]])/2 + eps1*nc[d[0, 1], d[1, 1]] + 
    gammaPolCh[1]*nc[d[0, 1], f[1, 0, 1]] + gammaPolCh[1]*nc[f[0, 0, 0], d[1, 0]] + coefzeta[2, 0]*nc[f[0, 0, 0], f[1, 0, 0]] + gammaPolCh[1]*nc[f[0, 0, 1], d[1, 1]] + coefzeta[1, 0]*nc[f[0, 0, 1], f[1, 0, 1]] - 
    U1*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]
 SCALE[0]=1.0201394465967895
@@ -36,10 +44,6 @@ dzeta(2.)(0)
 Precision last xi:Infinity
 Precision last zeta: Infinity
 Discretization done.
---EOF--
-maketable[]
-exnames={B1, d, eps1, g, Gamma1, Gamma11, Gamma12, Gamma2, Gamma21, Gamma22, Gamma2to2, Gamma3, Jcharge, Jcharge1, Jcharge2, Jkondo, Jkondo1, Jkondo1ch2, Jkondo1P, Jkondo1Z, Jkondo2, Jkondo2ch2, Jkondo2P, Jkondo2Z, Jkondo3, JkondoP, 
-   JkondoZ, Jspin, U1}
 thetaCh={"2.", "2."}
 theta0Ch={"0.2", "0.2"}
 gammaPolCh={"0.252313252202016", "0.252313252202016"}
@@ -89,22 +93,24 @@ makeireducf GENERAL
 Loading module operators.m
 operators.m started
 s: n_d nc[d[0, 0], d[1, 0]] + nc[d[0, 1], d[1, 1]]
+s: n_d_u nc[d[0, 1], d[1, 1]]
+s: n_d_d nc[d[0, 0], d[1, 0]]
 s: n_d^2 nc[d[0, 0], d[1, 0]] + nc[d[0, 1], d[1, 1]] - 2*nc[d[0, 0], d[0, 1], d[1, 0], d[1, 1]]
 s: hop0 nc[d[0, 0], f[1, 0, 0]] + nc[d[0, 1], f[1, 0, 1]] + nc[f[0, 0, 0], d[1, 0]] + nc[f[0, 0, 1], d[1, 1]]
 d: A_d d
 d: self_d Chop[Expand[komutator[Hint, d[#1, #2]]]] & 
-s: SZd -nc[d[0, 0], d[1, 0]]/2 + nc[d[0, 1], d[1, 1]]/2
+s: SZd -1/2*nc[d[0, 0], d[1, 0]] + nc[d[0, 1], d[1, 1]]/2
 operators.m done
 Loading module customoperators.m
-"customoperators Rok Zitko"
-Customoperators done.
+Can't load customoperators.m. Continuing.
 Loading module modeloperators.m
-Can't load modeloperators.m. Continuing.
+s: SigmaHartree-u U1*nc[d[0, 0], d[1, 0]]
+s: SigmaHartree-d U1*nc[d[0, 1], d[1, 1]]
 Timing report
-{basis, 0.009329`4.421380086571773}
-{ham, 0.200582`4.79959444139797}
-{maketable, 1.032707`6.465522114306052}
-{xi, 0.013681`4.587662836392449}
+{basis, 0.002985`3.9264893289613587}
+{ham, 0.054795`4.2360434153242466}
+{maketable, 0.321319`5.958481400190313}
+{xi, 0.002811`3.9004058391034135}
 {_, 0}
 data.in
 "Success!"

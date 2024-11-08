@@ -1,6 +1,6 @@
-ops:n_d n_d^2 hop0 A_d self_d sigma_d nph displ displ^2 aan
+ops:n_d n_d^2 hop0 A_d self_d sigma_d nph displ displ^2 aan SigmaHartree
 specs:n_d-n_d displ-displ aan-aan q_d-aan
-specd:A_d-A_d self_d-A_d
+specd:A_d-A_d self_d-A_d A_d-self_d self_d-self_d
 spect:sigma_d-sigma_d
 specq:
 specot:
