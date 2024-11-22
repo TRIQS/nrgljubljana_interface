@@ -1,0 +1,4 @@
+#!/bin/sh
+echo dos=Gamma_imp_00.dat >>param
+adapt P
+adapt N

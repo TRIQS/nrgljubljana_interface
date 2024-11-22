@@ -1,0 +1,31 @@
+#!/usr/bin/env perl
+
+open (O, ">info") or die;
+
+$x = `cat ops`;
+print O "ops:$x";
+$x = (-e "specs" ? `cat specs` : "\n");
+print O "specs:$x";
+$x = (-e "specd" ? `cat specd` : "\n");
+print O "specd:$x";
+$x = (-e "spect" ? `cat spect` : "\n");
+print O "spect:$x";
+$x = (-e "specq" ? `cat specq` : "\n");
+print O "specq:$x";
+$x = (-e "specot" ? `cat specot` : "\n");
+print O "specot:$x";
+
+open (F, "<param") or die;
+
+foreach (<F>) {
+    last if /\[param\]/;
+    /(.*)=/ or next;
+    $params .= "$1 ";
+}
+
+chop($params); # drop trailing space
+
+print O "params:$params\n";
+
+$x = (-e "polarized" ? `cat polarized` : "\n");
+print O "polarized:$x";

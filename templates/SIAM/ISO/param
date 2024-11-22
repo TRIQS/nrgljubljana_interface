@@ -1,0 +1,10 @@
+[extra]
+U1=
+
+[param]
+options=GENERATE_TEMPLATE GENERATE_TEMPLATE_ALL
+symtype=ISO
+model=SIAM.m
+ops=n_d n_d^2 hop0 A_d isoself_d sigma_d
+
+data_has_rescaled_energies=false
