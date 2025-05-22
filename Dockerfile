@@ -6,7 +6,7 @@ RUN apt-get install -y libgsl-dev || yum install -y gsl-devel perl-Math-Complex
 
 ENV BOOST_ROOT=/opt/boost
 ENV LD_LIBRARY_PATH=/opt/boost/lib:$LD_LIBRARY_PATH
-ADD https://archives.boost.io/release/1.86.0/source/boost_1_86_0.tar.gz /tmp/boost.tar.gz
+ADD https://archives.boost.io/release/1.88.0/source/boost_1_88_0.tar.gz /tmp/boost.tar.gz
 RUN chown build /tmp/boost.tar.gz
 USER build
 RUN tar -C /tmp -xf /tmp/boost.tar.gz && \
