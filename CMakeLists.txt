@@ -177,7 +177,7 @@ include(CMake/CPM.cmake)
 CPMAddPackage(
   NAME nrgljubljana
   GITHUB_REPOSITORY rokzitko/nrgljubljana
-  GIT_TAG 515f87f132ce9c7bb4ecc8f8d9a1a6feaeb9241d
+  GIT_TAG fa7a2d22102ebd9764b7e91ddf423e6b84539ef9
   OPTIONS
     "SYM_MORE OFF"
     "SYM_ALL OFF"
