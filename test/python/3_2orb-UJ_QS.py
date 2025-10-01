@@ -1,67 +1,68 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 import unittest
 
 from nrgljubljana_interface import Solver, SemiCircular
 
-from h5 import *
+from h5 import HDFArchive
 from triqs.utility.h5diff import h5diff
 
 
 class test_2orb(unittest.TestCase):
 
-    # Construct Parameters
-    cp = {}
-    cp["model"] = "2orb-UJ"
-    cp["symtype"] = "QS"
-    cp["mesh_max"] = 1.0
-    cp["mesh_min"] = 1e-1
-    cp["mesh_ratio"] = 1.1
+    def test_2orb_uj_qs_solver(self):
+        # Construct Parameters
+        cp = {}
+        cp["model"] = "2orb-UJ"
+        cp["symtype"] = "QS"
+        cp["mesh_max"] = 1.0
+        cp["mesh_min"] = 1e-1
+        cp["mesh_ratio"] = 1.1
 
-    # Set up the Solver
-    S = Solver(**cp)
+        # Set up the Solver
+        S = Solver(**cp)
 
-    # Solve Parameters
-    sp = {}
-    sp["T"] = 1e-1
-    sp["Lambda"] = 4.0
-    sp["Nz"] = 1
-    sp["Tmin"] = 0.5
-    sp["keep"] = 2000
-    sp["keepenergy"] = 10.0
+        # Solve Parameters
+        sp = {}
+        sp["T"] = 1e-1
+        sp["Lambda"] = 4.0
+        sp["Nz"] = 1
+        sp["Tmin"] = 0.5
+        sp["keep"] = 2000
+        sp["keepenergy"] = 10.0
 
-    # Model Parameters
-    mp = {}
-    mp["U1"] = 1.0
-    mp["U2"] = 0.9
-    mp["eps1"] = -0.5
-    mp["eps2"] = -0.4
-    mp["U12"] = 0.1
-    mp["J12"] = 0.05
-    sp["model_parameters"] = mp
+        # Model Parameters
+        mp = {}
+        mp["U1"] = 1.0
+        mp["U2"] = 0.9
+        mp["eps1"] = -0.5
+        mp["eps2"] = -0.4
+        mp["U12"] = 0.1
+        mp["J12"] = 0.05
+        sp["model_parameters"] = mp
 
-    # Low-level NRG Parameters
-    np = {}
-    np["bins"] = 50
-    S.set_nrg_params(**np)
+        # Low-level NRG Parameters
+        np = {}
+        np["bins"] = 50
+        S.set_nrg_params(**np)
 
-    # # Initialize hybridization function
-    S.Delta_w['imp'][0,0] << 0.5 * SemiCircular(1.0)
-    S.Delta_w['imp'][1,1] << 0.4 * SemiCircular(1.0)
-    # Out-of-diagonal Delta is zero
+        # # Initialize hybridization function
+        S.Delta_w['imp'][0,0] << 0.5 * SemiCircular(1.0)
+        S.Delta_w['imp'][1,1] << 0.4 * SemiCircular(1.0)
+        # Out-of-diagonal Delta is zero
 
-    # Solve the impurity model
-    S.solve(**sp)
+        # Solve the impurity model
+        S.solve(**sp)
 
-    # # Store the Result
-    with HDFArchive("3_2orb-UJ_QS.out.h5", 'w') as arch:
-        arch["A_w"] = S.A_w
-        arch["G_w"] = S.G_w
-        arch["F_w"] = S.F_w
-        arch["Sigma_w"] = S.Sigma_w
+        # # Store the Result
+        with HDFArchive("3_2orb-UJ_QS.out.h5", 'w') as arch:
+            arch["A_w"] = S.A_w
+            arch["G_w"] = S.G_w
+            arch["F_w"] = S.F_w
+            arch["Sigma_w"] = S.Sigma_w
 
-    # Compare against reference result
-    h5diff("3_2orb-UJ_QS.out.h5", "3_2orb-UJ_QS.ref.h5")
+        # Compare against reference result
+        h5diff("3_2orb-UJ_QS.out.h5", "3_2orb-UJ_QS.ref.h5")
 
 if __name__ == '__main__':
     unittest.main()
