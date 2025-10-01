@@ -73,6 +73,7 @@ jobs:
         libfftw3-dev
         libgfortran5
         libgmp-dev
+        libgsl-dev
         libhdf5-dev
         libopenblas-dev
         libopenmpi-dev
