@@ -29,10 +29,7 @@ DOC
 """
 from .solver import Solver
 from .solver_core import SolverCore, hilbert_transform_refreq, hilbert_transform_elementwise
-from .mesh_refreq_pts import MeshReFreqPts
-from .descriptors import Flat, SemiCircular, Omega
+from triqs.gf.meshes import MeshReFreqLog
+from triqs.gf.descriptors import Flat, SemiCircular, Omega
 
-__all__ = ['Solver','SolverCore', 'MeshReFreqPts', 'Flat', 'SemiCircular', 'Omega']
-
-import triqs.gf.gf
-triqs.gf.gf.all_meshes = triqs.gf.gf.all_meshes + (MeshReFreqPts,)
+__all__ = ['Solver','SolverCore', 'MeshReFreqLog', 'Flat', 'SemiCircular', 'Omega']

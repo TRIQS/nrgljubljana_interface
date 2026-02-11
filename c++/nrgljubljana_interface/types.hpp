@@ -27,8 +27,6 @@
 #include <triqs/hilbert_space/fundamental_operator_set.hpp>
 #include <triqs/utility/macros.hpp>
 
-#include <triqs/mesh/refreq_pts.hpp>
-
 #include <itertools/itertools.hpp>
 #include <mpi/mpi.hpp>
 
@@ -52,7 +50,7 @@ namespace nrgljubljana_interface {
   //using triqs::hilbert_space::gf_struct_t;
 
   /// Container type
-  using g_w_t = block_gf<refreq_pts, matrix_valued>;
+  using g_w_t = block_gf<refreq_log, matrix_valued>;
 
   /// A view to a g_w_t
   using g_w_vt = g_w_t::view_type;
@@ -61,7 +59,7 @@ namespace nrgljubljana_interface {
   using g_w_cvt = g_w_t::const_view_type;
 
   /// Container for scalar real-valued quantities with no block structure
-  using s_w_t = gf<refreq_pts, scalar_real_valued>;
+  using s_w_t = gf<refreq_log, scalar_real_valued>;
 
   /// A view to s_w_t
   using s_w_vt = s_w_t::view_type;
@@ -70,7 +68,7 @@ namespace nrgljubljana_interface {
   using s_w_cvt = s_w_t::const_view_type;
 
   /// Container for scalar complex-valued quantities with no block structure
-  using c_w_t = gf<refreq_pts, scalar_valued>;
+  using c_w_t = gf<refreq_log, scalar_valued>;
 
   /// A view to c_w_t
   using c_w_vt = c_w_t::view_type;
@@ -79,7 +77,7 @@ namespace nrgljubljana_interface {
   using c_w_cvt = c_w_t::const_view_type;
 
   /// Container for matrix complex-valued quantities with no block structure
-  using m_w_t = gf<refreq_pts, matrix_valued>;
+  using m_w_t = gf<refreq_log, matrix_valued>;
 
   /// A view to m_w_t
   using m_w_vt = m_w_t::view_type;

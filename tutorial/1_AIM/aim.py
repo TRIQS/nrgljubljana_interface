@@ -1,4 +1,4 @@
-from nrgljubljana_interface import Solver, Flat, MeshReFreqPts
+from nrgljubljana_interface import Solver, Flat
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt

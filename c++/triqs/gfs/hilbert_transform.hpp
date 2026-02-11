@@ -3,7 +3,6 @@
 #include <triqs/gfs.hpp>
 #include <triqs/mesh.hpp>
 #include <itertools/itertools.hpp>
-#include "../mesh/refreq_pts.hpp"
 
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_integration.h>
@@ -183,8 +182,9 @@ namespace triqs::gfs {
   template <typename G> dcomplex hilbert_transform(G const &Ain, dcomplex z, double lim_direct = 1e-3) requires(is_gf_v<G>) {
     static_assert(std::is_same_v<typename G::target_t, scalar_valued>,
                   "Hilbert transform only implemented for (complex) scalar-valued spectral functions");
-    static_assert(std::is_same_v<typename G::mesh_t, mesh::refreq> or std::is_same_v<typename G::mesh_t, mesh::refreq_pts>,
-                  "Hilbert transform only implemented for refreq and refreq_pts meshes");
+    static_assert(std::is_same_v<typename G::mesh_t, mesh::refreq> or std::is_same_v<typename G::mesh_t, mesh::refreq_pts>
+                     or std::is_same_v<typename G::mesh_t, mesh::refreq_log>,
+                  "Hilbert transform only implemented for refreq, refreq_pts, and refreq_log meshes");
     // Copy the input data for GSL interpolation routines.
     using DVEC = std::vector<double>;
     DVEC Xpts, Rpts, Ipts;

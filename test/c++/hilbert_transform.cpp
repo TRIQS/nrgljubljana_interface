@@ -5,7 +5,6 @@
 #include <triqs/hilbert_space/fundamental_operator_set.hpp>
 
 #include <triqs/gfs/hilbert_transform.hpp>
-#include <triqs/mesh/refreq_pts.hpp>
 
 #include <triqs/test_tools/gfs.hpp>
 

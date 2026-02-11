@@ -100,13 +100,7 @@ namespace nrgljubljana_interface {
     constr_params.polarized = getline("polarized") == "true";
 
     // Create the hybridization function on a logarithmic mesh
-    std::vector<double> mesh_points;
-    for (double w = cp.mesh_max; w > cp.mesh_min; w /= cp.mesh_ratio) {
-      mesh_points.push_back(w);
-      mesh_points.push_back(-w);
-    }
-    std::sort(begin(mesh_points), end(mesh_points));
-    log_mesh = refreq_pts{mesh_points};
+    log_mesh = refreq_log{cp.mesh_min, cp.mesh_max, cp.mesh_ratio};
     // Note: Delta may have a different structure from G.
     Delta_w  = g_w_t{log_mesh, Delta_struct};
     // We also construct G_w and Sigma_w here to enable their initialization in the DMFT loops

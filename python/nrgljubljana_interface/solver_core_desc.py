@@ -144,7 +144,7 @@ c.add_member(c_name = "chi_struct",
              doc = r"""The susceptibility structure object""")
 
 c.add_member(c_name = "log_mesh",
-             c_type = "refreq_pts",
+             c_type = "refreq_log",
              read_only= True,
              doc = r"""Logarithmic mesh""")
 

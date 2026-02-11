@@ -5,7 +5,8 @@ from triqs.gf import *
 from triqs.operators import *
 from h5 import *
 from triqs.utility import mpi
-from nrgljubljana_interface import Solver, MeshReFreqPts, hilbert_transform_refreq
+from nrgljubljana_interface import Solver, hilbert_transform_refreq
+from triqs.gf.meshes import MeshReFreqPts
 import math, os, warnings
 import numpy as np
 from scipy import interpolate, integrate, special, optimize

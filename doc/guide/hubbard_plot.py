@@ -5,8 +5,6 @@ import math
 
 from triqs.gf import *
 from h5 import *
-from nrgljubljana_interface import MeshReFreqPts
-
 def GF_to_nparrays(A):
     lx = np.array(list(A.mesh.values()))
     ly = np.array(-1.0/math.pi*A.data[:,0,0].imag)

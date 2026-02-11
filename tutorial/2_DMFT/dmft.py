@@ -15,7 +15,8 @@ from triqs.operators import *
 from h5 import *
 from triqs.utility import mpi
 
-from nrgljubljana_interface import Solver, MeshReFreqPts, hilbert_transform_refreq
+from nrgljubljana_interface import Solver, hilbert_transform_refreq
+from triqs.gf.meshes import MeshReFreqPts
 
 be_verbose = True # show info messages
 

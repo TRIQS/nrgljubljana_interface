@@ -2,7 +2,7 @@
 
 import unittest
 
-from nrgljubljana_interface import Solver, SemiCircular, MeshReFreqPts
+from nrgljubljana_interface import Solver, SemiCircular
 
 from triqs.utility import mpi
 from h5 import HDFArchive
