@@ -2,6 +2,44 @@
 
 # Changelog
 
+## Version 3.3.1
+
+nrgljubljana_interface version 3.3.1 is a patch-release that introduces
+minor fixes and improvements.
+
+We thank all contributors: Don Rolih, Henri Menke, Nils Wentzell, Thomas Hahn
+
+Find below an itemized list of changes in this release.
+
+### General
+* [cpp] Replace OMP deprecated function omp_get_nested with omp_get_max_active_levels
+* [python] Update np.complex_ to np.complex128
+
+### cmake
+* Fetch nrgljubljana via CPM, fix Boost download URL
+* Skip find_package(Mathematica) on Darwin in nrgljubljana patch
+* Fix add_custom_commands to be compliant with cmake 3.31
+* Ignore generated cpm-package-lock.cmake
+
+### doc
+* Add FI support notice to README.md
+* Fix broken link to TRIQS installation page
+* Add numpydoc option to doc/conf.py.in
+
+### ghactions
+* Synchronize build.yml with unstable
+* Synchronize Jenkins and GHActions Setup with unstable
+* Allow both unstable and release branch builds
+* Always build against respective TRIQS branch
+* Update runner images and compiler version
+
+### jenkins
+* For osx builds use gcc14 and python 3.12
+
+### test
+* Fix unrecognized python tests
+
+
 ## Version 3.3.0
 
 nrgljubljana_interface version 3.3.0 is a compatibility release for TRIQS version 3.3.0.
