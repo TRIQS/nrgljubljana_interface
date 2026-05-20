@@ -6,3 +6,4 @@ build.*
 build_*
 build-*
 rok_testing
+cpm-package-lock.cmake
