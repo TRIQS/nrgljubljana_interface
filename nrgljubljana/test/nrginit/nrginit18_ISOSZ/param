@@ -1,6 +1,0 @@
-[param]
-symtype=ISOSZ
-model=SIAM
-
-Nmax=2
-keep=20

@@ -20,10 +20,7 @@
 # ##############################################################################
 
 cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
-cmake_policy(VERSION 3.20)
-if(POLICY CMP0144)
-  cmake_policy(SET CMP0144 NEW)
-endif()
+cmake_policy(VERSION ${CMAKE_VERSION})
 
 # ############
 # Define Project
@@ -173,18 +170,31 @@ add_subdirectory(deps)
 # Build and install the library
 add_subdirectory(c++/${PROJECT_NAME})
 
+# CPM for downloading dependencies
+include(CMake/CPM.cmake)
+
+# NRG Ljubljana library
+# Pinned to the same upstream version that was carried by the embedded
+# subtree on this branch (version 2020.09). Two local patches preserve
+# the std::unary_function and BLAS/LAPACK-module fixes that lived on top
+# of the subtree. The CMAKE_POLICY_VERSION_MINIMUM shim keeps this old
+# cmake_minimum_required(VERSION 3.0.2) acceptable to CMake 4.0+.
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
+CPMAddPackage(
+  NAME nrgljubljana
+  GITHUB_REPOSITORY rokzitko/nrgljubljana
+  GIT_TAG 59d30dcfb30f52aa37becc7f5b3628513ab5c4a7
+  PATCHES
+    ${CMAKE_CURRENT_SOURCE_DIR}/CMake/patches/0001-nrgljubljana-modern-compiler-fixes.patch
+  OPTIONS
+    "SYM_MORE OFF"
+    "SYM_ALL OFF"
+)
+
 # Tests
 if(Build_Tests)
   add_subdirectory(test)
 endif()
-
-# NRG Ljubljana subproject. Turn off symmetry types that we do not currently require.
-option(SYM_MORE "" OFF)
-option(SYM_ALL "" OFF)
-add_subdirectory(nrgljubljana)
-# Make NRG Ljubljana Targets available without tests (commented out; works only in recent CMake versions)
-#add_subdirectory(nrgljubljana EXCLUDE_FROM_ALL)
-#install(TARGETS adapt nrgchain matrix diag unitary broaden kk EXPORT nrgljubljana_interface-targets RUNTIME DESTINATION bin)
 
 # Python
 if(PythonSupport)
