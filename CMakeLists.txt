@@ -24,7 +24,7 @@ cmake_policy(VERSION ${CMAKE_VERSION})
 
 # ############
 # Define Project
-project(nrgljubljana_interface VERSION 3.3.0 LANGUAGES CXX)
+project(nrgljubljana_interface VERSION 3.3.1 LANGUAGES CXX)
 get_directory_property(IS_SUBPROJECT PARENT_DIRECTORY)
 
 # ############
