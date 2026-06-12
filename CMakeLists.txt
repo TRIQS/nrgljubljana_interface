@@ -1,6 +1,6 @@
 # ##############################################################################
 #
-# nrgljubljana_interface - An example application using triqs and cpp2py
+# nrgljubljana_interface - An example application using triqs and c2py
 #
 # Copyright (C) ...
 #
@@ -28,7 +28,7 @@ project(nrgljubljana_interface VERSION 4.0.0 LANGUAGES CXX)
 get_directory_property(IS_SUBPROJECT PARENT_DIRECTORY)
 
 # ############
-# Load TRIQS and CPP2PY
+# Load TRIQS
 find_package(TRIQS 4.0 REQUIRED)
 
 # Get the git hash & print status

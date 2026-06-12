@@ -30,7 +30,7 @@ Expectation values
 - :math:`\langle n \rangle`, ``n_d``, impurity occupancy
 - :math:`\langle n^2 \rangle`, ``n_d^2``, impurity occupancy squared
 - :math:`\langle \sum_\sigma d^\dagger_\sigma f_{0\sigma} + \text{h.c.} \rangle`, ``hop0``, hopping between the impurity and the zero-th site of the Wilson chain, :math:`f_0` (i.e., the local orbital of
-the bath at the position of the impurity)
+  the bath at the position of the impurity)
 
 Structure of Green's functions
 ------------------------------

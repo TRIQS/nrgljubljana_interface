@@ -64,14 +64,17 @@ The compilation of ``nrgljubljana_interface`` can be configured using CMake-opti
 
     cmake ../nrgljubljana_interface.src -DOPTION1=value1 -DOPTION2=value2 ...
 
-+-----------------------------------------------------------------+-----------------------------------------------+
-| Options                                                         | Syntax                                        |
-+=================================================================+===============================================+
-| Specify an installation path other than path_to_triqs           | -DCMAKE_INSTALL_PREFIX=path_to_nrgljubljana_interface      |
-+-----------------------------------------------------------------+-----------------------------------------------+
-| Build in Debugging Mode                                         | -DCMAKE_BUILD_TYPE=Debug                      |
-+-----------------------------------------------------------------+-----------------------------------------------+
-| Disable testing (not recommended)                               | -DBuild_Tests=OFF                             |
-+-----------------------------------------------------------------+-----------------------------------------------+
-| Build the documentation                                         | -DBuild_Documentation=ON                      |
-+-----------------------------------------------------------------+-----------------------------------------------+
+.. list-table::
+   :header-rows: 1
+   :widths: 50 50
+
+   * - Options
+     - Syntax
+   * - Specify an installation path other than path_to_triqs
+     - ``-DCMAKE_INSTALL_PREFIX=path_to_nrgljubljana_interface``
+   * - Build in Debugging Mode
+     - ``-DCMAKE_BUILD_TYPE=Debug``
+   * - Disable testing (not recommended)
+     - ``-DBuild_Tests=OFF``
+   * - Build the documentation
+     - ``-DBuild_Documentation=ON``

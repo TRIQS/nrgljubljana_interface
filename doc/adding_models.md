@@ -1,3 +1,7 @@
+(adding_models)=
+
+# Adding new models
+
 The models (Hamiltonians) are added to nrgljubljana_interface by creating "template directories"
 in templates/. The templates are organised as templates/[model_name]/[symmetry_type], where the
 model name is e.g. "SIAM", while the symmetry type is one of the NRG Ljubljana codes for symmetry

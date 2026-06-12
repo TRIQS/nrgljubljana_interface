@@ -29,6 +29,7 @@
 #include <string>
 
 #include <triqs/gfs/hilbert_transform.hpp>
+#include <triqs/utility/macros.hpp>
 
 namespace nrgljubljana_interface {
 
@@ -55,7 +56,6 @@ namespace nrgljubljana_interface {
      *
      * @param cp Construction parameters.
      */
-    CPP2PY_ARG_AS_DICT
     explicit solver_core(constr_params_t cp);
 
     // Delete assignement operator because of const members
@@ -73,7 +73,6 @@ namespace nrgljubljana_interface {
      *
      * @param solve_params Parameters specific to the NRGLjubljana run.
      */
-    CPP2PY_ARG_AS_DICT
     void solve(solve_params_t const &solve_params);
 
     /**
@@ -116,7 +115,6 @@ namespace nrgljubljana_interface {
      *
      * @param nrg_params Low-level NRG parameters.
      */
-    CPP2PY_ARG_AS_DICT
     void set_nrg_params(nrg_params_t const &nrg_params);
 
     /// Establish good defaults for the low-level NRG parameters.
@@ -187,7 +185,7 @@ namespace nrgljubljana_interface {
      * @param G_w Container that receives the Green's function.
      * @param _gf_struct Block structure of the Green's function.
      */
-    void readGF(const std::string &name, std::optional<g_w_t> &G_w, gf_struct_t &_gf_struct);
+    C2PY_IGNORE void readGF(const std::string &name, std::optional<g_w_t> &G_w, gf_struct_t &_gf_struct);
 
     /**
      * @brief Read a block spectral function from ``name-block-ij.dat`` files.
@@ -198,7 +196,7 @@ namespace nrgljubljana_interface {
      * @param A_w Container that receives the spectral function.
      * @param _gf_struct Block structure of the spectral function.
      */
-    void readA(const std::string &name, std::optional<g_w_t> &A_w, gf_struct_t &_gf_struct);
+    C2PY_IGNORE void readA(const std::string &name, std::optional<g_w_t> &A_w, gf_struct_t &_gf_struct);
 
     /// Read a scalar real-valued function name.dat
     // void readc(const std::string &name, std::optional<s_w_t> &s_w); // TO DO
@@ -220,7 +218,7 @@ namespace nrgljubljana_interface {
     friend void h5_write(h5::group h5group, std::string subgroup_name, solver_core const &s);
 
     /// Construct a solver object from an HDF5 file.
-    CPP2PY_IGNORE
+    C2PY_IGNORE
     static solver_core h5_read_construct(h5::group h5group, std::string subgroup_name);
   };
 
