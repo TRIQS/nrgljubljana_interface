@@ -100,7 +100,7 @@ jobs:
       if: ${{ contains(matrix.os, 'macos') }}
       run: |
         brew update
-        brew install ccache gcc llvm libomp boost fftw gsl hdf5 open-mpi openblas
+        brew install ccache gcc llvm libomp boost fftw gsl hdf5 open-mpi openblas boost-mpi
         pip install mako numpy scipy mpi4py
         pip install -r requirements.txt
         echo "PATH=$(brew --prefix llvm)/bin:$(brew --prefix gcc)/bin:$PATH" >> $GITHUB_ENV
@@ -110,7 +110,7 @@ jobs:
         echo "LDFLAGS=-L$(brew --prefix libomp)/lib -L$(brew --prefix llvm)/lib/c++ -L/opt/homebrew/opt/llvm/lib/unwind -lunwind" >> $GITHUB_ENV
 
     - name: Add clang CXXFLAGS
-      if: ${{ contains(matrix.cxx, 'clang') }}
+      if: ${{ contains(matrix.os, 'macos') && contains(matrix.cxx, 'clang') }}
       run: |
         echo "CXXFLAGS=-stdlib=libc++" >> $GITHUB_ENV
 
