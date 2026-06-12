@@ -50,7 +50,7 @@ class test_SIAM(unittest.TestCase):
         S.solve(**sp)
         G_w_1 = S.G_w.copy()
 
-        S.solve(**S.last_solve_params)
+        S.solve(S.last_solve_params)
         G_w_2 = S.G_w.copy()
 
         assert_block_gfs_are_close(G_w_1, G_w_2, 1e-12)

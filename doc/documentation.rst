@@ -12,6 +12,7 @@ Examples
    guide/aim
    guide/holstein
    guide/hubbard
+   guide/2orb-UJ
 
 Model templates
 ---------------
@@ -31,28 +32,22 @@ Miscelaneous
 .. toctree::
    :maxdepth: 1
 
-   install
    parallelization
    temporary
-   issues
-   changelog
-   about
-
-C++ reference manual
-====================
-
-.. toctree::
-   :maxdepth: 5
-
-   cpp2rst_generated/contents
 
 Python reference manual
-=======================
+-----------------------
 
-.. automodule:: nrgljubljana_interface
-   :members:
+.. autosummary::
+   :toctree: _ref
+   :template: autosummary_module_template.rst
+   :recursive:
 
-.. autoclass:: nrgljubljana_interface.nrgljubljana_interface_module.Toto
-   :members:
+   nrgljubljana_interface.solver
+   nrgljubljana_interface.solver_core
 
-.. autofunction:: nrgljubljana_interface.nrgljubljana_interface_module.chain
+Links to all relevant solver parameters:
+
+* :doc:`Construction parameters <_ref/nrgljubljana_interface.solver_core.ConstrParamsT>`
+* :doc:`Solve parameters <_ref/nrgljubljana_interface.solver_core.SolveParamsT>`
+* :doc:`Low-level NRG parameters <_ref/nrgljubljana_interface.solver_core.NrgParamsT>`

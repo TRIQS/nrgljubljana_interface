@@ -1,0 +1,4 @@
+package_name  = "nrgljubljana_interface"
+documentation = "TRIQS interface to the NRGLjubljana numerical renormalization group impurity solver."
+namespaces    = "nrgljubljana_interface"
+match_names   = "nrgljubljana_interface::(solver_core|constr_params_t|solve_params_t|nrg_params_t|hilbert_transform_refreq|hilbert_transform_elementwise)"

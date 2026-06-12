@@ -24,8 +24,10 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 r"""
-DOC
+TRIQS interface to the NRGLjubljana numerical renormalization group (NRG) impurity solver.
 
+Given a hybridization function, computes spectral functions, Green's functions, the self-energy,
+susceptibilities and thermodynamic/expectation values for quantum impurity models (e.g. the SIAM).
 """
 from .solver import Solver
 from .solver_core import SolverCore, hilbert_transform_refreq, hilbert_transform_elementwise
