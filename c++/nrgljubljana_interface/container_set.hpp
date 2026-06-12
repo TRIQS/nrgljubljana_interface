@@ -24,52 +24,52 @@
 
 namespace nrgljubljana_interface {
 
-  /// The collection of all output containers in solver_core
+  /// Collection of all output containers held by the solver.
   struct container_set {
 
-    /// The spectral function
+    /// The spectral function \f$ A(\omega) \f$.
     std::optional<g_w_t> A_w;
 
-    /// The spectral function of the auxiliary correlator Fl_w
+    /// The spectral function \f$ B_l(\omega) \f$ of the auxiliary correlator \f$ F_l(\omega) \f$.
     std::optional<g_w_t> B_l_w;
 
-    /// The spectral function of the auxiliary correlator Fr_w
+    /// The spectral function \f$ B_r(\omega) \f$ of the auxiliary correlator \f$ F_r(\omega) \f$.
     std::optional<g_w_t> B_r_w;
 
-    /// The spectral function of the auxiliary correlator I_w
+    /// The spectral function \f$ C(\omega) \f$ of the auxiliary correlator \f$ I(\omega) \f$.
     std::optional<g_w_t> C_w;
 
-    /// The retarded Greens function
+    /// The retarded Green's function \f$ G(\omega) \f$.
     std::optional<g_w_t> G_w;
 
-    /// The auxiliary Green function Fl_w = Sigma_w * G_w
+    /// The auxiliary Green's function \f$ F_l(\omega) = \Sigma(\omega)\, G(\omega) \f$.
     std::optional<g_w_t> F_l_w;
 
-    /// The auxiliary Green function Fr_w = G_w * Sigma_w
+    /// The auxiliary Green's function \f$ F_r(\omega) = G(\omega)\, \Sigma(\omega) \f$.
     std::optional<g_w_t> F_r_w;
 
-    /// The auxiliary Green function I_w
+    /// The auxiliary Green's function \f$ I(\omega) \f$.
     std::optional<g_w_t> I_w;
 
-    /// Constant Hartree shift to the self-energy, stored as a Green function
+    /// Constant Hartree shift to the self-energy, stored as a Green's function.
     std::optional<g_w_t> SigmaHartree_w;
 
-    /// The retarded Self energy (computed from F_l_w, F_r_w, G_w and I_w)
+    /// The retarded self-energy \f$ \Sigma(\omega) \f$ (computed from \f$ F_l \f$, \f$ F_r \f$, \f$ G \f$ and \f$ I \f$).
     std::optional<g_w_t> Sigma_w;
 
-    /// Expectation values of local impurity operators
+    /// Expectation values of local impurity operators.
     std::map<std::string, double> expv;
 
-    /// Thermodynamic variables (FDM algorithm)
+    /// Thermodynamic variables (FDM algorithm).
     std::map<std::string, double> tdfdm;
 
-    /// Charge susceptibility
+    /// Charge susceptibility \f$ \chi_{NN}(\omega) \f$.
     std::optional<g_w_t> chi_NN_w;
 
-    /// Spin susceptibility
+    /// Spin susceptibility \f$ \chi_{SS}(\omega) \f$.
     std::optional<g_w_t> chi_SS_w;
 
-    /// Function that writes all containers to hdf5 file
+    /// Write all containers to an HDF5 file.
     friend void h5_write(h5::group h5group, std::string subgroup_name, container_set const &c) {
       auto grp = h5group.create_group(subgroup_name);
       h5_write(grp, "A_w", c.A_w);
@@ -88,7 +88,7 @@ namespace nrgljubljana_interface {
       h5_write(grp, "chi_SS_w", c.chi_SS_w);
     }
 
-    /// Function that reads all containers from hdf5 file
+    /// Read all containers from an HDF5 file.
     friend void h5_read(h5::group h5group, std::string subgroup_name, container_set &c) {
       auto grp = h5group.open_group(subgroup_name);
       h5_read(grp, "A_w", c.A_w);

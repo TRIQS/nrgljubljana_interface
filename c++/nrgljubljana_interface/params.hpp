@@ -24,18 +24,26 @@
 
 namespace nrgljubljana_interface {
 
-  /// The parameters for the solver construction
+  /// Construction parameters for the NRGLjubljana solver.
   struct constr_params_t {
 
-    /// Path to the template library (default to bundled templates)
+    /// Path to the template library (defaults to the bundled templates).
     std::string templatedir = NRGIF_TEMPLATE_DIR;
 
-    /// Model considered (templated)
+    /// Impurity model to solve (selects a template directory).
     std::string model = "SIAM";
 
-    /// Symmetry
+    /// Symmetry type (NRGLjubljana symmetry code, e.g. QS, QSZ, ISO).
     std::string symtype = "QS";
 
+    /**
+     * @brief Resolve the template directory for the chosen model and symmetry.
+     *
+     * @details Returns ``templatedir/model/symtype``, with the ``$NRGIF_TEMPLATE_DIR``
+     * environment variable overriding ``templatedir`` when set.
+     *
+     * @return Absolute path to the model/symmetry template directory.
+     */
     [[nodiscard]] std::string get_model_dir() const {
       if (const char *env_tdir = std::getenv("NRGIF_TEMPLATE_DIR")) {
         return std::string{env_tdir} + "/" + model + "/" + symtype;
@@ -44,390 +52,381 @@ namespace nrgljubljana_interface {
       }
     }
 
-    /// Mesh maximum frequency
+    /// Maximum frequency of the logarithmic mesh.
     double mesh_max = 10;
 
-    /// Mesh minimum frequency
+    /// Minimum frequency of the logarithmic mesh.
     double mesh_min = 1e-4;
 
-    /// Common ratio of the geometric sequence
+    /// Common ratio of the geometric (logarithmic) frequency mesh.
     double mesh_ratio = 1.05;
 
-    /// Spin-polarized Wilson chain
+    /// Use a spin-polarized Wilson chain.
     bool polarized = false;
 
-    /// 2x2 spin structure in Wilson chain
+    /// Use a 2x2 spin structure in the Wilson chain.
     bool pol2x2 = false;
 
-    /// Channel-mixing terms in Wilson chain
+    /// Include channel-mixing terms in the Wilson chain.
     bool rungs = false;
 
-    /// Operators to be calculated
+    /// Operators whose expectation values are to be calculated.
     std::string ops = "";
 
-    /// Spectral functions (singlet ops) to compute
+    /// Spectral functions of singlet operators to compute.
     std::string specs = "";
 
-    /// Spectral functions (doublet ops) to compute
+    /// Spectral functions of doublet operators to compute.
     std::string specd = "";
 
-    /// Spectral functions (triplet ops) to compute
+    /// Spectral functions of triplet operators to compute.
     std::string spect = "";
 
-    /// Spectral functions (quadruplet ops) to compute
+    /// Spectral functions of quadruplet operators to compute.
     std::string specq = "";
 
-    /// Spectral functions (orbital triplet ops) to compute
+    /// Spectral functions of orbital-triplet operators to compute.
     std::string specot = "";
 
-    /// Susceptibilities to compute
+    /// Susceptibilities to compute.
     std::string specchit = "";
 
-    /// 3-leg vertex functions to compute?
+    /// 3-leg vertex functions to compute.
     std::string specv3 = "";
 
-    /// List of model parameters that need to be specified
+    /// List of model parameters that need to be specified.
     std::string params = "";
 
-    /// Write constr_params_t to hdf5
+    /// Write constr_params_t to HDF5.
     friend void h5_write(h5::group h5group, std::string subgroup_name, constr_params_t const &cp);
 
-    /// Read constr_params_t from hdf5
+    /// Read constr_params_t from HDF5.
     friend void h5_read(h5::group h5group, std::string subgroup_name, constr_params_t &cp);
   };
 
-  /// The parameters for the solve function
+  /// Parameters for the solve() method.
   struct solve_params_t {
 
-    /// Logarithmic discretization parameter
+    /// Logarithmic discretization parameter.
     double Lambda = 2.0;
 
-    /// Number of discretization meshes
+    /// Number of discretization meshes (interleaved twist parameters z).
     int Nz = 1;
 
-    /// Lowest scale on the Wilson chain
+    /// Lowest energy scale on the Wilson chain.
     double Tmin = 1e-4;
 
-    /// Maximum number of states to keep at each step
+    /// Maximum number of states to keep at each NRG step.
     size_t keep = 100;
 
-    /// Cut-off energy for truncation
+    /// Cut-off energy for truncation.
     double keepenergy = -1.0;
 
-    /// Minimum number of states to keep at each step
+    /// Minimum number of states to keep at each NRG step.
     size_t keepmin = 0;
 
-    /// Temperature, k_B T/D,
+    /// Temperature, \f$ k_B T / D \f$.
     double T = 0.001;
 
-    /// Width of logarithmic gaussian
+    /// Width of the logarithmic gaussian used for broadening.
     double alpha = 0.3;
 
-    /// Parameter for Gaussian convolution step
+    /// Parameter for the Gaussian convolution step.
     double gamma = 0.2;
 
-    /// Method for calculating the dynamical quantities
+    /// Method for calculating the dynamical quantities.
     std::string method = "fdm";
 
-    /// Band rescaling factor (half-width of the support of the hybridisation function)
-    double bandrescale = -1.0; // set to the value of meshmax if negative
+    /// Band rescaling factor (half-width of the support of the hybridisation function); set to mesh_max if negative.
+    double bandrescale = -1.0;
 
-    /// Model parameters
+    /// Model parameters (name to value map, e.g. U1, eps1).
     std::map<std::string, double> model_parameters;
 
-    /// Write constr_params_t to hdf5
+    /// Write solve_params_t to HDF5.
     friend void h5_write(h5::group h5group, std::string subgroup_name, solve_params_t const &sp);
 
-    /// Read constr_params_t from hdf5
+    /// Read solve_params_t from HDF5.
     friend void h5_read(h5::group h5group, std::string subgroup_name, solve_params_t &sp);
   };
 
-  /// NRG low-level parameters
+  /// Low-level NRG parameters.
   struct nrg_params_t {
 
-    /// Perform DMNRG (density-matrix NRG) calculation
+    /// Perform a DMNRG (density-matrix NRG) calculation.
     bool dmnrg = false;
 
-    /// Perform CFS (complete Fock space) calculation
+    /// Perform a CFS (complete Fock space) calculation.
     bool cfs = false;
 
-    /// Perform FDM (full-density-matrix) calculation
+    /// Perform an FDM (full-density-matrix) calculation.
     bool fdm = true;
 
-    /// Calculate expectation values using FDM algorithm
+    /// Calculate expectation values using the FDM algorithm.
     bool fdmexpv = true;
 
-    /// DMNRG calculation on Matsubara axis
+    /// Perform the DMNRG calculation on the Matsubara axis.
     bool dmnrgmats = false;
 
-    /// FDM calculation on Matsubara axis
+    /// Perform the FDM calculation on the Matsubara axis.
     bool fdmmats = false;
 
-    /// Number of Matsubara points to collect
+    /// Number of Matsubara points to collect.
     size_t mats = 100;
 
-    /// Conductance curves to compute
+    /// Conductance curves to compute.
     std::string specgt = "";
 
-    /// I_1 curves to compute
+    /// \f$ I_1 \f$ curves to compute.
     std::string speci1t = "";
 
-    /// I_2 curves to compute
+    /// \f$ I_2 \f$ curves to compute.
     std::string speci2t = "";
 
-    /// Compute 3-leg vertex on matsubara/matsubara axis?
+    /// Compute the 3-leg vertex on the Matsubara/Matsubara axis.
     bool v3mm = false;
 
-    /// Number of sites in the star representation
-    int mMAX = -1; // automatically determined
+    /// Number of sites in the star representation (\f$ -1 \f$: automatically determined).
+    int mMAX = -1;
 
-    /// Number of sites in the Wilson chain
-    int Nmax = -1; // automatically determined
+    /// Number of sites in the Wilson chain (\f$ -1 \f$: automatically determined).
+    int Nmax = -1;
 
-    /// Largest x in the discretization ODE solver
-    double xmax = -1.0; // automatically determined
+    /// Largest \f$ x \f$ in the discretization ODE solver (\f$ -1 \f$: automatically determined).
+    double xmax = -1.0;
 
-    /// Discretization scheme
+    /// Discretization scheme.
     std::string discretization = "Z";
 
-    /// Parameter z in the logarithmic discretization
+    /// Parameter \f$ z \f$ (twist) in the logarithmic discretization.
     double z = 1.0;
 
-    /// Tridiagonalisation approach
+    /// Tridiagonalisation approach.
     std::string tri = "old";
 
-    /// Precision for tridiagonalisation
+    /// Precision for tridiagonalisation.
     size_t preccpp = 2000;
 
-    /// Eigensolver routine (dsyev|dsyevr|zheev|zheevr|default)
+    /// Eigensolver routine (dsyev|dsyevr|zheev|zheevr|default).
     std::string diag = "default";
 
-    /// Ratio of eigenstates computed in partial diagonalisation
+    /// Ratio of eigenstates computed in partial diagonalisation.
     double diagratio = 1.0;
 
-    /// Minimal matrix size for dsyevr
+    /// Minimal matrix size for dsyevr.
     size_t dsyevrlimit = 100;
 
-    /// Minimal matrix size for zheevr
+    /// Minimal matrix size for zheevr.
     size_t zheevrlimit = 100;
 
-    /// Restart calculation to achieve truncation goal?
+    /// Restart the calculation to achieve the truncation goal.
     bool restart = true;
 
-    /// Rescale factor for restart=true
+    /// Rescale factor used when restart is true.
     double restartfactor = 2.0;
 
-    /// Additional states to keep in case of a near degeneracy
+    /// Additional states to keep in case of a near degeneracy.
     double safeguard = 1e-5;
 
-    /// Maximal number of additional states
+    /// Maximal number of additional states to keep.
     size_t safeguardmax = 200;
 
-    /// Threshold value for eigenvalue splitting corrections
+    /// Threshold value for eigenvalue splitting corrections.
     double fixeps = 1e-15;
 
-    /// Parameter \bar{\beta} for thermodynamics
+    /// Parameter \f$ \bar{\beta} \f$ for thermodynamics.
     double betabar = 1.0;
 
-    /// Parameter p for G(T) calculations
+    /// Parameter \f$ p \f$ for \f$ G(T) \f$ calculations.
     double gtp = 0.7;
 
-    /// Parameter p for chi(T) calculations
+    /// Parameter \f$ p \f$ for \f$ \chi(T) \f$ calculations.
     double chitp = 1.0;
 
-    /// Perform Costi-Hewson-Zlatic finite-T calculation
+    /// Perform a Costi-Hewson-Zlatic finite-T calculation.
     bool finite = false;
 
-    /// CFS greater correlation function
+    /// Compute the CFS greater correlation function.
     bool cfsgt = false;
 
-    /// CFS lesser correlation function
+    /// Compute the CFS lesser correlation function.
     bool cfsls = false;
 
-    /// FDM greater correlation function?
+    /// Compute the FDM greater correlation function.
     bool fdmgt = false;
 
-    /// FDM lesser correlation function?
+    /// Compute the FDM lesser correlation function.
     bool fdmls = false;
 
-    /// Iteration where we evaluate the expectation values
+    /// Iteration at which the expectation values are evaluated.
     size_t fdmexpvn = 0;
 
-    /// T>0 calculation on Matsubara axis
+    /// Perform a \f$ T > 0 \f$ calculation on the Matsubara axis.
     bool finitemats = false;
 
-    /// Compute density matrixes?
+    /// Compute density matrices.
     bool dm = false;
 
-    /// Broadening mesh maximum frequency
-    //double broaden_max = 10; // We use mesh_max instead
-
-    /// Broadening mesh minimum frequency
-    //double broaden_min = -99.; // We use mesh_min instead
-
-    /// Auto-tune broaden_min parameter
+    /// Auto-tune the `broaden_min` parameter.
     double broaden_min_ratio = 3.0;
 
-    /// Common ration of the geometric sequence
-    //double broaden_ratio = 1.05; // We use mesh_ratio instead
-
-    /// Smallest energy scale in the problem
+    /// Smallest energy scale in the problem, \f$ \omega_0 \f$.
     double omega0 = -1.0;
 
-    /// omega0 = omega0_ratio x T
+    /// Sets \f$ \omega_0 = \mathtt{omega0\_ratio} \times T \f$.
     double omega0_ratio = 1.0;
 
-    /// Number of diagonalisation threads
+    /// Number of diagonalisation threads.
     int diagth = 1;
 
-    /// Interleaved diagonalization scheme
+    /// Use the interleaved diagonalization scheme.
     bool substeps = false;
 
-    /// Recalculation strategy
+    /// Recalculation strategy.
     std::string strategy = "kept";
 
-    /// Initial Wilson chain ops
+    /// Number of initial Wilson chain operators.
     size_t Ninit = 0;
 
-    /// Output imaginary parts of correlators?
+    /// Output the imaginary parts of the correlators.
     bool reim = false;
 
-    /// Number of eigenvalues to dump
+    /// Number of eigenvalues to dump.
     size_t dumpannotated = 0;
 
-    /// Dump in terms of absolute energies
+    /// Dump in terms of absolute energies.
     bool dumpabs = false;
 
-    /// Dump using omega_N energy units
+    /// Dump using omega_N energy units.
     bool dumpscaled = true;
 
-    /// Dump with # digits of precision
+    /// Number of digits of precision used when dumping.
     size_t dumpprecision = 8;
 
-    /// Dump by grouping degenerate states
+    /// Dump by grouping degenerate states.
     bool dumpgroups = true;
 
-    /// Energy tolerance for considering two states as degenerate
+    /// Energy tolerance for considering two states as degenerate.
     double grouptol = 1e-6;
 
-    /// Dump diagonal matrix elements
+    /// Dump diagonal matrix elements.
     size_t dumpdiagonal = 0;
 
-    /// Save binned (unbroadened) data
-    bool savebins = true; // should be set to true!!
+    /// Save binned (unbroadened) data.
+    bool savebins = true;
 
-    /// Enable broadening of spectra
+    /// Enable broadening of spectra.
     bool broaden = false;
-    
-    /// Lower binning limit
+
+    /// Lower binning limit.
     double emin = -1.0;
 
-    /// Upper binning limit
+    /// Upper binning limit.
     double emax = -1.0;
 
-    /// bins/decade for spectral data
-    size_t bins = 1000; // good default for high-accuracy calculations
+    /// Number of bins per decade for spectral data.
+    size_t bins = 1000;
 
-    /// Shift of the accumulation points for binning
+    /// Shift of the accumulation points for binning.
     double accumulation = 0.0;
 
-    /// Bin width for linear mesh
+    /// Bin width for the linear mesh.
     double linstep = 0;
 
-    /// Peak clipping at the end of the run
+    /// Peak clipping at the end of the run.
     double discard_trim = 1e-16;
 
-    /// Peak clipping on the fly
+    /// Peak clipping on the fly.
     double discard_immediately = 1e-16;
 
-    /// Energy window parameter for patching
+    /// Energy window parameter for patching.
     double goodE = 2.0;
 
-    /// Do N/N+1 patching?
+    /// Perform N/N+1 patching.
     bool NN1 = false;
 
-    /// Use even iterations in N/N+2 patching
+    /// Use even iterations in N/N+2 patching.
     bool NN2even = true;
 
-    /// Average over even and odd N/N+2 spectra
+    /// Average over even and odd N/N+2 spectra.
     bool NN2avg = false;
 
-    /// a in tanh[a(x-0.5)] window function
+    /// Parameter \f$ a \f$ in the \f$ \tanh[a(x-0.5)] \f$ window function.
     double NNtanh = 0.0;
 
-    /// Width of columns in 'td' output file
+    /// Width of columns in the 'td' output file.
     size_t width_td = 16;
 
-    /// Width of columns in 'custom' output file
+    /// Width of columns in the 'custom' output file.
     size_t width_custom = 16;
 
-    /// Precision of columns in 'td' output file
+    /// Precision of columns in the 'td' output file.
     size_t prec_td = 10;
 
-    /// Precision of columns in 'custom' output file
+    /// Precision of columns in the 'custom' output file.
     size_t prec_custom = 10;
 
-    /// Precision of spectral function output
+    /// Precision of the spectral function output.
     size_t prec_xy = 10;
 
-    /// Attempt restart?
+    /// Attempt to restart the calculation.
     bool resume = false;
 
-    /// List of tokens to define what to log
+    /// List of tokens defining what to log.
     std::string log = "";
 
-    /// Log everything
+    /// Log everything.
     bool logall = false;
 
-    /// Create DONE file?
+    /// Create a DONE file.
     bool done = true;
 
-    /// Perform calculations at 0-th iteration?
+    /// Perform calculations at the 0-th iteration.
     bool calc0 = true;
 
-    /// Keep all states in the last iteratio for DMNRG
+    /// Keep all states in the last iteration for DMNRG.
     bool lastall = false;
 
-    /// Override automatic lastall setting
+    /// Override the automatic lastall setting.
     bool lastalloverride = false;
 
-    /// Save detailed subspace info
+    /// Save detailed subspace info.
     bool dumpsubspaces = false;
 
-    /// Dump <f> matrix elements
+    /// Dump \f$ \langle f \rangle \f$ matrix elements.
     bool dump_f = false;
 
-    /// Dump (all) energies to file?
+    /// Dump all energies to a file.
     bool dumpenergies = false;
 
-    /// # of eigenvalues to show for log=e
+    /// Number of eigenvalues to show for log=e.
     size_t logenumber = 10;
 
-    /// Stop calculation at some point?
+    /// Stop the calculation at a given point.
     std::string stopafter = "";
 
-    /// Stop iteration?
+    /// Force stop at the given iteration (-1: disabled).
     int forcestop = -1;
 
-    /// Remove temporary data files?
+    /// Remove temporary data files.
     bool removefiles = true;
 
-    /// Do not output imaginary parts of expvs
+    /// Do not output the imaginary parts of expectation values.
     bool noimag = true;
 
-    /// Check operator sumrules
+    /// Check operator sum rules.
     bool checksumrules = false;
 
-    /// Test diag results
+    /// Test the diagonalisation results.
     bool checkdiag = false;
 
-    /// Test tr(rho)=1
+    /// Test that \f$ \mathrm{tr}(\rho) = 1 \f$.
     bool checkrho = false;
 
-    /// Write nrg_params_t to hdf5
+    /// Write nrg_params_t to HDF5.
     friend void h5_write(h5::group h5group, std::string subgroup_name, nrg_params_t const &sp);
 
-    /// Read nrg_params_t from hdf5
+    /// Read nrg_params_t from HDF5.
     friend void h5_read(h5::group h5group, std::string subgroup_name, nrg_params_t &sp);
   };
 
