@@ -19,7 +19,7 @@
 #
 # ##############################################################################
 
-cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
 cmake_policy(VERSION ${CMAKE_VERSION})
 
 # ############
@@ -96,6 +96,11 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Disable compiler extensions
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# No C++20 modules used. Disable module scanning (default ON for C++20+ with Ninja):
+# it injects transient @<obj>.modmap flags into compile_commands.json that break clair-c2py
+# binding generation when it replays those commands. No-op on CMake < 3.28.
+set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
+
 # Provide additional debugging information for Debug builds
 add_compile_options($<$<CONFIG:Debug>:-ggdb3>)
 
@@ -113,18 +118,15 @@ target_compile_options(${PROJECT_NAME}_warnings
     $<$<CXX_COMPILER_ID:GNU>:-Wno-comma-subscript>
     $<$<CXX_COMPILER_ID:GNU>:-Wno-psabi> # Disable notes about ABI changes
     $<$<CXX_COMPILER_ID:GNU>:-Wshadow=local>
-    $<$<CXX_COMPILER_ID:Clang>:-Wno-deprecated-comma-subscript>
-    $<$<CXX_COMPILER_ID:Clang>:-Wno-unknown-warning-option>
-    $<$<CXX_COMPILER_ID:Clang>:-Wshadow>
-    $<$<CXX_COMPILER_ID:Clang>:-Wno-gcc-compat>
-    $<$<CXX_COMPILER_ID:Clang>:-Wno-c++20-extensions>
-    $<$<CXX_COMPILER_ID:Clang>:-Wno-c++20-compat>
-    $<$<CXX_COMPILER_ID:AppleClang>:-Wno-deprecated-comma-subscript>
-    $<$<CXX_COMPILER_ID:AppleClang>:-Wno-unknown-warning-option>
-    $<$<CXX_COMPILER_ID:AppleClang>:-Wshadow>
-    $<$<CXX_COMPILER_ID:AppleClang>:-Wno-gcc-compat>
-    $<$<CXX_COMPILER_ID:AppleClang>:-Wno-c++20-extensions>
-    $<$<CXX_COMPILER_ID:AppleClang>:-Wno-c++20-compat>
+    $<$<CXX_COMPILER_ID:GNU>:-Wno-deprecated-declarations>
+    $<$<CXX_COMPILER_ID:AppleClang,Clang,IntelLLVM>:-Wno-deprecated-comma-subscript>
+    $<$<CXX_COMPILER_ID:AppleClang,Clang,IntelLLVM>:-Wno-unknown-warning-option>
+    $<$<CXX_COMPILER_ID:AppleClang,Clang,IntelLLVM>:-Wshadow>
+    $<$<CXX_COMPILER_ID:AppleClang,Clang,IntelLLVM>:-Wno-gcc-compat>
+    $<$<CXX_COMPILER_ID:AppleClang,Clang,IntelLLVM>:-Wno-c++26-extensions>
+    $<$<CXX_COMPILER_ID:AppleClang,Clang,IntelLLVM>:-Wno-c++26-compat>
+    $<$<CXX_COMPILER_ID:AppleClang,Clang,IntelLLVM>:-Wno-c2y-extensions> # __COUNTER__ in SCOPE_EXIT
+    $<$<CXX_COMPILER_ID:IntelLLVM>:-Wno-tautological-constant-compare>
 )
 
 # Provide GNU Installation directories

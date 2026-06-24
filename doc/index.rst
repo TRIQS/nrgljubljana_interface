@@ -3,9 +3,9 @@
 nrgljubljana_interface
 **********************
 
-.. sidebar:: nrgljubljana_interface 3.0.0
+.. sidebar:: nrgljubljana_interface |PROJECT_VERSION|
 
-   This is the homepage of nrgljubljana_interface v3.0.0.
+   This is the homepage of nrgljubljana_interface |PROJECT_VERSION|.
    For changes see the :ref:`changelog page <changelog>`.
       
       .. image:: _static/logo_github.png

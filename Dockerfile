@@ -21,11 +21,12 @@ RUN cd /tmp/boost_* && \
     cd / && rm -rf /tmp/boost*
 
 COPY --chown=build . $SRC/$APPNAME
-WORKDIR $BUILD/$APPNAME
-RUN chown build .
-USER build
+RUN mkdir $BUILD/$APPNAME && chown build $BUILD/$APPNAME
+
 ARG BUILD_ID
 ARG CMAKE_ARGS
+USER build
+WORKDIR $BUILD/$APPNAME
 RUN cmake $SRC/$APPNAME -DTRIQS_ROOT=${INSTALL} $CMAKE_ARGS && make -j4 || make -j1 VERBOSE=1
 USER root
 RUN make install

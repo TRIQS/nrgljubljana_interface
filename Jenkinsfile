@@ -26,6 +26,9 @@ def platforms = [:]
 /****************** linux builds (in docker) */
 /* Each platform must have a corresponding Dockerfile.PLATFORM in triqs/packaging */
 def dockerPlatforms = ["ubuntu-clang", "ubuntu-gcc"]
+/* Platforms that regenerate the Python bindings via clair-c2py.
+   All others use the default (OFF) from c2py. */
+def regenPlatforms = ["ubuntu-clang"]
 /* .each is currently broken in jenkins */
 for (int i = 0; i < dockerPlatforms.size(); i++) {
   def platform = dockerPlatforms[i]
@@ -39,11 +42,12 @@ for (int i = 0; i < dockerPlatforms.size(); i++) {
       """
       archiveArtifacts(artifacts: "Dockerfile.${env.STAGE_NAME}")
       /* build and tag */
-      def args = ''
+      def regen = regenPlatforms.contains(platform)
+      def args = regen ? '-DUpdate_Python_Bindings=ON' : ''
       if (platform == documentationPlatform)
-        args = '-DBuild_Documentation=1'
+        args += ' -DBuild_Documentation=ON'
       else if (platform == "sanitize")
-        args = '-DASAN=ON -DUBSAN=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo'
+        args += ' -DASAN=ON -DUBSAN=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo'
       def img = docker.build("flatironjenkins/${dockerName}:${env.BRANCH_NAME}-${env.STAGE_NAME}", "--build-arg APPNAME=${projectName} --build-arg BUILD_ID=${env.BUILD_TAG} --build-arg CMAKE_ARGS='${args}' .")
       catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
         img.inside("--shm-size=4gb") {
