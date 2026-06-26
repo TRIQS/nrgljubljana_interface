@@ -3,3 +3,20 @@ FROM flatironinstitute/triqs:unstable-ubuntu-clang
 
 # Install here missing dependencies, e.g.
 # RUN apt-get update && apt-get install -y python3-skimage
+RUN apt-get install -y libgsl-dev || yum install -y gsl-devel perl-Math-Complex
+
+ENV BOOST_ROOT=/opt/boost
+ENV LD_LIBRARY_PATH=/opt/boost/lib:$LD_LIBRARY_PATH
+ADD https://archives.boost.io/release/1.88.0/source/boost_1_88_0.tar.gz /tmp/boost.tar.gz
+RUN chown build /tmp/boost.tar.gz
+USER build
+RUN tar -C /tmp -xf /tmp/boost.tar.gz && \
+    cd /tmp/boost_* && \
+    case $CC in (clang*) toolset=clang ;; (gcc*) toolset=gcc ;; (icx*) toolset=intel-linux ;; esac ; \
+    ./bootstrap.sh --prefix=$BOOST_ROOT --with-toolset=$toolset --with-libraries=mpi,serialization,system && \
+    echo "using mpi ;" >> $PWD/project-config.jam && \
+    ./b2 ${CXXFLAGS:+cxxflags=$CXXFLAGS linkflags=$CXXFLAGS} toolset=$toolset
+USER root
+RUN cd /tmp/boost_* && \
+    case $CC in (clang*) toolset=clang ;; (gcc*) toolset=gcc ;; (icx*) toolset=intel-linux ;; esac ; ./b2 toolset=$toolset install && \
+    cd / && rm -rf /tmp/boost*
