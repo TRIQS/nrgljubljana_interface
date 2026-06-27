@@ -2,6 +2,63 @@
 
 # Changelog
 
+## Version 4.0.0
+
+nrgljubljana_interface version 4.0.0 is a compatibility release for TRIQS version 4.0.0.
+It is based on the latest [app4triqs](https://github.com/TRIQS/app4triqs) skeleton and
+ports the Python bindings to the new clair + c2py binding generator. The most notable
+changes are:
+
+* Run the `port_to_triqs4` script for the TRIQS 4.0 module renames (`triqs.gf` -> `triqs.gfs`, mesh modules moved to `triqs.mesh`)
+* Use the latest app4triqs skeleton, including the new Kubernetes-based Jenkins setup
+* Port the Python bindings from cpp2py to clair + c2py
+* Replace the custom `point_mesh` with the TRIQS `refreq_log` mesh and align with the latest mesh conventions
+* Add improved self-energy estimators and new problem template files
+
+We thank all contributors: Jennifer Coulter, Thomas Hahn, Alexander Hampel, Henri Menke, Don Rolih, Dylan Simon, Nils Wentzell, Rok Zitko
+
+Find below an itemized list of changes in this release.
+
+### General
+* Port to TRIQS 4.0 via the `port_to_triqs4` script
+* Port the Python bindings to clair + c2py and regenerate the `solver_core` module
+* Replace the custom `point_mesh` with the TRIQS `refreq_log` mesh and align with the latest mesh conventions
+* Add improved self-energy estimators and the definitions they require
+* Add new problem template files (SIAM/ISO particle-hole-symmetric case, updates to SIAM/QS, SIAM/QSZ, Holstein/Nph=10/QS, 2orb-UJ/QS)
+* Add a note and instructions on implementing new models in nrgljubljana_interface
+* Update the bundled NRG Ljubljana dependency to b2dc884
+* Update the doxygen documentation in `container_set.hpp`, `params.hpp` and `solver_core.hpp`
+* Clean up references to the old estimator
+* Fix unrecognized Python tests
+
+### cmake
+* Fetch the NRG Ljubljana dependency through the CPM package manager, pinned to a fixed `rokzitko/nrgljubljana` commit
+* Allow both static and dynamic builds of the nrgljubljana library
+* Disable the Mathematica search on OSX
+* Fix the test environments
+
+### cpp
+* Replace the deprecated OpenMP function `omp_get_nested`
+* Fix the calls to NRG Ljubljana functions
+
+### python
+* Update test scripts and reference `.h5` files for the new self-energy estimator
+* Replace deprecated `numpy.complex_` with `numpy.complex128`
+
+### jenkins
+* Migrate to the new Kubernetes-based Jenkins system
+* Add the GSL and Boost dependencies to `jenkins/Dockerfile`, bump Boost to 1.88
+* Disable IntelLLVM builds
+
+### ghactions
+* Modernize and simplify `build.yml`, building in parallel with Ninja
+* Add the GSL, Boost-MPI and Boost-system dependencies
+* Fix the macOS + clang build (libc++/libomp/unwind paths, OpenMP detection)
+
+### doc
+* Add a Flatiron Institute support notice to `README.md`
+
+
 ## Version 3.3.0
 
 nrgljubljana_interface version 3.3.0 is a compatibility release for TRIQS version 3.3.0.
