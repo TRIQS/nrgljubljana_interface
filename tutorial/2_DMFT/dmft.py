@@ -10,13 +10,13 @@ import math
 import numpy as np
 from scipy import interpolate, integrate, special, optimize
 
-from triqs.gf import *
+from triqs.gfs import *
 from triqs.operators import *
 from h5 import *
 from triqs.utility import mpi
 
 from nrgljubljana_interface import Solver, hilbert_transform_refreq
-from triqs.gf.meshes import MeshReFreqPts
+from triqs.mesh import MeshReFreqPts
 
 be_verbose = True # show info messages
 

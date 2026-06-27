@@ -31,7 +31,7 @@ susceptibilities and thermodynamic/expectation values for quantum impurity model
 """
 from .solver import Solver
 from .solver_core import SolverCore, hilbert_transform_refreq, hilbert_transform_elementwise
-from triqs.gf.meshes import MeshReFreqLog
-from triqs.gf.descriptors import Flat, SemiCircular, Omega
+from triqs.mesh import MeshReFreqLog
+from triqs.gfs.descriptors import Flat, SemiCircular, Omega
 
 __all__ = ['Solver','SolverCore', 'MeshReFreqLog', 'Flat', 'SemiCircular', 'Omega']

@@ -29,7 +29,7 @@ solve, and low-level NRG parameters as keyword arguments and importing
 """
 from .solver_core import SolverCore, ConstrParamsT, SolveParamsT, NrgParamsT
 
-from triqs.gf import *
+from triqs.gfs import *
 from triqs.utility import mpi
 
 

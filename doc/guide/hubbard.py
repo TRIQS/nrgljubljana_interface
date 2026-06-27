@@ -1,12 +1,12 @@
 # DMFT(NRG) for Hubbard and Hubbard-like models (including Hubbard-Holstein model)
 # RZ, Feb 2020
 
-from triqs.gf import *
+from triqs.gfs import *
 from triqs.operators import *
 from h5 import *
 from triqs.utility import mpi
 from nrgljubljana_interface import Solver, hilbert_transform_refreq
-from triqs.gf.meshes import MeshReFreqPts
+from triqs.mesh import MeshReFreqPts
 import math, os, warnings
 import numpy as np
 from scipy import interpolate, integrate, special, optimize

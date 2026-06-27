@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-from triqs.gf import *
+from triqs.gfs import *
 from h5 import *
 def A_to_nparrays(A):
     lx = np.array(list(A.mesh.values()))

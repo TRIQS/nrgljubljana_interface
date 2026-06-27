@@ -1,5 +1,5 @@
-from triqs.gf import *
-from triqs.gf.meshes import MeshReFreqPts
+from triqs.gfs import *
+from triqs.mesh import MeshReFreqPts
 from nrgljubljana_interface import hilbert_transform_refreq, hilbert_transform_elementwise
 import numpy as np
 import math
