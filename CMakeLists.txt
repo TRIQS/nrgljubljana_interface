@@ -1,6 +1,6 @@
 # ##############################################################################
 #
-# nrgljubljana_interface - An example application using triqs and c2py
+# nrgljubljana_interface - An example application using triqs and c2py + clair
 #
 # Copyright (C) ...
 #
