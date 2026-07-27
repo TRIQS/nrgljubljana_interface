@@ -27,6 +27,9 @@ cmake_policy(VERSION ${CMAKE_VERSION})
 project(nrgljubljana_interface VERSION 3.3.1 LANGUAGES CXX)
 get_directory_property(IS_SUBPROJECT PARENT_DIRECTORY)
 
+# version displayed in the documentation
+set(BRANCH_FOR_DOC ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.x)
+
 # ############
 # Load TRIQS and CPP2PY
 find_package(TRIQS 3.3 REQUIRED)
