@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21691802.svg)](https://doi.org/10.5281/zenodo.21691802)
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.21691802-blue.svg)](https://doi.org/10.5281/zenodo.21691802)
 
 ## nrgljubljana_interface - An Interface to the Open-Source Code [NRGLjubljana](https://github.com/rokzitko/nrgljubljana)
 
