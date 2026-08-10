@@ -2,6 +2,23 @@
 
 # Changelog
 
+## Version 4.0.1
+
+nrgljubljana_interface version 4.0.1 is a patch release that pins the c2py build
+dependency to the 0.9.x release branch, keeping a fresh build compatible with
+the released triqs 4.0.x, and adds README badges.
+
+We thank all contributors: Thomas Hahn, Alexander Hampel, Nils Wentzell
+
+Find below an itemized list of changes in this release.
+
+### deps
+* Pin c2py to the 0.9.x release branch for the 4.0.x release
+
+### doc
+* Add a build status badge and a Zenodo DOI badge to the README
+
+
 ## Version 4.0.0
 
 nrgljubljana_interface version 4.0.0 is a compatibility release for TRIQS version 4.0.0.
